@@ -1183,7 +1183,7 @@ be additive.
 | WP-9 | Scalar extension interface | I | done | sonnet | merged 2026-09-07 |
 | WP-10 | Phase I assembly and audit | I | done | sonnet | merged 2026-09-07; `verify.sh --phase-i` passes |
 | WP-11 | Localization interface construction | II | todo | | |
-| WP-12 | Étale derivations and coordinate rigidity | II | todo | | |
+| WP-12 | Étale derivations and coordinate rigidity | II | done | sonnet | merged; `etaleChartData_of_fields` assembles fields, remaining fields from WP-13/WP-14 |
 | WP-13 | Finite generic fibre | II | todo | | |
 | WP-14 | Chart operator ring is a domain | II | todo | | largest |
 | WP-15 | Weyl domain and right Ore | II | todo | | |
