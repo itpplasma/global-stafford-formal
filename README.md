@@ -26,9 +26,10 @@ it to the Mathlib-only statement `GlobalStaffordChallenge.universalStatement`
 of [`Challenge.lean`](Challenge.lean). Both depend only on `propext`,
 `Classical.choice`, and `Quot.sound`; `scripts/verify.sh` (build, pins,
 source audit, endpoint axioms, Challenge/Solution import closures) passes.
-Phase III (Comparator, NanoDa and Lean-kernel replay in an isolated clone,
-verification record, release metadata) is in progress; see [`PLAN.md`](PLAN.md)
-and [`docs/verification.md`](docs/verification.md). No release, registration,
+Commit `d76051ce` was replayed from a fresh clone: `scripts/verify.sh`,
+Comparator, NanoDa and Lean's kernel all accept the solution; the
+[verification record](docs/verification-results.json) has SHA-256
+``. See [`docs/verification.md`](docs/verification.md). No release, registration,
 or publication is claimed, and human expert review of the paper proof and of
 the statement correspondence remains open.
 

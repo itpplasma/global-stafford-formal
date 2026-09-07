@@ -1,10 +1,10 @@
 # Global Stafford formalization plan
 
 ```yaml
-phase: phase-iii
+phase: verified-snapshot
 phase_i_status: done 2026-09-07 (scripts/verify.sh --phase-i: 15 endpoints, standard axioms only)
 phase_ii_status: done 2026-09-07 (GlobalStafford.universalStatement, GlobalStaffordChallenge.universalStatement: propext, Classical.choice, Quot.sound only)
-phase_iii_status: in-progress (Solution written; Palomar tool replay and metadata pending)
+phase_iii_status: done 2026-09-07 (independent-clone replay of d76051ce: verify.sh, Comparator, NanoDa, Lean kernel all passed; record docs/verification-results.json)
 paper_source: itpplasma/global-stafford notes/source-changing-descent-2026-09-07.md
 paper_review: two independent-context model reviews passed 2026-09-07; human review open
 lean_toolchain: leanprover/lean4:v4.33.0
@@ -1072,6 +1072,12 @@ Deliverable: `noncomputable def scalarExtensionInterface : ScalarExtensionInterf
 
 ## 5. Phase III: Palomar packaging
 
+Status 2026-09-07: `Solution.lean` written and verified; `scripts/verify.sh`
+(full) and `scripts/verify-palomar.sh` pass in the working checkout;
+`scripts/record-verification.py` writes `docs/verification-results.json`
+from the independent-clone replay. Remaining human-only actions are in
+`docs/release-runbook.md`.
+
 ### WP-19 Solution, consumers, verification
 
 1. `Solution.lean`: import `GlobalStafford.Assembly.Closure`, restate the
@@ -1192,7 +1198,7 @@ All leaves were discharged on 2026-09-07 (WP-11..WP-18); `docs/paper-lean-specif
 | WP-16 | Scalar extension construction | II | done | sonnet | merged 2026-09-07; `scalarExtensionInterface`, `DK k C` |
 | WP-17 | Smooth cover by étale charts | II | done | sonnet | merged 2026-09-07; presentation route (`EtaleCoordinateChart`, `exists_finite_etale_cover`) |
 | WP-18 | Closure and axiom audit | II | done | sonnet (18a, 18b, 18) | merged 2026-09-07; `GlobalStafford.universalStatement`, `challengeStatement` |
-| WP-19 | Solution, consumers, Palomar verification, metadata | III | wip: `Assembly/ChallengeTransport.lean` done (sonnet); Solution and verification pending Phase II | | |
+| WP-19 | Solution, consumers, Palomar verification, metadata | III | done | sonnet+controller | Solution, verify.sh, verify-palomar.sh, independent replay record 2026-09-07 |
 | AA-1 | Finite-order coordinate generation in AA | I | done; pin bumped to `faa64814` 2026-09-07 | sonnet | |
 
 ## 10. Build and verification commands

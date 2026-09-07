@@ -8,7 +8,7 @@ project:
     ring of k-linear finite-order differential operators of every smooth
     integral finitely generated algebra over a characteristic-zero field,
     extending Stafford's Conjecture 3.8 from Weyl algebras to smooth affine
-    varieties. Work in progress; see PLAN.md for the exact status.
+    varieties. PLAN.md records the work packages and their status.
   authors:
     - name: "Christopher Albert"
       orcid: "0000-0003-4773-416X"
@@ -22,8 +22,9 @@ repository:
   url: "https://github.com/itpplasma/global-stafford-formal"
   registration_status: "not-registered"
   note: >-
-    Private development repository. Not registered with Palomar; no
-    verification snapshot exists yet.
+    Private repository, not registered with Palomar. The verification
+    snapshot is recorded in docs/verification-results.json; registration
+    and any visibility change are separate human decisions.
 
 classification:
   arxiv:
@@ -61,7 +62,7 @@ related_formalizations:
     relationship: "depends-on"
 
 verification:
-  commit: ""
+  commit: "d76051ce227f41c0fb21f114ffd61890f3b6b99b"
   report: ""
   machine_readable_report: "docs/verification-results.json"
   statement_correspondence: "docs/paper-lean-specification.md"
@@ -69,18 +70,39 @@ verification:
 
 status:
   scope: >-
-    Phase I (project-owned steps over concrete carriers with explicit
-    literature hypotheses), Phase II (discharge of all hypotheses from
-    Mathlib and pinned dependencies) and Phase III (Palomar packaging) are
-    tracked in PLAN.md. Until Phase III closes, no theorem here is verified.
+    The substantive development proves the universal same-divisor
+    certificate 1 = d*R + F*d*S in the intrinsic algebra of finite-order
+    differential operators of every smooth integral finitely generated
+    algebra over every characteristic-zero field (GlobalStafford.universalStatement),
+    and Solution.lean transports it to the Mathlib-only Challenge statement.
+    Both depend only on propext, Classical.choice and Quot.sound. The
+    verification record in docs/verification-results.json lists the
+    independent-clone replay, the endpoint axiom audits, the Challenge and
+    Solution import-closure audits, and the Comparator, NanoDa and Lean-kernel
+    checks. Human expert review of the paper proof and of the statement
+    correspondence is open.
   sorry_count: 1
   sorry_in_definitions: 0
-  axioms: []
+  axioms:
+    - "propext"
+    - "Quot.sound"
+    - "Classical.choice"
   main_results:
+    - declaration: "GlobalStafford.universalStatement"
+      file: "GlobalStafford/Assembly/Closure.lean"
+      sorry_count: 0
+      axioms:
+        - "propext"
+        - "Quot.sound"
+        - "Classical.choice"
+      literature_dependencies: []
     - declaration: "GlobalStaffordChallenge.universalStatement"
-      file: "Challenge.lean"
-      sorry_count: 1
-      axioms: []
+      file: "Solution.lean"
+      sorry_count: 0
+      axioms:
+        - "propext"
+        - "Quot.sound"
+        - "Classical.choice"
       comparator_config: "comparator.json"
       literature_dependencies: []
 
@@ -125,22 +147,32 @@ fidelity:
     certificate is the paper's. Smoothness is Mathlib's Algebra.Smooth.
 
 review:
-  status: "not-reviewed"
+  status: "agent-reviewed"
   reviewers: []
   notes: >-
-    The paper proof passed two independent-context model reviews; human
+    The paper proof passed two independent-context model reviews and the
+    formal development has kernel checking, scoped agent audits, and the
+    statement correspondence in docs/paper-lean-specification.md. Human
     expert review of the paper and of the formal statement is open.
 
 alignment:
   namespace: "GlobalStafford"
   statements:
     - source: "Original proof: GS-DX, Theorem 6.3"
-      lean: "GlobalStaffordChallenge.universalStatement"
-      module: "Challenge"
-      status: "stated"
+      lean: "GlobalStafford.universalStatement"
+      module: "GlobalStafford.Assembly.Closure"
+      status: "proved"
       note: >-
-        Mathlib-only statement with one deliberate sorry; the proof is the
-        Phase III Solution.
+        For every characteristic-zero field and every smooth integral
+        finitely generated algebra, the literal identity 1 = d*R + F*d*S in
+        the intrinsic differential-operator algebra.
+    - source: "Original proof: GS-DX, Theorem 6.3 (Palomar statement)"
+      lean: "GlobalStaffordChallenge.universalStatement"
+      module: "Solution"
+      status: "proved"
+      note: >-
+        Mathlib-only statement of Challenge.lean, proved in Solution.lean by
+        transport; Challenge.lean keeps its one deliberate sorry.
 
 acknowledgements: >-
   Builds on Lean, Mathlib, the AlgebraicAnalysis library and the Stafford38
