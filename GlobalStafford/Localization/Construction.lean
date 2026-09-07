@@ -279,7 +279,79 @@ theorem termFun_shift {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k := k) 
         (Finset.sum_congr rfl hstep).symm
     _ = termFun f r P (f * a) (n + 1) := rfl
 
+/-- Iterating `termFun_shift` `t` times: shifting the representative by `f^t`. -/
+theorem termFun_shift_pow {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k := k) (R := A) r)
+    (a : A) (n t : ℕ) : (termFun f r P a n : Af) = termFun f r P (f ^ t * a) (n + t) := by
+  induction t with
+  | zero => simp
+  | succ t ih =>
+      rw [ih, show f ^ (t + 1) * a = f * (f ^ t * a) from by ring,
+        show n + (t + 1) = (n + t) + 1 from by omega]
+      exact termFun_shift f hP (f ^ t * a) (n + t)
+
+include hf in
+/-- `Submonoid.powers f` consists of nonzerodivisors: `A` is a domain and `f ≠ 0`. -/
+theorem powers_le_nonZeroDivisors : Submonoid.powers f ≤ nonZeroDivisors A := by
+  intro x hx
+  obtain ⟨m, hm⟩ := (Submonoid.mem_powers_iff x f).1 hx
+  rw [← hm]
+  exact mem_nonZeroDivisors_iff_ne_zero.2 (pow_ne_zero m hf)
+
+include hf in
+/-- `algebraMap A Af` is injective: `A` is a domain, `f ≠ 0`. -/
+theorem algebraMap_injective : Function.Injective (algebraMap A Af) :=
+  IsLocalization.injective Af (powers_le_nonZeroDivisors f hf)
+
+include hf in
+/-- Two representatives with the *same* exponent and the same value in `Af` have the
+same numerator, by cancelling the (nonzerodivisor) common denominator. -/
+theorem eq_of_mk'_same_denom {a₁ a₂ : A} {n : ℕ}
+    (h : (IsLocalization.mk' Af a₁ (fPow f n) : Af) = IsLocalization.mk' Af a₂ (fPow f n)) :
+    a₁ = a₂ := by
+  rw [IsLocalization.mk'_eq_iff_eq] at h
+  have heq : (fPow f n : A) * a₁ = (fPow f n : A) * a₂ := algebraMap_injective f hf h
+  rw [coe_fPow] at heq
+  exact mul_left_cancel₀ (pow_ne_zero n hf) heq
+
+/-- `mk' Af a (fPow f (n + t)) = mk' Af (f^t * a) (fPow f (n + t))`: scaling a representative's
+numerator by `f^t` and its exponent by `t` leaves the represented element unchanged. -/
+theorem mk'_shift_pow (a : A) (n t : ℕ) :
+    (IsLocalization.mk' Af a (fPow f n) : Af) = IsLocalization.mk' Af (f ^ t * a) (fPow f (n + t)) := by
+  induction t with
+  | zero => simp
+  | succ t ih =>
+      rw [ih, show f ^ (t + 1) * a = f * (f ^ t * a) from by ring,
+        show n + (t + 1) = (n + t) + 1 from by omega, ← mk'_shift_num_denom f (f ^ t * a) (n + t)]
+
+include hf in
+/-- **Representative independence of `termFun`** (`PLAN.md` WP-11 step 1, general case):
+if two representatives `(a₁, n₁)` and `(a₂, n₂)` denote the same element of `A_f`, they give
+the same value of `termFun`. Shift both up to the common exponent `max n₁ n₂` (`mk'_shift_pow`,
+`termFun_shift_pow`), then use that at a common exponent the numerators agree
+(`eq_of_mk'_same_denom`, using that `A` is a domain). -/
+theorem termFun_well_defined {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k := k) (R := A) r)
+    {a₁ a₂ : A} {n₁ n₂ : ℕ}
+    (h : (IsLocalization.mk' Af a₁ (fPow f n₁) : Af) = IsLocalization.mk' Af a₂ (fPow f n₂)) :
+    (termFun f r P a₁ n₁ : Af) = termFun f r P a₂ n₂ := by
+  set N := max n₁ n₂ with hN
+  obtain ⟨t₁, ht₁⟩ : ∃ t, n₁ + t = N := ⟨N - n₁, by omega⟩
+  obtain ⟨t₂, ht₂⟩ : ∃ t, n₂ + t = N := ⟨N - n₂, by omega⟩
+  have e1 : (IsLocalization.mk' Af a₁ (fPow f n₁) : Af) =
+      IsLocalization.mk' Af (f ^ t₁ * a₁) (fPow f N) := by
+    rw [← ht₁]; exact mk'_shift_pow f a₁ n₁ t₁
+  have e2 : (IsLocalization.mk' Af a₂ (fPow f n₂) : Af) =
+      IsLocalization.mk' Af (f ^ t₂ * a₂) (fPow f N) := by
+    rw [← ht₂]; exact mk'_shift_pow f a₂ n₂ t₂
+  have hnum : f ^ t₁ * a₁ = f ^ t₂ * a₂ := by
+    apply eq_of_mk'_same_denom f hf (Af := Af) (n := N)
+    rw [← e1, ← e2, h]
+  calc (termFun f r P a₁ n₁ : Af)
+      = termFun f r P (f ^ t₁ * a₁) (n₁ + t₁) := termFun_shift_pow f hP a₁ n₁ t₁
+    _ = termFun f r P (f ^ t₂ * a₂) (n₂ + t₂) := by rw [hnum, ht₁, ht₂]
+    _ = termFun f r P a₂ n₂ := (termFun_shift_pow f hP a₂ n₂ t₂).symm
+
 end GlobalStafford.Localization
 
 #print axioms GlobalStafford.Localization.ext_of_finite_order
 #print axioms GlobalStafford.Localization.termFun_shift
+#print axioms GlobalStafford.Localization.termFun_well_defined
