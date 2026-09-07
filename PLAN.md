@@ -2,7 +2,7 @@
 
 ```yaml
 phase: phase-i
-phase_i_status: not-started
+phase_i_status: in-progress (WP-1, WP-2 core, WP-4 generic, AA-1 done)
 phase_ii_status: not-started
 phase_iii_status: not-started
 paper_source: itpplasma/global-stafford notes/source-changing-descent-2026-09-07.md
@@ -1172,10 +1172,10 @@ be additive.
 
 | WP | Title | Phase | Status | Owner | Notes |
 | --- | --- | --- | --- | --- | --- |
-| WP-1 | Operators: binomial formulas, contractive powers | I | todo | | |
-| WP-2 | Squared annihilator, Ore data, localization interface | I | todo | | |
+| WP-1 | Operators: binomial formulas, contractive powers | I | done | sonnet | merged 2026-09-07 |
+| WP-2 | Squared annihilator, Ore data, localization interface | I | done except `rightClearance` (moved to WP-3) | sonnet | merged 2026-09-07 |
 | WP-3 | Old-chart protection (Lemma 1.2) | I | todo | | |
-| WP-4 | Polynomial evaluation, ρ, E', S38Poly | I | todo | | |
+| WP-4 | Polynomial evaluation, ρ, E', S38Poly | I | generic part done; `rho`/`squaredInput` open (WP-4b) | sonnet | merged 2026-09-07 |
 | WP-5 | Bounded-order sources (Theorem 4.1) | I | todo | | |
 | WP-6 | Finite-cover patching (Theorem 5.1) | I | todo | | |
 | WP-7 | Finite-right-span ascent (Lemma 6.1) | I | todo | | |
@@ -1191,7 +1191,7 @@ be additive.
 | WP-17 | Smooth cover by étale charts | II | todo | | |
 | WP-18 | Closure and axiom audit | II | todo | | |
 | WP-19 | Solution, consumers, Palomar verification, metadata | III | todo | | |
-| AA-1 | Finite-order coordinate generation in AA | I | todo | | |
+| AA-1 | Finite-order coordinate generation in AA | I | done in AA `faa64814`; pin bump pending | sonnet | |
 
 ## 10. Build and verification commands
 
