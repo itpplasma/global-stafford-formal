@@ -185,5 +185,26 @@ theorem algebraMap_BK_mapBK (b : B k n) :
 
 end AlgebraBK
 
+/-! ## 4. The coordinate derivations of `C_K` commute -/
+
+section DerivationsComm
+
+variable {k : Type u} [Field k] [CharZero k] {n : ℕ} {C : Type u} [CommRing C] [Algebra k C]
+  [Algebra (B k n) C] [IsScalarTower k (B k n) C] [Algebra.FormallyEtale (B k n) C]
+
+/-- **`«∂_comm»` over `K`**: the coordinate derivations `liftDerivationK i` of `C_K` commute,
+by base change of `liftDerivation_comm` (base change is a ring homomorphism on
+`Module.End k C`, `baseChangeEnd_mul`). -/
+theorem liftDerivationK_comm (i j : Fin n) :
+    (liftDerivationK (k := k) (n := n) (C := C) i).toLinearMap *
+        (liftDerivationK j).toLinearMap =
+      (liftDerivationK j).toLinearMap * (liftDerivationK i).toLinearMap := by
+  show baseChangeEnd (liftDerivation (k := k) (C := C) i).toLinearMap *
+      baseChangeEnd (liftDerivation j).toLinearMap =
+    baseChangeEnd (liftDerivation j).toLinearMap * baseChangeEnd (liftDerivation i).toLinearMap
+  rw [← baseChangeEnd_mul, ← baseChangeEnd_mul, liftDerivation_comm]
+
+end DerivationsComm
+
 end
 end GlobalStafford.Chart
