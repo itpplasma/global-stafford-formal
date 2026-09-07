@@ -357,6 +357,274 @@ theorem bigTheta_injective :
       Polynomial.notMem_support_iff.mp fun h => hi (Finset.mem_union_right _ h)
     rw [hp0, hq0]
 
+/-! ## 4. Base change of derivations -/
+
+/-- Leibniz rule for the base change of a derivation. -/
+theorem baseChangeEnd_leibniz (δ : Derivation k C C) (a b : CK k C) :
+    baseChangeEnd δ.toLinearMap (a * b) =
+      a * baseChangeEnd δ.toLinearMap b + b * baseChangeEnd δ.toLinearMap a := by
+  induction a using TensorProduct.induction_on with
+  | zero => simp
+  | tmul κ c =>
+      induction b using TensorProduct.induction_on with
+      | zero => simp
+      | tmul μ d =>
+          rw [Algebra.TensorProduct.tmul_mul_tmul, baseChangeEnd_tmul, baseChangeEnd_tmul,
+            baseChangeEnd_tmul]
+          show (κ * μ) ⊗ₜ[k] (δ (c * d)) =
+            (κ ⊗ₜ[k] c) * (μ ⊗ₜ[k] (δ d)) + (μ ⊗ₜ[k] d) * (κ ⊗ₜ[k] (δ c))
+          rw [δ.leibniz, Algebra.TensorProduct.tmul_mul_tmul,
+            Algebra.TensorProduct.tmul_mul_tmul, smul_eq_mul, smul_eq_mul, TensorProduct.tmul_add,
+            mul_comm μ κ]
+      | add b₁ b₂ h₁ h₂ =>
+          rw [mul_add, map_add, h₁, h₂, map_add, mul_add, add_mul]
+          abel
+  | add a₁ a₂ h₁ h₂ =>
+      rw [add_mul, map_add, h₁, h₂, map_add, add_mul, mul_add]
+      abel
+
+/-- The base change to `K` of a `k`-derivation of `C`, as a `K`-derivation of `C_K`. -/
+def baseChangeDerivation (δ : Derivation k C C) : Derivation (RatFunc k) (CK k C) (CK k C) where
+  toLinearMap := baseChangeEnd δ.toLinearMap
+  map_one_eq_zero' := by
+    show baseChangeEnd δ.toLinearMap (1 : CK k C) = 0
+    rw [Algebra.TensorProduct.one_def, baseChangeEnd_tmul]
+    show (1 : RatFunc k) ⊗ₜ[k] (δ 1) = 0
+    rw [δ.map_one_eq_zero, TensorProduct.tmul_zero]
+  leibniz' a b := by
+    simpa only [smul_eq_mul] using baseChangeEnd_leibniz δ a b
+
+@[simp] theorem baseChangeDerivation_tmul (δ : Derivation k C C) (κ : RatFunc k) (c : C) :
+    baseChangeDerivation δ (κ ⊗ₜ[k] c) = κ ⊗ₜ[k] (δ c) := rfl
+
+@[simp] theorem coe_baseChangeDerivation (δ : Derivation k C C) :
+    (baseChangeDerivation δ).toLinearMap = baseChangeEnd δ.toLinearMap := rfl
+
+/-! ## 5. Contractions along `k`-linear functionals of `K` -/
+
+/-- Contraction of `C_K = K ⊗_k C` along a `k`-linear functional of `K`. -/
+def contract (φ : RatFunc k →ₗ[k] k) : CK k C →ₗ[k] C :=
+  (TensorProduct.lid k C).toLinearMap ∘ₗ LinearMap.rTensor C φ
+
+@[simp] theorem contract_tmul (φ : RatFunc k →ₗ[k] k) (κ : RatFunc k) (c : C) :
+    contract φ (κ ⊗ₜ[k] c) = φ κ • c := rfl
+
+/-- Contraction is `C`-linear for the right tensor factor. -/
+theorem contract_one_tmul_mul (φ : RatFunc k →ₗ[k] k) (c : C) (z : CK k C) :
+    contract φ (((1 : RatFunc k) ⊗ₜ[k] c) * z) = c * contract φ z := by
+  induction z using TensorProduct.induction_on with
+  | zero => simp
+  | tmul μ d =>
+      rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul, contract_tmul, contract_tmul,
+        mul_smul_comm]
+  | add z₁ z₂ h₁ h₂ => rw [mul_add, map_add, h₁, h₂, map_add, mul_add]
+
+/-- The contractions separate the points of `C_K`: a `K`-basis of `C_K` obtained by base change
+from a `k`-basis of `C` has coordinates that are detected by the functionals of `K`. -/
+theorem eq_zero_of_forall_contract (y : CK k C)
+    (h : ∀ φ : RatFunc k →ₗ[k] k, contract φ y = 0) : y = 0 := by
+  classical
+  set bC := Module.Basis.ofVectorSpace k C with hbC
+  set b := bC.baseChange (RatFunc k) with hb
+  have hy : ∑ i ∈ (b.repr y).support, (b.repr y i) • b i = y := by
+    conv_rhs => rw [← b.linearCombination_repr y]
+    rw [Finsupp.linearCombination_apply, Finsupp.sum]
+  have hzero : ∀ i ∈ (b.repr y).support, b.repr y i = 0 := by
+    intro i hi
+    rw [← Module.forall_dual_apply_eq_zero_iff k (b.repr y i)]
+    intro φ
+    have hcy : contract (C := C) φ y =
+        ∑ j ∈ (b.repr y).support, φ (b.repr y j) • bC j := by
+      conv_lhs => rw [← hy]
+      rw [map_sum]
+      refine Finset.sum_congr rfl fun j _ => ?_
+      have hbj : (b.repr y j) • b j = (b.repr y j) ⊗ₜ[k] bC j := by
+        rw [hb, Module.Basis.baseChange_apply, smul_tmul_CK, mul_one]
+      rw [hbj, contract_tmul]
+    rw [h φ] at hcy
+    exact linearIndependent_iff'.mp bC.linearIndependent _ _ hcy.symm i hi
+  conv_lhs => rw [← hy]
+  exact Finset.sum_eq_zero fun i hi => by rw [hzero i hi, zero_smul]
+
+/-- Contracting a `K`-derivation of `C_K` along a functional of `K` gives a `k`-derivation
+of `C`. -/
+def contractDerivation (φ : RatFunc k →ₗ[k] k)
+    (δ : Derivation (RatFunc k) (CK k C) (CK k C)) : Derivation k C C where
+  toLinearMap :=
+    { toFun := fun c => contract φ (δ ((1 : RatFunc k) ⊗ₜ[k] c))
+      map_add' := fun c c' => by
+        show contract φ (δ ((1 : RatFunc k) ⊗ₜ[k] (c + c'))) = _
+        rw [TensorProduct.tmul_add, map_add, map_add]
+      map_smul' := fun a c => by
+        show contract φ (δ ((1 : RatFunc k) ⊗ₜ[k] (a • c))) = a • _
+        rw [TensorProduct.tmul_smul, ← IsScalarTower.algebraMap_smul (RatFunc k) a,
+          δ.map_smul, IsScalarTower.algebraMap_smul, map_smul] }
+  map_one_eq_zero' := by
+    show contract φ (δ ((1 : RatFunc k) ⊗ₜ[k] (1 : C))) = 0
+    rw [← Algebra.TensorProduct.one_def, δ.map_one_eq_zero, map_zero]
+  leibniz' := fun a b => by
+    show contract φ (δ ((1 : RatFunc k) ⊗ₜ[k] (a * b))) = a • _ + b • _
+    have h1 : (1 : RatFunc k) ⊗ₜ[k] (a * b) =
+        ((1 : RatFunc k) ⊗ₜ[k] a) * ((1 : RatFunc k) ⊗ₜ[k] b) := by
+      rw [Algebra.TensorProduct.tmul_mul_tmul, one_mul]
+    rw [h1, δ.leibniz, smul_eq_mul, smul_eq_mul, map_add, contract_one_tmul_mul,
+      contract_one_tmul_mul, smul_eq_mul, smul_eq_mul]
+    rfl
+
+@[simp] theorem contractDerivation_apply (φ : RatFunc k →ₗ[k] k)
+    (δ : Derivation (RatFunc k) (CK k C) (CK k C)) (c : C) :
+    contractDerivation φ δ c = contract φ (δ ((1 : RatFunc k) ⊗ₜ[k] c)) := rfl
+
+/-! ## 6. Coordinate rigidity over `K` -/
+
+variable [CharZero k] {n : ℕ} [Algebra (B k n) C] [IsScalarTower k (B k n) C]
+  [Algebra.FormallyEtale (B k n) C]
+
+/-- The image of the coordinate `x_i` in `C_K`. -/
+def xCK (k : Type u) [Field k] (n : ℕ) (C : Type u) [CommRing C] [Algebra k C]
+    [Algebra (B k n) C] (i : Fin n) : CK k C :=
+  (1 : RatFunc k) ⊗ₜ[k] xC k n C i
+
+/-- **Derivation rigidity over `K`**: a `K`-derivation of `C_K` killing every coordinate is
+zero. Contracting along the `k`-linear functionals of `K` reduces this to the corresponding
+statement over `k`, `derivation_eq_zero_of_algebraMap`, which holds because `C` is formally
+étale over `B = k[x_1,…,x_n]`. -/
+theorem derivationK_eq_zero_of_coord (δ : Derivation (RatFunc k) (CK k C) (CK k C))
+    (hx : ∀ i, δ (xCK k n C i) = 0) : δ = 0 := by
+  have hcontract : ∀ (φ : RatFunc k →ₗ[k] k) (c : C),
+      contract φ (δ ((1 : RatFunc k) ⊗ₜ[k] c)) = 0 := by
+    intro φ
+    have hzero : contractDerivation φ δ = 0 := by
+      refine derivation_eq_zero_of_algebraMap (k := k) (n := n) (C := C) _ ?_
+      intro b
+      induction b using MvPolynomial.induction_on with
+      | C c =>
+          have hcB : algebraMap (B k n) C (MvPolynomial.C c) = algebraMap k C c := by
+            calc
+              algebraMap (B k n) C (MvPolynomial.C c)
+                  = algebraMap (B k n) C (algebraMap k (B k n) c) := by
+                    rw [MvPolynomial.algebraMap_eq]
+              _ = algebraMap k C c := (IsScalarTower.algebraMap_apply k (B k n) C c).symm
+          rw [hcB, Derivation.map_algebraMap]
+      | add f g hf hg => rw [map_add, map_add, hf, hg, add_zero]
+      | mul_X f i hf =>
+          have hmulX : algebraMap (B k n) C (f * MvPolynomial.X i) =
+              algebraMap (B k n) C f * xC k n C i := by
+            rw [map_mul]; rfl
+          have hxi : contractDerivation φ δ (xC k n C i) = 0 := by
+            rw [contractDerivation_apply]
+            show contract φ (δ (xCK k n C i)) = 0
+            rw [hx i, map_zero]
+          rw [hmulX, Derivation.leibniz, hf, hxi, smul_zero, smul_zero, add_zero]
+    intro c
+    have := DFunLike.congr_fun hzero c
+    simpa using this
+  have hone : ∀ c : C, δ ((1 : RatFunc k) ⊗ₜ[k] c) = 0 := fun c =>
+    eq_zero_of_forall_contract _ fun φ => hcontract φ c
+  refine Derivation.ext fun y => ?_
+  induction y using TensorProduct.induction_on with
+  | zero => simp
+  | tmul κ c =>
+      have hk : (κ ⊗ₜ[k] c : CK k C) = κ • ((1 : RatFunc k) ⊗ₜ[k] c) := by
+        rw [smul_tmul_CK, mul_one]
+      rw [hk, δ.map_smul, hone c, smul_zero]
+      rfl
+  | add y z hy hz =>
+      rw [map_add, hy, hz]
+      simp
+
+section GenericRigidity
+
+variable {F R : Type*} [Field F] [CommRing R] [Algebra F R]
+
+theorem commutator_mul_right' (P : Module.End F R) (a b : R) :
+    commutator P (a * b) =
+      commutator P a * multiplication b + multiplication a * commutator P b := by
+  ext z
+  simp only [commutator_apply, Module.End.mul_apply, multiplication_apply, LinearMap.add_apply]
+  ring_nf
+
+theorem commutator_commutator_comm' (P : Module.End F R) (c x : R) :
+    commutator (commutator P c) x = commutator (commutator P x) c := by
+  ext z
+  simp only [commutator_apply]
+  ring_nf
+
+theorem commutator_zero_left' (a : R) : commutator (0 : Module.End F R) a = 0 := by
+  ext z; simp [commutator_apply]
+
+/-- **Coordinate rigidity from derivation rigidity**: if the only `F`-derivation of `R` killing
+all the coordinates `x i` is zero, then a finite-order operator commuting with every coordinate
+is a multiplication operator. This is the generic form of `coordinateRigidity`
+(`Chart/EtaleDerivations.lean`), with the étale input isolated in the hypothesis `hder`. -/
+theorem coordinateRigidity_of_derivations {m : ℕ} (x : Fin m → R)
+    (hder : ∀ δ : Derivation F R R, (∀ i, δ (x i) = 0) → δ = 0) :
+    ∀ (r : ℕ) (P : Module.End F R), P ∈ order (k := F) (R := R) r →
+      (∀ i, commutator P (x i) = 0) → P = multiplication (P 1) := by
+  intro r
+  induction r with
+  | zero =>
+      intro P hP _
+      exact (mem_order_zero_iff_eq_multiplication P).mp hP
+  | succ r IH =>
+      intro P hPm hcomm
+      set μ : R → R := fun c => P c - c * P 1 with hμdef
+      have hrep : ∀ c : R, commutator P c = multiplication (μ c) := by
+        intro c
+        have hQorder : commutator P c ∈ order (k := F) (R := R) r := hPm c
+        have hQcomm : ∀ i, commutator (commutator P c) (x i) = 0 := by
+          intro i
+          rw [commutator_commutator_comm', hcomm i, commutator_zero_left']
+        have hQeq := IH (commutator P c) hQorder hQcomm
+        rw [hQeq]
+        congr 1
+        show P (c * 1) - c * P 1 = μ c
+        rw [mul_one]
+      have hμadd : ∀ a b, μ (a + b) = μ a + μ b := by
+        intro a b; simp only [hμdef, map_add, add_mul]; ring
+      have hμsmul : ∀ (s : F) (a : R), μ (s • a) = s • μ a := by
+        intro s a; simp only [hμdef, P.map_smul, smul_mul_assoc, smul_sub]
+      have hμone : μ 1 = 0 := by simp [hμdef]
+      have hμleibniz : ∀ a b : R, μ (a * b) = a • μ b + b • μ a := by
+        intro a b
+        have e1 := hrep (a * b)
+        have e2 := commutator_mul_right' P a b
+        rw [e1] at e2
+        have e3 := congrArg (fun T : Module.End F R => T 1) e2
+        simp only [multiplication_apply, mul_one, LinearMap.add_apply, Module.End.mul_apply] at e3
+        rw [hrep a, hrep b] at e3
+        simp only [multiplication_apply] at e3
+        rw [e3, smul_eq_mul, smul_eq_mul]
+        ring
+      let μL : R →ₗ[F] R :=
+        { toFun := μ, map_add' := hμadd, map_smul' := by intro s a; simpa using hμsmul s a }
+      let μD : Derivation F R R :=
+        { toLinearMap := μL, map_one_eq_zero' := hμone, leibniz' := hμleibniz }
+      have hμcoord : ∀ i, μD (x i) = 0 := by
+        intro i
+        show μ (x i) = 0
+        have h0 : multiplication (k := F) (μ (x i)) = (0 : Module.End F R) := by
+          rw [← hrep (x i), hcomm i]
+        have h1 := congrArg (fun T : Module.End F R => T 1) h0
+        simpa [multiplication_apply] using h1
+      have hμDzero : μD = 0 := hder μD hμcoord
+      have hzero : ∀ c, commutator P c = 0 := by
+        intro c
+        have : μ c = 0 := DFunLike.congr_fun hμDzero c
+        rw [hrep c, this]
+        ext z; simp [multiplication_apply]
+      exact (mem_order_zero_iff_eq_multiplication P).mp ((mem_order_zero_iff P).mpr hzero)
+
+end GenericRigidity
+
+/-- **Coordinate rigidity over `K`** for `C_K`. -/
+theorem coordinateRigidityK (P : Module.End (RatFunc k) (CK k C))
+    (hP : P ∈ algebra (k := RatFunc k) (R := CK k C))
+    (hcomm : ∀ i, commutator P (xCK k n C i) = 0) : P = multiplication (P 1) := by
+  obtain ⟨r, hr⟩ := hP
+  exact coordinateRigidity_of_derivations (xCK k n C)
+    (fun δ hδ => derivationK_eq_zero_of_coord δ hδ) r P hr hcomm
+
 end
 
 end GlobalStafford.Chart
