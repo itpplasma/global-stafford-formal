@@ -149,7 +149,8 @@ theorem exists_pred_of_ne_zero {α : Fin n →₀ ℕ} (hα : α ≠ 0) :
     calc (α - Finsupp.single i 1).degree + 1
         = (α - Finsupp.single i 1).degree + (Finsupp.single i 1 : Fin n →₀ ℕ).degree := by
           rw [Finsupp.degree_single]
-      _ = ((α - Finsupp.single i 1) + Finsupp.single i 1 : Fin n →₀ ℕ).degree := (map_add _ _ _).symm
+      _ = ((α - Finsupp.single i 1) + Finsupp.single i 1 : Fin n →₀ ℕ).degree :=
+            (map_add _ _ _).symm
       _ = α.degree := by rw [hsplit]
 
 /-- **Composition rule (weak form)**: `∂^α` commutes with a multiplication operator up to a
