@@ -1,0 +1,148 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+version: "v0.4"
+
+project:
+  name: "Global Stafford"
+  description: >-
+    Lean formalization of the same-divisor identity 1 = d*R + F*d*S in the
+    ring of k-linear finite-order differential operators of every smooth
+    integral finitely generated algebra over a characteristic-zero field,
+    extending Stafford's Conjecture 3.8 from Weyl algebras to smooth affine
+    varieties. Work in progress; see PLAN.md for the exact status.
+  authors:
+    - name: "Christopher Albert"
+      orcid: "0000-0003-4773-416X"
+  responsible_maintainers:
+    - name: "Christopher Albert"
+      orcid: "0000-0003-4773-416X"
+  license: "Apache-2.0"
+
+repository:
+  role: "substantive-development"
+  url: "https://github.com/itpplasma/global-stafford-formal"
+  registration_status: "not-registered"
+  note: >-
+    Private development repository. Not registered with Palomar; no
+    verification snapshot exists yet.
+
+classification:
+  arxiv:
+    - "math.RA"
+    - "math.AG"
+  msc2020:
+    - "16S32"
+    - "14F10"
+
+sources:
+  - title: "Source-changing descent by central-parameter conjugation (private research note)"
+    authors:
+      - name: "Christopher Albert"
+        orcid: "0000-0003-4773-416X"
+    type: "original-proof"
+    relationship: "other"
+    note: >-
+      The private paper proof formalized here. No public preprint exists.
+    license: "CC-BY-4.0"
+    author_endorsement: "participated"
+  - title: "Module structure of Weyl algebras"
+    authors:
+      - "J. T. Stafford"
+    type: "paper"
+    location: >-
+      Journal of the London Mathematical Society (2) 18 (1978), 429-442,
+      Conjecture 3.8
+    relationship: "background"
+    note: >-
+      States the Weyl-algebra case, which is the imported theorem.
+
+related_formalizations:
+  - name: "Stafford 3.8"
+    url: "https://github.com/itpplasma/stafford38-formal"
+    relationship: "depends-on"
+
+verification:
+  commit: ""
+  report: ""
+  machine_readable_report: "docs/verification-results.json"
+  statement_correspondence: "docs/paper-lean-specification.md"
+  allowed_axioms: ["propext", "Classical.choice", "Quot.sound"]
+
+status:
+  scope: >-
+    Phase I (project-owned steps over concrete carriers with explicit
+    literature hypotheses), Phase II (discharge of all hypotheses from
+    Mathlib and pinned dependencies) and Phase III (Palomar packaging) are
+    tracked in PLAN.md. Until Phase III closes, no theorem here is verified.
+  sorry_count: 1
+  sorry_in_definitions: 0
+  axioms: []
+  main_results:
+    - declaration: "GlobalStaffordChallenge.universalStatement"
+      file: "Challenge.lean"
+      sorry_count: 1
+      axioms: []
+      comparator_config: "comparator.json"
+      literature_dependencies: []
+
+automation:
+  methods:
+    - method: "manual"
+      framework: "Lean 4 and Mathlib"
+      tool_setup: >-
+        Human mathematical direction, plan authorship, integration and
+        release control.
+      cost:
+        wall_time: "not tracked"
+        spend_usd: "not tracked"
+        hardware: "local workstation"
+      prompting_notes: "n/a"
+    - method: "agent"
+      models:
+        - "claude-fable-5-1"
+        - "claude-opus-5"
+        - "claude-sonnet-5"
+      framework: "Claude Code"
+      tool_setup: >-
+        A controller agent maintains PLAN.md and assigns work packages;
+        implementing agents write Lean under the escalation ladder recorded
+        in AGENTS.md.
+      cost:
+        wall_time: "not tracked"
+        spend_usd: "not tracked"
+        hardware: "local workstation"
+      prompting_notes: >-
+        Work packages are specified in PLAN.md with Lean signatures and proof
+        outlines; agents commit after each green build.
+  spend_usd: "not tracked"
+  notes: >-
+    Model use records process assistance and does not assign authorship of a
+    mathematical idea.
+
+fidelity:
+  divergences: >-
+    The formal proof follows the right-moved conjugation variant (paper
+    Remark 4.2) and a polynomial form of the chart hypothesis; the produced
+    certificate is the paper's. Smoothness is Mathlib's Algebra.Smooth.
+
+review:
+  status: "not-reviewed"
+  reviewers: []
+  notes: >-
+    The paper proof passed two independent-context model reviews; human
+    expert review of the paper and of the formal statement is open.
+
+alignment:
+  namespace: "GlobalStafford"
+  statements:
+    - source: "Original proof: GS-DX, Theorem 6.3"
+      lean: "GlobalStaffordChallenge.universalStatement"
+      module: "Challenge"
+      status: "stated"
+      note: >-
+        Mathlib-only statement with one deliberate sorry; the proof is the
+        Phase III Solution.
+
+acknowledgements: >-
+  Builds on Lean, Mathlib, the AlgebraicAnalysis library and the Stafford38
+  formal development. Comparator, lean4export, NanoDa and Landrun provide the
+  independent submission-checking path.

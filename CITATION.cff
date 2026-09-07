@@ -1,0 +1,33 @@
+cff-version: 1.2.0
+message: >-
+  Work in progress; no release or DOI exists. Cite the repository URL and
+  commit if needed.
+title: "Global Stafford for rings of differential operators: Lean 4 formalization"
+type: software
+authors:
+  - family-names: Albert
+    given-names: Christopher
+    orcid: "https://orcid.org/0000-0003-4773-416X"
+    affiliation: "Graz University of Technology"
+repository-code: "https://github.com/itpplasma/global-stafford-formal"
+license: Apache-2.0
+abstract: >-
+  A Lean 4 and Mathlib formalization, in progress, of the same-divisor
+  identity 1 = dR + FdS in the ring of finite-order differential operators
+  of every smooth integral affine variety over a characteristic-zero field,
+  extending the formalized Weyl-algebra case (Stafford's Conjecture 3.8).
+keywords:
+  - Lean
+  - Mathlib
+  - differential operators
+  - Stafford's conjecture
+  - D-modules
+  - formal mathematics
+references:
+  - type: software
+    title: "Stafford's Conjecture 3.8 for Weyl algebras: Lean 4 formalization"
+    authors:
+      - family-names: Albert
+        given-names: Christopher
+    doi: 10.5281/zenodo.22390721
+    repository-code: "https://github.com/itpplasma/stafford38-formal"

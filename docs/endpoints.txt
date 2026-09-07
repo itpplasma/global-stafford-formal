@@ -1,0 +1,2 @@
+GlobalStafford.universalStatement
+GlobalStaffordChallenge.universalStatement
