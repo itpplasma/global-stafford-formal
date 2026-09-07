@@ -337,5 +337,83 @@ theorem algebraMap_ne_zero_K (q : B (RatFunc k) n) (hq : q ≠ 0) :
 
 end AlgebraMapNeZero
 
+/-! ## 6. `finiteGenericFibre` over `K` -/
+
+section FiniteGenericFibreK
+
+variable {k : Type u} [Field k] {n : ℕ} {C : Type u} [CommRing C] [IsDomain C] [Algebra k C]
+  [Algebra (B k n) C] [IsScalarTower k (B k n) C] [Algebra.Etale (B k n) C]
+
+/-- **`finiteGenericFibre` over `K`**: the finite generic fibre of `C` over `k`
+(`finiteGenericFibre_of_etale`) base-changes to a finite generic fibre of `C_K` over
+`K`, with the same witnesses `c i`, viewed through `1 ⊗ c i`. For a pure tensor `κ ⊗ c₀`,
+clear the denominator of `c₀` (over `k`) and transport the resulting identity along `mapBK`
+and a `κ`-multiple; the general case follows by `TensorProduct.induction_on`, closing
+under addition with the product of the two denominators. -/
+theorem finiteGenericFibreK :
+    ∃ (m : ℕ) (c' : Fin m → CK k C), ∀ x : CK k C, ∃ b : B (RatFunc k) n, b ≠ 0 ∧
+      ∃ t : Fin m → B (RatFunc k) n,
+        algebraMap (B (RatFunc k) n) (CK k C) b * x =
+          ∑ i, c' i * algebraMap (B (RatFunc k) n) (CK k C) (t i) := by
+  classical
+  obtain ⟨m, c, hfibre⟩ := finiteGenericFibre_of_etale (k := k) (n := n) (C := C)
+  refine ⟨m, fun i => (1 : RatFunc k) ⊗ₜ[k] (c i), ?_⟩
+  intro x
+  induction x using TensorProduct.induction_on with
+  | zero =>
+      exact ⟨1, one_ne_zero, 0, by simp⟩
+  | tmul κ c0 =>
+      obtain ⟨b0, hb0, t0, ht0⟩ := hfibre c0
+      refine ⟨mapBK b0, mapBK_ne_zero hb0, fun i => κ • mapBK (t0 i), ?_⟩
+      have hb0map : algebraMap (B (RatFunc k) n) (CK k C) (mapBK b0) =
+          (1 : RatFunc k) ⊗ₜ[k] (algebraMap (B k n) C b0) := algebraMap_BK_mapBK b0
+      have htmap : ∀ i, algebraMap (B (RatFunc k) n) (CK k C) (κ • mapBK (t0 i)) =
+          κ ⊗ₜ[k] (algebraMap (B k n) C (t0 i)) := by
+        intro i
+        rw [algebraMap_BK_apply, map_smul, ← algebraMap_BK_apply, algebraMap_BK_mapBK,
+          smul_tmul_CK, mul_one]
+      rw [hb0map, Algebra.TensorProduct.tmul_mul_tmul, one_mul, ht0, TensorProduct.tmul_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [htmap i, Algebra.TensorProduct.tmul_mul_tmul, one_mul]
+  | add x1 x2 h1 h2 =>
+      obtain ⟨b1, hb1, t1, ht1⟩ := h1
+      obtain ⟨b2, hb2, t2, ht2⟩ := h2
+      refine ⟨b1 * b2, mul_ne_zero hb1 hb2, fun i => t1 i * b2 + t2 i * b1, ?_⟩
+      calc
+        algebraMap (B (RatFunc k) n) (CK k C) (b1 * b2) * (x1 + x2)
+            = algebraMap (B (RatFunc k) n) (CK k C) b2 *
+                (algebraMap (B (RatFunc k) n) (CK k C) b1 * x1) +
+              algebraMap (B (RatFunc k) n) (CK k C) b1 *
+                (algebraMap (B (RatFunc k) n) (CK k C) b2 * x2) := by
+              rw [map_mul, mul_add]; ring
+        _ = algebraMap (B (RatFunc k) n) (CK k C) b2 *
+              (∑ i, (1 : RatFunc k) ⊗ₜ[k] (c i) *
+                algebraMap (B (RatFunc k) n) (CK k C) (t1 i)) +
+            algebraMap (B (RatFunc k) n) (CK k C) b1 *
+              (∑ i, (1 : RatFunc k) ⊗ₜ[k] (c i) *
+                algebraMap (B (RatFunc k) n) (CK k C) (t2 i)) := by rw [ht1, ht2]
+        _ = ∑ i, (1 : RatFunc k) ⊗ₜ[k] (c i) *
+              algebraMap (B (RatFunc k) n) (CK k C) (t1 i * b2 + t2 i * b1) := by
+              rw [Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+              refine Finset.sum_congr rfl fun i _ => ?_
+              rw [map_add, map_mul, map_mul, mul_add]
+              have e1 : algebraMap (B (RatFunc k) n) (CK k C) b2 *
+                  ((1 : RatFunc k) ⊗ₜ[k] (c i) *
+                    algebraMap (B (RatFunc k) n) (CK k C) (t1 i)) =
+                  (1 : RatFunc k) ⊗ₜ[k] (c i) *
+                    (algebraMap (B (RatFunc k) n) (CK k C) (t1 i) *
+                      algebraMap (B (RatFunc k) n) (CK k C) b2) := by
+                ring
+              have e2 : algebraMap (B (RatFunc k) n) (CK k C) b1 *
+                  ((1 : RatFunc k) ⊗ₜ[k] (c i) *
+                    algebraMap (B (RatFunc k) n) (CK k C) (t2 i)) =
+                  (1 : RatFunc k) ⊗ₜ[k] (c i) *
+                    (algebraMap (B (RatFunc k) n) (CK k C) (t2 i) *
+                      algebraMap (B (RatFunc k) n) (CK k C) b1) := by
+                ring
+              rw [e1, e2]
+
+end FiniteGenericFibreK
+
 end
 end GlobalStafford.Chart
