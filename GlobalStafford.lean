@@ -1,7 +1,3 @@
-import GlobalStafford.Operators.Basic
-import GlobalStafford.Operators.Commutator
-import GlobalStafford.Operators.ContractivePowers
-
 /-!
 # GlobalStafford
 
