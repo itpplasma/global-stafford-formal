@@ -26,6 +26,86 @@ namespace GlobalStafford.Localization
 
 open AlgebraicAnalysis.DifferentialOperators GlobalStafford.Operators
 
+/-! ## Generic commutator identities
+
+Companions to `AlgebraicAnalysis.DifferentialOperators.commutator_mul` (Leibniz
+in the *first* argument): here we need the Leibniz rule in the *second*
+argument, `commutator D (x * y)`, together with the resulting closure
+properties of the set `{x | commutator D x ∈ order s}`. These reduce the order
+bound of an operator on `A_f` to its commutators with the image of `A` and with
+the inverse of `algebraMap f`, and they are what makes `extend_mem_order` a
+finite computation. All statements are for an arbitrary commutative
+`k`-algebra `R`; they are applied with `R := A` and `R := A_f`. -/
+
+section GenericCommutator
+
+variable {k R : Type*} [CommRing k] [CommRing R] [Algebra k R]
+
+/-- `multiplication x` has order `0`. -/
+theorem multiplication_mem_order_zero (x : R) :
+    multiplication (k := k) x ∈ order (k := k) (R := R) 0 :=
+  (mem_order_zero_iff_eq_multiplication _).2 (by ext w; simp [multiplication_apply])
+
+/-- `[D, 1] = 0`. -/
+theorem commutator_one (D : Module.End k R) : commutator D (1 : R) = 0 := by
+  ext w; simp [commutator_apply]
+
+/-- **Leibniz rule in the second argument**: `[D, x y] = x [D, y] + [D, x] y`. -/
+theorem commutator_mul_right (D : Module.End k R) (x y : R) :
+    commutator D (x * y) =
+      multiplication (k := k) x * commutator D y + commutator D x * multiplication (k := k) y := by
+  ext w
+  simp only [commutator_apply, LinearMap.add_apply, Module.End.mul_apply, multiplication_apply]
+  rw [show x * y * w = x * (y * w) from mul_assoc x y w]
+  ring
+
+/-- The set of `x` with `[D, x]` of order `≤ s` is closed under multiplication. -/
+theorem commutator_mem_order_mul {D : Module.End k R} {s : ℕ} {x y : R}
+    (hx : commutator D x ∈ order (k := k) (R := R) s)
+    (hy : commutator D y ∈ order (k := k) (R := R) s) :
+    commutator D (x * y) ∈ order (k := k) (R := R) s := by
+  rw [commutator_mul_right]
+  refine (order (k := k) (R := R) s).add_mem ?_ ?_
+  · simpa using mul_mem_order (multiplication_mem_order_zero (k := k) x) hy
+  · simpa using mul_mem_order hx (multiplication_mem_order_zero (k := k) y)
+
+/-- The set of `x` with `[D, x]` of order `≤ s` is closed under inverses:
+`[D, v] = -v [D, u] v` when `u v = 1`. -/
+theorem commutator_mem_order_of_mul_eq_one {D : Module.End k R} {s : ℕ} {u v : R}
+    (huv : u * v = 1) (hu : commutator D u ∈ order (k := k) (R := R) s) :
+    commutator D v ∈ order (k := k) (R := R) s := by
+  have hmul : multiplication (k := k) (R := R) v * multiplication (k := k) (R := R) u = 1 := by
+    ext w
+    simp only [Module.End.mul_apply, multiplication_apply, Module.End.one_apply]
+    rw [← mul_assoc, mul_comm v u, huv, one_mul]
+  have h0 : multiplication (k := k) (R := R) u * commutator D v +
+      commutator D u * multiplication (k := k) (R := R) v = 0 := by
+    rw [← commutator_mul_right, huv, commutator_one]
+  have h1 : commutator D v +
+      multiplication (k := k) (R := R) v * commutator D u *
+        multiplication (k := k) (R := R) v = 0 := by
+    have h2 := congrArg (fun T => multiplication (k := k) (R := R) v * T) h0
+    simp only [mul_add, mul_zero] at h2
+    rwa [← mul_assoc, hmul, one_mul, ← mul_assoc] at h2
+  rw [add_eq_zero_iff_eq_neg] at h1
+  rw [h1]
+  refine (order (k := k) (R := R) s).neg_mem ?_
+  have hstep := mul_mem_order
+    (mul_mem_order (multiplication_mem_order_zero (k := k) v) hu)
+    (multiplication_mem_order_zero (k := k) v)
+  simpa using hstep
+
+/-- **Jacobi-type commuting fact**: commutators with two elements of a
+*commutative* algebra commute with each other. -/
+theorem commutator_commutator_comm (D : Module.End k R) (x y : R) :
+    commutator (commutator D x) y = commutator (commutator D y) x := by
+  ext w
+  simp only [commutator_apply]
+  rw [show y * (x * w) = x * (y * w) from by ring]
+  ring
+
+end GenericCommutator
+
 variable {k A Af : Type*} [CommRing k] [CommRing A] [IsDomain A] [Algebra k A]
   [Algebra.FiniteType k A] [CommRing Af] [Algebra k Af] [Algebra A Af]
   [IsScalarTower k A Af] (f : A) (hf : f ≠ 0) [IsLocalization.Away f Af]
@@ -142,6 +222,20 @@ theorem ad_iterate_apply_mul (P : Module.End k A) (j : ℕ) (a : A) :
         (Function.iterate_succ_apply' (ad (k := k) (A := A) f) j P).symm] at heq
     exact heq.symm
   rw [← h]; ring
+
+/-- `ad f` commutes with `commutator (·) a`, by `commutator_commutator_comm`. -/
+theorem ad_commutator (a : A) (P : Module.End k A) :
+    ad (k := k) (A := A) f (commutator P a) = commutator (ad (k := k) (A := A) f P) a :=
+  commutator_commutator_comm P a f
+
+/-- Iterates of `ad f` commute with `commutator (·) a`. -/
+theorem ad_iterate_commutator (a : A) (P : Module.End k A) (j : ℕ) :
+    (ad (k := k) (A := A) f)^[j] (commutator P a) =
+      commutator ((ad (k := k) (A := A) f)^[j] P) a := by
+  induction j with
+  | zero => simp
+  | succ j ih =>
+      rw [Function.iterate_succ_apply', ih, ad_commutator, Function.iterate_succ_apply']
 
 /-- One term of the extension sum: `Σ_{j ≤ r} choose(-(n:ℤ), j) • mk' Af ((ad f)^[j] P a) f^{n+j}`. -/
 noncomputable def termFun (r : ℕ) (P : Module.End k A) (a : A) (n : ℕ) : Af :=
