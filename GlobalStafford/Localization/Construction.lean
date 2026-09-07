@@ -1,6 +1,7 @@
 import GlobalStafford.Localization.Interface
 import Mathlib.RingTheory.Binomial
 import Mathlib.RingTheory.FiniteType
+import Mathlib.RingTheory.Localization.Integer
 import Mathlib.Tactic.LinearCombination
 
 /-!
@@ -925,6 +926,196 @@ theorem ιHom_injective :
   simp only [ιFun_algebraMap] at ha
   exact algebraMap_injective f hf ha
 
+/-! ## Step 8: clearance -/
+
+include hf in
+/-- If an operator `P` on `A` is computed, through `algebraMap A Af`, by an
+operator `Q` of order `≤ r` on `A_f`, then `P` has order `≤ r`. Induction on
+`r`: the commutator `[P, c]` is computed the same way by
+`[Q, algebraMap c]`. -/
+theorem mem_order_of_algebraMap_comm :
+    ∀ (r : ℕ) (P : Module.End k A) (Q : Module.End k Af), Q ∈ order (k := k) (R := Af) r →
+      (∀ a : A, algebraMap A Af (P a) = Q (algebraMap A Af a)) →
+      P ∈ order (k := k) (R := A) r := by
+  intro r
+  induction r with
+  | zero =>
+      intro P Q hQ hPQ
+      rw [mem_order_zero_iff_eq_multiplication] at hQ
+      rw [mem_order_zero_iff_eq_multiplication]
+      have hQ1 : algebraMap A Af (P 1) = Q 1 := by rw [hPQ 1, map_one]
+      ext a
+      show P a = P 1 * a
+      refine algebraMap_injective (Af := Af) f hf ?_
+      rw [hPQ a, map_mul, hQ1]
+      conv_lhs => rw [hQ]
+      rw [multiplication_apply]
+  | succ r ih =>
+      intro P Q hQ hPQ
+      rw [mem_order_succ_iff]
+      intro c
+      refine ih (commutator P c) (commutator Q (algebraMap A Af c))
+        ((mem_order_succ_iff Q r).1 hQ (algebraMap A Af c)) (fun a => ?_)
+      simp only [commutator_apply, map_sub, map_mul, hPQ]
+
+include hf in
+/-- **Finite-span lemma** (`PLAN.md` WP-11 step 8): the values of an operator of
+order `≤ r` on the image of `A` lie in a *finitely generated* `A`-submodule of
+`A_f`. Outer induction on `r`; the inner induction runs over a finite algebra
+generating set `s` of `A` (`Algebra.FiniteType.out`), first over the multiplicative
+closure of `s` by `Submonoid.closure_induction_left` — which only ever needs
+commutators with the *generators* — and then over its `k`-span by
+`Submodule.span_induction`, using `Algebra.adjoin_eq_span`. -/
+theorem exists_span_of_order :
+    ∀ (r : ℕ) (Q : Module.End k Af), Q ∈ order (k := k) (R := Af) r →
+      ∃ V : Finset Af, ∀ a : A, Q (algebraMap A Af a) ∈ Submodule.span A (V : Set Af) := by
+  classical
+  intro r
+  induction r with
+  | zero =>
+      intro Q hQ
+      rw [mem_order_zero_iff_eq_multiplication] at hQ
+      refine ⟨{Q 1}, fun a => ?_⟩
+      have hval : Q (algebraMap A Af a) = a • Q 1 := by
+        conv_lhs => rw [hQ]
+        rw [multiplication_apply, Algebra.smul_def, mul_comm]
+      rw [hval]
+      exact Submodule.smul_mem _ _ (Submodule.subset_span (by simp))
+  | succ r ih =>
+      intro Q hQ
+      obtain ⟨s, hs⟩ := (Algebra.FiniteType.out : (⊤ : Subalgebra k A).FG)
+      have hcomm : ∀ g : A, ∃ V : Finset Af, ∀ b : A,
+          (commutator Q (algebraMap A Af g)) (algebraMap A Af b) ∈
+            Submodule.span A (V : Set Af) :=
+        fun g => ih _ ((mem_order_succ_iff Q r).1 hQ (algebraMap A Af g))
+      choose Vg hVg using hcomm
+      refine ⟨insert (Q 1) (s.biUnion Vg), fun a => ?_⟩
+      have hQ1 : Q 1 ∈ Submodule.span A
+          ((insert (Q 1) (s.biUnion Vg) : Finset Af) : Set Af) :=
+        Submodule.subset_span (by simp)
+      have hgen : ∀ g ∈ s, ∀ b : A,
+          (commutator Q (algebraMap A Af g)) (algebraMap A Af b) ∈
+            Submodule.span A ((insert (Q 1) (s.biUnion Vg) : Finset Af) : Set Af) := by
+        intro g hg b
+        refine Submodule.span_mono ?_ (hVg g b)
+        exact_mod_cast Finset.coe_subset.2
+          (fun v hv => Finset.mem_insert_of_mem (Finset.mem_biUnion.2 ⟨g, hg, hv⟩))
+      have hmem : a ∈ Submodule.span k ((Submonoid.closure (s : Set A) : Submonoid A) : Set A) := by
+        have h1 : a ∈ Subalgebra.toSubmodule (Algebra.adjoin k (s : Set A)) := by
+          rw [hs]; exact Submodule.mem_top
+        rwa [Algebra.adjoin_eq_span] at h1
+      induction hmem using Submodule.span_induction with
+      | mem x hx =>
+          induction hx using Submonoid.closure_induction_left with
+          | one => simpa using hQ1
+          | mul_left g hg y _ ihy =>
+              have hstep : Q (algebraMap A Af (g * y)) =
+                  g • Q (algebraMap A Af y) +
+                    (commutator Q (algebraMap A Af g)) (algebraMap A Af y) := by
+                rw [map_mul, commutator_apply, Algebra.smul_def]
+                ring
+              rw [hstep]
+              exact Submodule.add_mem _ (Submodule.smul_mem _ g ihy) (hgen g hg y)
+      | zero => simpa using Submodule.zero_mem _
+      | add x y _ _ ihx ihy =>
+          rw [map_add, map_add]
+          exact Submodule.add_mem _ ihx ihy
+      | smul c x _ ihx =>
+          rw [algebraMap_A_smul, map_smul, algebra_compatible_smul A c]
+          exact Submodule.smul_mem _ _ ihx
+
+include hf in
+/-- **Clearance** (`PLAN.md` WP-11 step 8): every operator on `A_f` becomes the
+image of an operator on `A` after multiplication by a sufficiently high power of
+multiplication by `f`. The finitely many values produced by
+`exists_span_of_order` have a common denominator `f^l`
+(`IsLocalization.exist_integer_multiples_of_finset`); the resulting operator maps
+the image of `A` into itself, its restriction `P₀` is `k`-linear of order `≤ r`
+(`mem_order_of_algebraMap_comm`), and `ext_of_finite_order` identifies its
+extension with the cleared operator. -/
+theorem ιHom_clearance (Q : algebra (k := k) (R := Af)) :
+    ∃ (l : ℕ) (P : algebra (k := k) (R := A)),
+      multiplicationD (k := k) (A := Af) (algebraMap A Af f) ^ l * Q = ιHom f hf P := by
+  classical
+  obtain ⟨r, hr⟩ := exists_order (k := k) (A := Af) Q
+  obtain ⟨V, hV⟩ := exists_span_of_order f hf r (Q : Module.End k Af) hr
+  obtain ⟨b, hb⟩ :=
+    IsLocalization.exist_integer_multiples_of_finset (S := Af) (Submonoid.powers f) V
+  obtain ⟨l, hl⟩ := (Submonoid.mem_powers_iff (b : A) f).1 b.2
+  -- the values of `Q` on the image of `A` become integral after scaling by `f ^ l`
+  have hspan : ∀ a : A, ∃ c : A, algebraMap A Af c =
+      algebraMap A Af (f ^ l) * (Q : Module.End k Af) (algebraMap A Af a) := by
+    intro a
+    have hT : Submodule.span A (V : Set Af) ≤
+        (LinearMap.range (Algebra.linearMap A Af)).comap
+          (LinearMap.mulLeft A (algebraMap A Af (f ^ l))) := by
+      refine Submodule.span_le.2 (fun v hv => ?_)
+      obtain ⟨c, hc⟩ := hb v (by exact_mod_cast hv)
+      refine ⟨c, ?_⟩
+      show algebraMap A Af c = algebraMap A Af (f ^ l) * v
+      rw [hc, hl, Algebra.smul_def]
+    exact hT (hV a)
+  choose P₀ hP₀ using hspan
+  -- `P₀` is `k`-linear
+  have hQ' : ∀ a : A, algebraMap A Af (P₀ a) =
+      (multiplication (k := k) (algebraMap A Af (f ^ l)) * (Q : Module.End k Af))
+        (algebraMap A Af a) := by
+    intro a
+    rw [hP₀ a]
+    rfl
+  have hadd : ∀ a c : A, P₀ (a + c) = P₀ a + P₀ c := by
+    intro a c
+    refine algebraMap_injective (Af := Af) f hf ?_
+    simp only [map_add, hQ']
+  have hsmul : ∀ (c : k) (a : A), P₀ (c • a) = c • P₀ a := by
+    intro c a
+    refine algebraMap_injective (Af := Af) f hf ?_
+    simp only [algebraMap_A_smul, map_smul, hQ']
+  obtain ⟨P₀ₗ, hPl⟩ : ∃ P₀ₗ : Module.End k A, ∀ a : A, P₀ₗ a = P₀ a :=
+    ⟨{ toFun := P₀, map_add' := hadd, map_smul' := fun c a => hsmul c a }, fun _ => rfl⟩
+  have hQ'ord : (multiplication (k := k) (algebraMap A Af (f ^ l)) * (Q : Module.End k Af)) ∈
+      order (k := k) (R := Af) r := by
+    simpa using
+      mul_mem_order (multiplication_mem_order_zero (k := k) (algebraMap A Af (f ^ l))) hr
+  have hPlQ : ∀ a : A, algebraMap A Af (P₀ₗ a) =
+      (multiplication (k := k) (algebraMap A Af (f ^ l)) * (Q : Module.End k Af))
+        (algebraMap A Af a) := by
+    intro a
+    rw [hPl a]
+    exact hQ' a
+  have hord : P₀ₗ ∈ order (k := k) (R := A) r :=
+    mem_order_of_algebraMap_comm f hf r P₀ₗ _ hQ'ord hPlQ
+  have hext : (extendₗ f hf P₀ₗ hord : Module.End k Af) =
+      multiplication (k := k) (algebraMap A Af (f ^ l)) * (Q : Module.End k Af) :=
+    ext_of_finite_order f (r := r) _ _ (extendₗ_mem_order f hf r _ hord) hQ'ord
+      (fun a => by rw [extendₗ_algebraMap]; exact hPlQ a)
+  have hpow : multiplicationD (k := k) (A := Af) (algebraMap A Af f) ^ l =
+      multiplicationD (k := k) (A := Af) (algebraMap A Af (f ^ l)) := by
+    rw [multiplicationD_pow, map_pow]
+  refine ⟨l, ⟨P₀ₗ, (mem_algebra_iff _).2 ⟨r, hord⟩⟩, ?_⟩
+  rw [hpow, ιHom_apply]
+  apply Subtype.ext
+  rw [Subalgebra.coe_mul, coe_ιFun f hf _ hord, hext]
+  rfl
+
+/-! ## Step 9: the assembled interface -/
+
+include hf in
+/-- **The localization interface** (`PLAN.md` WP-11): `D_k(A_f)` is an
+order-preserving, injective, `f`-power-clearable extension of `D_k(A)`.
+This discharges the literature input recorded in `Localization/Interface.lean`
+(WP-2) for every finitely generated integral domain `A` over `k`. -/
+noncomputable def localizationInterface :
+    LocalizationInterface (k := k) (A := A) (Af := Af) f where
+  ι := ιHom f hf
+  ι_multiplicationD := ιHom_multiplicationD f hf
+  ι_mem_order := fun r P hP => by
+    rw [ιHom_apply]
+    exact ιFun_mem_order f hf r P hP
+  ι_injective := ιHom_injective f hf
+  clearance := ιHom_clearance f hf
+
+
 end GlobalStafford.Localization
 
 #print axioms GlobalStafford.Localization.ext_of_finite_order
@@ -935,3 +1126,9 @@ end GlobalStafford.Localization
 #print axioms GlobalStafford.Localization.extendₗ_of_order_zero
 #print axioms GlobalStafford.Localization.extendₗ_commutator_algebraMap
 #print axioms GlobalStafford.Localization.extendₗ_mem_order
+#print axioms GlobalStafford.Localization.extendₗ_mul
+#print axioms GlobalStafford.Localization.ιHom_multiplicationD
+#print axioms GlobalStafford.Localization.ιHom_injective
+#print axioms GlobalStafford.Localization.exists_span_of_order
+#print axioms GlobalStafford.Localization.ιHom_clearance
+#print axioms GlobalStafford.Localization.localizationInterface
