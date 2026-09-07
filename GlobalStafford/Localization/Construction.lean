@@ -499,9 +499,203 @@ theorem extend_algebraMap {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k :=
   · intro h0
     exact absurd (Finset.mem_range.2 (Nat.succ_pos r)) h0
 
+/-! ## Step 4, part 1: linearity of `termFun` in the numerator -/
+
+/-- `k`-scalars pass through `mk'`, using `IsScalarTower k A Af`. -/
+theorem mk'_smul_k (c : k) (a : A) (y : Submonoid.powers f) :
+    (IsLocalization.mk' Af (c • a) y : Af) = c • IsLocalization.mk' Af a y := by
+  rw [Algebra.smul_def c a, Algebra.smul_def c (IsLocalization.mk' Af a y),
+    IsScalarTower.algebraMap_apply k A Af, IsLocalization.mul_mk'_eq_mk'_of_mul]
+
+/-- `termFun` is additive in the numerator of the representative. -/
+theorem termFun_add_num (r : ℕ) (P : Module.End k A) (a b : A) (n : ℕ) :
+    (termFun f r P (a + b) n : Af) = termFun f r P a n + termFun f r P b n := by
+  unfold termFun
+  rw [← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  rw [map_add, mk'_add_same_denom, smul_add]
+
+/-- `termFun` is `k`-homogeneous in the numerator of the representative. -/
+theorem termFun_smul_num (r : ℕ) (P : Module.End k A) (c : k) (a : A) (n : ℕ) :
+    (termFun f r P (c • a) n : Af) = c • termFun f r P a n := by
+  unfold termFun
+  rw [Finset.smul_sum]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  rw [map_smul, mk'_smul_k, smul_comm]
+
+/-- The truncation length of `termFun` may be raised above the order bound of
+`P` without changing the value: the extra summands vanish. -/
+theorem termFun_order_mono {r₁ r₂ : ℕ} {P : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) r₁) (h : r₁ ≤ r₂) (a : A) (n : ℕ) :
+    (termFun f r₂ P a n : Af) = termFun f r₁ P a n := by
+  unfold termFun
+  symm
+  refine Finset.sum_subset (Finset.range_subset_range.2 (by omega)) ?_
+  intro j _ hjnot
+  have hgt : r₁ < j := by
+    by_contra hc
+    exact hjnot (Finset.mem_range.2 (by omega))
+  rw [termFun_summand_vanish f hP a n hgt, smul_zero]
+
+/-- **The commutator identity for `termFun`** (`PLAN.md` WP-11 step 4): moving a
+factor `a : A` out of the numerator produces exactly the `termFun` of the
+commutator `[P, a]`, at the *same* truncation length. Termwise consequence of
+`commutator_apply` together with the Jacobi identity `ad_iterate_commutator`,
+which is what lets `[P, a]` replace `P` under the iterated `ad f`. -/
+theorem termFun_commutator (r : ℕ) (P : Module.End k A) (a b : A) (n : ℕ) :
+    (termFun f r P (a * b) n : Af) =
+      algebraMap A Af a * termFun f r P b n + termFun f r (commutator P a) b n := by
+  unfold termFun
+  rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  have hsplit : ((ad (k := k) (A := A) f)^[j] P) (a * b) =
+      a * (((ad (k := k) (A := A) f)^[j] P) b) +
+        (((ad (k := k) (A := A) f)^[j] (commutator P a)) b) := by
+    rw [ad_iterate_commutator f a P j, commutator_apply]
+    ring
+  rw [hsplit, mk'_add_same_denom, smul_add, ← IsLocalization.mul_mk'_eq_mk'_of_mul,
+    mul_smul_comm]
+
+/-! ## Step 4, part 2: `extend` as a `k`-linear endomorphism of `A_f` -/
+
+/-- Two elements of `A_f` admit representatives with a common denominator. -/
+theorem exists_common_rep (x y : Af) :
+    ∃ (a b : A) (N : ℕ), (IsLocalization.mk' Af a (fPow f N) : Af) = x ∧
+      (IsLocalization.mk' Af b (fPow f N) : Af) = y := by
+  obtain ⟨a, n, ha⟩ := exists_fPow_rep f x
+  obtain ⟨b, m, hb⟩ := exists_fPow_rep f y
+  refine ⟨f ^ m * a, f ^ n * b, n + m, ?_, ?_⟩
+  · rw [← mk'_shift_pow f a n m, ha]
+  · rw [show n + m = m + n from by omega, ← mk'_shift_pow f b m n, hb]
+
+include hf in
+/-- `extend` is additive: reduce to a common denominator and use
+`termFun_add_num`. -/
+theorem extend_add {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k := k) (R := A) r) (x y : Af) :
+    (extend f P hP (x + y) : Af) = extend f P hP x + extend f P hP y := by
+  obtain ⟨a, b, N, hx, hy⟩ := exists_common_rep f x y
+  rw [← hx, ← hy, ← mk'_add_same_denom, extend_eq_termFun f hf hP, extend_eq_termFun f hf hP,
+    extend_eq_termFun f hf hP, termFun_add_num]
+
+include hf in
+/-- `extend` is `k`-homogeneous, by `termFun_smul_num`. -/
+theorem extend_smul {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k := k) (R := A) r)
+    (c : k) (x : Af) : (extend f P hP (c • x) : Af) = c • extend f P hP x := by
+  obtain ⟨a, n, ha⟩ := exists_fPow_rep f x
+  rw [← ha, ← mk'_smul_k, extend_eq_termFun f hf hP, extend_eq_termFun f hf hP, termFun_smul_num]
+
+include hf in
+/-- **The extension operator** (`PLAN.md` WP-11 step 2): `extend P` packaged as a
+`k`-linear endomorphism of `A_f`. -/
+noncomputable def extendₗ {r : ℕ} (P : Module.End k A) (hP : P ∈ order (k := k) (R := A) r) :
+    Module.End k Af where
+  toFun := extend f P hP
+  map_add' := extend_add f hf hP
+  map_smul' := fun c x => extend_smul f hf hP c x
+
+include hf in
+@[simp] theorem extendₗ_apply {r : ℕ} {P : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) r) (x : Af) :
+    (extendₗ f hf P hP : Module.End k Af) x = extend f P hP x := rfl
+
+include hf in
+/-- `extendₗ` restricts to `P` on the image of `A`. -/
+theorem extendₗ_algebraMap {r : ℕ} {P : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) r) (a : A) :
+    (extendₗ f hf P hP : Module.End k Af) (algebraMap A Af a) = algebraMap A Af (P a) :=
+  extend_algebraMap f hf hP a
+
+include hf in
+/-- `extendₗ` at a representative. -/
+theorem extendₗ_mk' {r : ℕ} {P : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) r) (a : A) (n : ℕ) :
+    (extendₗ f hf P hP : Module.End k Af) (IsLocalization.mk' Af a (fPow f n)) =
+      termFun f r P a n :=
+  extend_eq_termFun f hf hP a n
+
+/-! ## Step 4, part 3: the order bound -/
+
+include hf in
+/-- Base case of `extendₗ_mem_order`: an operator of order `0` on `A` is
+multiplication by `P 1`, and its extension is multiplication by the image of
+`P 1`. -/
+theorem extendₗ_of_order_zero {P : Module.End k A} (hP : P ∈ order (k := k) (R := A) 0) :
+    (extendₗ f hf P hP : Module.End k Af) =
+      multiplication (k := k) (algebraMap A Af (P 1)) := by
+  have hPa : ∀ b : A, P b = P 1 * b := by
+    intro b
+    have h := (mem_order_zero_iff_eq_multiplication P).1 hP
+    conv_lhs => rw [h]
+    simp [multiplication_apply]
+  ext x
+  obtain ⟨a, n, ha⟩ := exists_fPow_rep f x
+  rw [← ha, extendₗ_mk' f hf hP, multiplication_apply]
+  unfold termFun
+  rw [Finset.sum_range_one]
+  simp only [Function.iterate_zero, id_eq, add_zero, Ring.choose_zero_right, one_smul]
+  rw [hPa a, ← IsLocalization.mul_mk'_eq_mk'_of_mul]
+
+include hf in
+/-- **Step 4b**: the commutator of `extendₗ P` with the image of `a : A` is the
+extension of `[P, a]`. Pointwise on representatives this is
+`termFun_commutator` plus `termFun_order_mono` (the two sides use truncation
+lengths `r' + 1` and `r'`). -/
+theorem extendₗ_commutator_algebraMap {r' : ℕ} {P : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) (r' + 1)) (a : A) :
+    commutator (extendₗ f hf P hP) (algebraMap A Af a) =
+      extendₗ f hf (commutator P a) ((mem_order_succ_iff P r').1 hP a) := by
+  have hQ : commutator P a ∈ order (k := k) (R := A) r' := (mem_order_succ_iff P r').1 hP a
+  ext x
+  obtain ⟨b, n, hb⟩ := exists_fPow_rep f x
+  rw [← hb, commutator_apply, IsLocalization.mul_mk'_eq_mk'_of_mul, extendₗ_mk' f hf hP,
+    extendₗ_mk' f hf hP, extendₗ_mk' f hf hQ, termFun_commutator,
+    termFun_order_mono f hQ (Nat.le_succ r') b n]
+  ring
+
+include hf in
+/-- **Step 4** (`PLAN.md` WP-11): the extension of an operator of order `≤ r` has
+order `≤ r`. Induction on `r`. The base case is `extendₗ_of_order_zero`. In the
+step, the set of `x : A_f` with `[extendₗ P, x]` of order `≤ r'` contains the
+image of `A` (`extendₗ_commutator_algebraMap` plus the induction hypothesis) and
+is closed under products and inverses (`commutator_mem_order_mul`,
+`commutator_mem_order_of_mul_eq_one`); every `x : A_f` is
+`algebraMap a * (algebraMap (f^n))⁻¹`. -/
+theorem extendₗ_mem_order : ∀ (r : ℕ) (P : Module.End k A) (hP : P ∈ order (k := k) (R := A) r),
+    (extendₗ f hf P hP : Module.End k Af) ∈ order (k := k) (R := Af) r := by
+  intro r
+  induction r with
+  | zero =>
+      intro P hP
+      rw [extendₗ_of_order_zero f hf hP]
+      exact multiplication_mem_order_zero (k := k) _
+  | succ r' ih =>
+      intro P hP
+      rw [mem_order_succ_iff]
+      intro z
+      have hA : ∀ a : A, commutator (extendₗ f hf P hP) (algebraMap A Af a) ∈
+          order (k := k) (R := Af) r' := by
+        intro a
+        rw [extendₗ_commutator_algebraMap f hf hP a]
+        exact ih _ _
+      obtain ⟨a, n, ha⟩ := exists_fPow_rep f z
+      have hinv : (algebraMap A Af (f ^ n) : Af) * IsLocalization.mk' Af (1 : A) (fPow f n) = 1 := by
+        have h := IsLocalization.mk'_spec' Af (1 : A) (fPow f n)
+        rw [coe_fPow, map_one] at h
+        exact h
+      have hz : z = algebraMap A Af a * IsLocalization.mk' Af (1 : A) (fPow f n) := by
+        rw [← ha]
+        exact IsLocalization.mk'_eq_mul_mk'_one a (fPow f n)
+      rw [hz]
+      exact commutator_mem_order_mul (hA a)
+        (commutator_mem_order_of_mul_eq_one hinv (hA (f ^ n)))
+
 end GlobalStafford.Localization
 
 #print axioms GlobalStafford.Localization.ext_of_finite_order
 #print axioms GlobalStafford.Localization.termFun_shift
 #print axioms GlobalStafford.Localization.termFun_well_defined
 #print axioms GlobalStafford.Localization.extend_algebraMap
+#print axioms GlobalStafford.Localization.termFun_commutator
+#print axioms GlobalStafford.Localization.extendₗ_of_order_zero
+#print axioms GlobalStafford.Localization.extendₗ_commutator_algebraMap
+#print axioms GlobalStafford.Localization.extendₗ_mem_order
