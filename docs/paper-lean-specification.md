@@ -19,24 +19,25 @@ work packages close.
 
 | Paper | Lean | WP | Status |
 | --- | --- | --- | --- |
-| (1.1) left binomial formula | `GlobalStafford.Operators.mul_multiplication_pow` | 1 | todo |
-| (4.10) right binomial formula | `GlobalStafford.Operators.multiplication_pow_mul` | 1 | todo |
-| (1.2) | `GlobalStafford.Operators.exists_mul_multiplication_pow_eq` | 1 | todo |
-| Lemma 1.1 | `GlobalStafford.Operators.pow_eq_multiplication_pow_mul` | 1 | todo |
-| Lemma 1.2 | `GlobalStafford.Certificate.protect_old_chart` | 3 | todo |
-| Section 3 identity (3.3) | `GlobalStafford.Certificate.certificate_of_square` | 2 | todo |
-| Ore choice (3.1) | `GlobalStafford.Certificate.OreData.of_rightOre` | 2 | todo |
-| `ρ_t`, `ρ_N(P) = f^N P f^{-N}` | `GlobalStafford.Conjugation.rho`, `evalNat_rho` | 4 | todo |
-| (4.11) `e_N^2 = E'(N) f^{2N}` | `GlobalStafford.Conjugation.evalNat_squaredInput` | 4 | todo |
-| `E'(0) ≠ 0` | `GlobalStafford.Conjugation.squaredInput_ne_zero` | 4 | todo |
-| S38_poly | `GlobalStafford.Chart.S38Poly` | 4 | todo |
-| Theorem 4.1 | `GlobalStafford.Descent.exists_bounded_order_sources` | 5 | todo |
-| Theorem 5.1 | `GlobalStafford.Descent.twoGeneratorIdentity_of_charts` | 6 | todo |
-| Lemma 6.1 | `GlobalStafford.Chart.twoGeneratorIdentity_of_finiteRightSpan` | 7 | todo |
-| Lemma 6.2 (rank) | `GlobalStafford.Chart.finiteRightSpan_weylAction`, `twoGeneratorIdentity_chart` | 8 | todo |
-| Lemma 6.2 over `k(t)` | `GlobalStafford.Chart.s38Poly_of_scalarExtension`, `s38Poly_of_chartData` | 9, 10 | todo |
+| (1.1) left binomial formula | `GlobalStafford.Operators.mul_multiplication_pow` | 1 | done |
+| (4.10) right binomial formula | `GlobalStafford.Operators.multiplication_pow_mul` | 1 | done |
+| (1.2) | `GlobalStafford.Operators.exists_mul_multiplication_pow_eq` | 1 | done |
+| Lemma 1.1 | `GlobalStafford.Operators.pow_eq_multiplication_pow_mul` | 1 | done |
+| Lemma 1.2 | `GlobalStafford.Certificate.protect_old_chart` | 3 | done |
+| Section 3 identity (3.3) | `GlobalStafford.Certificate.certificate_of_square` | 2 | done |
+| Ore choice (3.1) | `GlobalStafford.Certificate.OreData.of_rightOre` | 2 | done |
+| `ρ_t`, `ρ_N(P) = f^N P f^{-N}` | `GlobalStafford.Conjugation.rho`, `evalNat_rho` | 4 | done |
+| (4.11) `e_N^2 = E'(N) f^{2N}` | `GlobalStafford.Conjugation.evalNat_squaredInput` | 4 | done |
+| `E'(0) ≠ 0` | `GlobalStafford.Conjugation.squaredInput_ne_zero` | 4 | done |
+| S38_poly | `GlobalStafford.Chart.S38Poly` | 4 | done |
+| Theorem 4.1 | `GlobalStafford.Descent.exists_bounded_order_sources` | 5 | done |
+| Theorem 5.1 | `GlobalStafford.Descent.twoGeneratorIdentity_of_charts` | 6 | done |
+| Lemma 6.1 | `GlobalStafford.Chart.twoGeneratorIdentity_of_finiteRightSpan`, `finiteRightSpan_weylAction` | 7 | done |
+| Lemma 6.2 (rank) | `GlobalStafford.Chart.twoGeneratorIdentity_chart`, `twoGeneratorIdentity_chart_of_weyl` | 8 | done |
+| Lemma 6.2 over `k(t)` | `GlobalStafford.Chart.s38Poly_of_scalarExtension`, `GlobalStafford.PhaseI.s38Poly_of_chartData` | 9, 10 | done |
 | Theorem 6.3 cover | `GlobalStafford.Chart.SmoothCover` | 17 | todo |
 | Weyl S38 import | `Stafford38.universalStatement` at pin `784b5992` | — | imported, axiom-clean |
+| Phase I assembly | `GlobalStafford.PhaseI.twoGeneratorIdentity_of_inputs`, `universalStatement_of_inputs` | 10 | done |
 
 ## Literature inputs and their discharge
 
