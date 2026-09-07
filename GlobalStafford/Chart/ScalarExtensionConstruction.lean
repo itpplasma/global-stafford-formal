@@ -477,8 +477,8 @@ def contractDerivation (φ : RatFunc k →ₗ[k] k)
 
 /-! ## 6. Coordinate rigidity over `K` -/
 
-variable [CharZero k] {n : ℕ} [Algebra (B k n) C] [IsScalarTower k (B k n) C]
-  [Algebra.FormallyEtale (B k n) C]
+variable [CharZero k] {n : ℕ} [instBC : Algebra (B k n) C]
+  [instTower : IsScalarTower k (B k n) C] [instEtale : Algebra.FormallyEtale (B k n) C]
 
 /-- The image of the coordinate `x_i` in `C_K`. -/
 def xCK (k : Type u) [Field k] (n : ℕ) (C : Type u) [CommRing C] [Algebra k C]
@@ -625,6 +625,178 @@ theorem coordinateRigidityK (P : Module.End (RatFunc k) (CK k C))
   exact coordinateRigidity_of_derivations (xCK k n C)
     (fun δ hδ => derivationK_eq_zero_of_coord δ hδ) r P hr hcomm
 
+/-! ## 7. The image of `Θ` spans `D_K(C_K)` up to a scalar denominator -/
+
+/-- The image in `K = k(t)` of a scalar polynomial `h : k[X]`. -/
+abbrev scalarK (h : Polynomial k) : RatFunc k := Polynomial.aeval (RatFunc.X : RatFunc k) h
+
+omit [CharZero k] in
+@[simp] theorem scalarK_one : scalarK (1 : Polynomial k) = 1 := map_one _
+
+omit [CharZero k] in
+theorem scalarK_mul (h₁ h₂ : Polynomial k) :
+    scalarK (h₁ * h₂) = scalarK h₁ * scalarK h₂ := map_mul _ _ _
+
+/-- Multiplication operators are additive in the coefficient. -/
+theorem multiplication_add' {F R : Type*} [CommRing F] [CommRing R] [Algebra F R] (a b : R) :
+    multiplication (k := F) (a + b) = multiplication (k := F) a + multiplication (k := F) b := by
+  ext z; simp [multiplication_apply, add_mul]
+
+theorem multiplication_zero' {F R : Type*} [CommRing F] [CommRing R] [Algebra F R] :
+    multiplication (k := F) (0 : R) = 0 := by
+  ext z; simp [multiplication_apply]
+
+omit [CharZero k] in
+/-- Multiplication by a pure tensor is the `K`-multiple of multiplication by `1 ⊗ c`. -/
+theorem multiplication_tmul (κ : RatFunc k) (c : C) :
+    multiplication (k := RatFunc k) (κ ⊗ₜ[k] c : CK k C) =
+      κ • multiplication (k := RatFunc k) ((1 : RatFunc k) ⊗ₜ[k] c : CK k C) := by
+  refine LinearMap.ext fun z => ?_
+  rw [LinearMap.smul_apply, multiplication_apply, multiplication_apply, Algebra.smul_def,
+    algebraMap_CK, ← mul_assoc, Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
+
+omit [CharZero k] in
+/-- Left multiplication by a scalar of `K` inside `D_K(C_K)` is the `K`-action. -/
+theorem coe_algebraMap_mul (κ : RatFunc k) (Q : DK k C) :
+    ((algebraMap (RatFunc k) (DK k C) κ * Q : DK k C) :
+        Module.End (RatFunc k) (CK k C)) =
+      κ • (Q : Module.End (RatFunc k) (CK k C)) := by
+  rw [Subalgebra.coe_mul, coe_algebraMap_DK]
+  ext z
+  simp [multiplication_apply, Module.End.mul_apply, Algebra.smul_def]
+
+omit [CharZero k] in
+theorem coe_bigTheta_scalarPoly_mul (h : Polynomial k)
+    (P : Polynomial (algebra (k := k) (R := C))) :
+    ((bigTheta (GlobalStafford.Conjugation.scalarPoly (D := algebra (k := k) (R := C)) h * P) :
+        DK k C) :
+        Module.End (RatFunc k) (CK k C)) =
+      scalarK h • ((bigTheta P : DK k C) : Module.End (RatFunc k) (CK k C)) := by
+  rw [map_mul, bigTheta_scalarPoly, coe_algebraMap_mul]
+
+/-- The `i`-th coordinate derivation of `C_K`, the base change of `liftDerivation i`. -/
+def liftDerivationK (i : Fin n) : Derivation (RatFunc k) (CK k C) (CK k C) :=
+  baseChangeDerivation (liftDerivation (k := k) (C := C) i)
+
+/-- The coordinate derivations of `C_K` are dual to the coordinates. -/
+theorem liftDerivationK_coord (i j : Fin n) :
+    liftDerivationK (k := k) (n := n) (C := C) i (xCK k n C j) = if i = j then 1 else 0 := by
+  show baseChangeDerivation (liftDerivation (k := k) (C := C) i)
+      ((1 : RatFunc k) ⊗ₜ[k] xC k n C j) = _
+  rw [baseChangeDerivation_tmul, liftDerivation_coord]
+  by_cases hij : i = j
+  · rw [if_pos hij, if_pos hij, ← Algebra.TensorProduct.one_def]
+  · rw [if_neg hij, if_neg hij, TensorProduct.tmul_zero]
+
+/-- The `i`-th coordinate derivation of `C`, as an element of `D_k(C)`. -/
+def liftDerivationD (i : Fin n) : algebra (k := k) (R := C) :=
+  ⟨(liftDerivation (k := k) (C := C) i).toLinearMap,
+    AlgebraicAnalysis.DifferentialOperators.CoordinateGeneration.derivation_mem_algebra _⟩
+
+omit [CharZero k] in
+@[simp] theorem coe_liftDerivationD (i : Fin n) :
+    (liftDerivationD (k := k) (n := n) (C := C) i : Module.End k C) =
+      (liftDerivation (k := k) (C := C) i).toLinearMap := rfl
+
+include n instBC instTower instEtale in
+/-- **`spanning`** (`PLAN.md` WP-16.5): every operator of `D_K(C_K)` lies in the image of `Θ`
+after multiplication by a nonzero scalar `aeval t h`, `h ∈ k[X]`. -/
+theorem bigTheta_spanning (Q : DK k C) :
+    ∃ h : Polynomial k, h ≠ 0 ∧ ∃ P : Polynomial (algebra (k := k) (R := C)),
+      algebraMap (RatFunc k) (DK k C) (scalarK h) * Q = bigTheta P := by
+  classical
+  set sH : Set (Module.End (RatFunc k) (CK k C)) :=
+    {T | ∃ h : Polynomial k, h ≠ 0 ∧ ∃ P : Polynomial (algebra (k := k) (R := C)),
+      scalarK h • T = ((bigTheta P : DK k C) : Module.End (RatFunc k) (CK k C))} with hsHdef
+  have hzero : (0 : Module.End (RatFunc k) (CK k C)) ∈ sH := by
+    refine ⟨1, one_ne_zero, 0, ?_⟩
+    rw [smul_zero, map_zero]
+    rfl
+  have hadd : ∀ T₁ T₂, T₁ ∈ sH → T₂ ∈ sH → T₁ + T₂ ∈ sH := by
+    rintro T₁ T₂ ⟨h₁, hh₁, P₁, e₁⟩ ⟨h₂, hh₂, P₂, e₂⟩
+    refine ⟨h₁ * h₂, mul_ne_zero hh₁ hh₂,
+      GlobalStafford.Conjugation.scalarPoly (D := algebra (k := k) (R := C)) h₂ * P₁ +
+        GlobalStafford.Conjugation.scalarPoly (D := algebra (k := k) (R := C)) h₁ * P₂, ?_⟩
+    rw [RingHom.map_add, Subalgebra.coe_add, coe_bigTheta_scalarPoly_mul,
+      coe_bigTheta_scalarPoly_mul, ← e₁, ← e₂, scalarK_mul, smul_add, smul_smul, smul_smul,
+      mul_comm (scalarK h₂) (scalarK h₁)]
+  have hsmul : ∀ (κ : RatFunc k) T, T ∈ sH → κ • T ∈ sH := by
+    rintro κ T ⟨h, hh, P, e⟩
+    have hden : algebraMap (Polynomial k) (RatFunc k) κ.denom ≠ 0 :=
+      RatFunc.algebraMap_ne_zero (RatFunc.denom_ne_zero κ)
+    have hkey : scalarK (RatFunc.denom κ) * κ = scalarK (RatFunc.num κ) := by
+      have h2 : algebraMap (Polynomial k) (RatFunc k) (RatFunc.num κ) =
+          κ * algebraMap (Polynomial k) (RatFunc k) (RatFunc.denom κ) :=
+        (div_eq_iff hden).mp (RatFunc.num_div_denom κ)
+      show Polynomial.aeval (RatFunc.X : RatFunc k) (RatFunc.denom κ) * κ =
+        Polynomial.aeval (RatFunc.X : RatFunc k) (RatFunc.num κ)
+      rw [RatFunc.aeval_X_left_eq_algebraMap, RatFunc.aeval_X_left_eq_algebraMap, h2, mul_comm]
+    refine ⟨h * RatFunc.denom κ, mul_ne_zero hh (RatFunc.denom_ne_zero κ),
+      GlobalStafford.Conjugation.scalarPoly (D := algebra (k := k) (R := C))
+        (RatFunc.num κ) * P, ?_⟩
+    rw [coe_bigTheta_scalarPoly_mul, ← e, scalarK_mul, smul_smul, smul_smul, ← hkey]
+    congr 1
+    ring
+  set H : Submodule (RatFunc k) (Module.End (RatFunc k) (CK k C)) :=
+    { carrier := sH
+      zero_mem' := hzero
+      add_mem' := fun {T₁ T₂} h₁ h₂ => hadd T₁ T₂ h₁ h₂
+      smul_mem' := fun κ {T} h => hsmul κ T h } with hHdef
+  have hmulmem : ∀ y : CK k C, multiplication y ∈ H := by
+    intro y
+    induction y using TensorProduct.induction_on with
+    | zero =>
+        rw [multiplication_zero']
+        exact H.zero_mem
+    | tmul κ c =>
+        rw [multiplication_tmul]
+        refine Submodule.smul_mem H κ ?_
+        refine ⟨1, one_ne_zero, Polynomial.C (GlobalStafford.Operators.multiplicationD c), ?_⟩
+        rw [bigTheta_C, coe_bcHom, GlobalStafford.Operators.coe_multiplicationD,
+          baseChangeEnd_multiplication]
+        rw [scalarK_one, one_smul]
+    | add y z hy hz =>
+        rw [multiplication_add']
+        exact Submodule.add_mem H hy hz
+  have hright : ∀ (i : Fin n) (T : Module.End (RatFunc k) (CK k C)), T ∈ H →
+      T * (liftDerivationK (k := k) (n := n) (C := C) i).toLinearMap ∈ H := by
+    rintro i T ⟨h, hh, P, e⟩
+    refine ⟨h, hh, P * Polynomial.C (liftDerivationD (k := k) (n := n) (C := C) i), ?_⟩
+    rw [map_mul, bigTheta_C, Subalgebra.coe_mul, coe_bcHom, coe_liftDerivationD, ← e,
+      smul_mul_assoc]
+    rfl
+  have hmem : (Q : Module.End (RatFunc k) (CK k C)) ∈ H :=
+    AlgebraicAnalysis.DifferentialOperators.CoordinateGeneration.mem_submodule_of_coordinates'
+      (xCK k n C) (liftDerivationK (k := k) (n := n) (C := C)) liftDerivationK_coord
+      (fun P hP hc => coordinateRigidityK P hP hc) H hmulmem hright
+      (Q : Module.End (RatFunc k) (CK k C)) Q.property
+  obtain ⟨h, hh, P, e⟩ := hmem
+  exact ⟨h, hh, P, Subtype.ext (by rw [coe_algebraMap_mul]; exact e)⟩
+
+/-! ## 8. The scalar extension interface -/
+
+include n instBC instTower instEtale in
+/-- **WP-16 deliverable** (`PLAN.md` §4, WP-16): the scalar extension interface of WP-9 for
+`K = k(t)`, `t = RatFunc.X`, `C_K = K ⊗_k C` and `D_K(C_K)`, for an étale chart `C` over
+`B = k[x_1,…,x_n]`. -/
+noncomputable def scalarExtensionInterface :
+    ScalarExtensionInterface (k := k) (algebra (k := k) (R := C)) (RatFunc k) (DK k C)
+      (RatFunc.X : RatFunc k) where
+  Θ := bigTheta
+  Θ_scalar := bigTheta_scalarPoly
+  Θ_injective := bigTheta_injective
+  spanning := bigTheta_spanning (n := n)
+  aeval_ne_zero := aeval_X_ne_zero
+
 end
 
 end GlobalStafford.Chart
+
+#print axioms GlobalStafford.Chart.baseChangeEnd_mem_order
+#print axioms GlobalStafford.Chart.bigTheta_scalarPoly
+#print axioms GlobalStafford.Chart.bigTheta_injective
+#print axioms GlobalStafford.Chart.aeval_X_ne_zero
+#print axioms GlobalStafford.Chart.derivationK_eq_zero_of_coord
+#print axioms GlobalStafford.Chart.coordinateRigidityK
+#print axioms GlobalStafford.Chart.bigTheta_spanning
+#print axioms GlobalStafford.Chart.scalarExtensionInterface
