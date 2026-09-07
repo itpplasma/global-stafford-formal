@@ -225,4 +225,91 @@ lemma Ld_surjective {d : S} (hd : d ≠ 0) [FiniteDimensional (Q T) (V φ)] :
 
 end Construction
 
+section SpanFinite
+
+variable (φ : T →+* S) {m : ℕ} (s : Fin m → S)
+  (hspan : ∀ x : S, ∃ τ : T, τ ≠ 0 ∧ ∃ t : Fin m → T, x * φ τ = ∑ i, s i * φ (t i))
+
+/-- The `AddMonoidHom` recovering the underlying `S`-value of a `RightModule φ`
+element; used to commute finite sums with `.v`. -/
+def vHom : RightModule φ →+ S where
+  toFun := RightModule.v
+  map_zero' := rfl
+  map_add' _ _ := rfl
+
+/-- The finite spanning set, as elements `s i /ₒ 1` of `V φ`. -/
+noncomputable abbrev spanGen (i : Fin m) : V φ := (⟨s i⟩ : RightModule φ) /ₒ (1 : (Tᵐᵒᵖ)⁰)
+
+include hspan in
+/-- Step (a) of Lemma 6.1: every fraction with numerator-in-`S` and denominator `1`
+lies in the `Q`-span of the finite spanning set. -/
+lemma mem_span_numHom (x : S) :
+    ((⟨x⟩ : RightModule φ) /ₒ (1 : (Tᵐᵒᵖ)⁰) : V φ) ∈
+      Submodule.span (Q T) (Set.range (spanGen φ s)) := by
+  classical
+  obtain ⟨τ, hτ, t, ht⟩ := hspan x
+  have hτ' : (MulOpposite.op τ : Tᵐᵒᵖ) ≠ 0 := by simpa [MulOpposite.op_eq_zero_iff] using hτ
+  set u : Q T := (MulOpposite.op τ : Tᵐᵒᵖ) /ₒ (1 : (Tᵐᵒᵖ)⁰) with hu_def
+  have hune : u ≠ 0 := by
+    rw [hu_def]
+    intro hz
+    rw [← OreLocalization.zero_oreDiv' (1 : (Tᵐᵒᵖ)⁰), OreLocalization.oreDiv_eq_iff] at hz
+    obtain ⟨w1, w2, hw1, hw2⟩ := hz
+    simp only [Submonoid.smul_def, smul_eq_mul, mul_zero, Submonoid.coe_one, mul_one] at hw1 hw2
+    rw [← hw2] at hw1
+    exact mul_ne_zero (nonZeroDivisors.ne_zero w1.2) hτ' hw1.symm
+  have hsum : (MulOpposite.op τ : Tᵐᵒᵖ) • (⟨x⟩ : RightModule φ) =
+      ∑ i, (MulOpposite.op (t i) : Tᵐᵒᵖ) • (⟨s i⟩ : RightModule φ) := by
+    ext
+    have hv : (∑ i, (MulOpposite.op (t i) : Tᵐᵒᵖ) • (⟨s i⟩ : RightModule φ)).v =
+        ∑ i, ((MulOpposite.op (t i) : Tᵐᵒᵖ) • (⟨s i⟩ : RightModule φ)).v := map_sum (vHom φ) _ _
+    rw [hv]
+    simp only [RightModule.smul_v, MulOpposite.unop_op]
+    simpa using ht
+  have hstep : u • ((⟨x⟩ : RightModule φ) /ₒ (1 : (Tᵐᵒᵖ)⁰)) =
+      ∑ i, ((MulOpposite.op (t i) : Tᵐᵒᵖ) /ₒ (1 : (Tᵐᵒᵖ)⁰) : Q T) • (spanGen φ s i) := by
+    have hrhs : ∀ i, ((MulOpposite.op (t i) : Tᵐᵒᵖ) /ₒ (1 : (Tᵐᵒᵖ)⁰) : Q T) • (spanGen φ s i)
+        = ((MulOpposite.op (t i) : Tᵐᵒᵖ) • (⟨s i⟩ : RightModule φ)) /ₒ (1 : (Tᵐᵒᵖ)⁰) :=
+      fun i => smul_oreDiv_one φ _ _
+    simp_rw [hrhs]
+    rw [hu_def, smul_oreDiv_one, hsum]
+    have hnum : ((∑ i, (MulOpposite.op (t i) : Tᵐᵒᵖ) • (⟨s i⟩ : RightModule φ)) /ₒ
+        (1 : (Tᵐᵒᵖ)⁰) : V φ) =
+        numHom φ (∑ i, (MulOpposite.op (t i) : Tᵐᵒᵖ) • (⟨s i⟩ : RightModule φ)) := rfl
+    rw [hnum, map_sum]
+    rfl
+  have hmem : u • ((⟨x⟩ : RightModule φ) /ₒ (1 : (Tᵐᵒᵖ)⁰)) ∈
+      Submodule.span (Q T) (Set.range (spanGen φ s)) := by
+    rw [hstep]
+    exact Submodule.sum_mem _ fun i _ =>
+      Submodule.smul_mem _ _ (Submodule.subset_span ⟨i, rfl⟩)
+  have hback := Submodule.smul_mem (Submodule.span (Q T) (Set.range (spanGen φ s))) u⁻¹ hmem
+  rwa [inv_smul_smul₀ hune] at hback
+
+include hspan in
+/-- Step (a) of Lemma 6.1: `V φ` is spanned over `Q` by the finite set `spanGen`. -/
+lemma span_eq_top :
+    (⊤ : Submodule (Q T) (V φ)) = Submodule.span (Q T) (Set.range (spanGen φ s)) := by
+  refine le_antisymm (fun v _ => ?_) le_top
+  induction v using OreLocalization.ind with
+  | _ x den =>
+    have h1 : ((⟨x.v⟩ : RightModule φ) /ₒ (1 : (Tᵐᵒᵖ)⁰) : V φ) ∈
+        Submodule.span (Q T) (Set.range (spanGen φ s)) := mem_span_numHom φ s hspan x.v
+    have h1' : (x /ₒ (1 : (Tᵐᵒᵖ)⁰) : V φ) ∈
+        Submodule.span (Q T) (Set.range (spanGen φ s)) := by simpa using h1
+    have h2 := Submodule.smul_mem (Submodule.span (Q T) (Set.range (spanGen φ s)))
+      ((1 : Tᵐᵒᵖ) /ₒ den : Q T) h1'
+    rwa [one_oreDiv_smul] at h2
+
+include hspan in
+/-- Step (a) of Lemma 6.1: `V φ` is a finite-dimensional `Q`-vector space. Not registered
+as an instance since the finite spanning data `(m, s, hspan)` cannot be inferred by
+typeclass search; supply it locally with `haveI`. -/
+theorem moduleFinite : Module.Finite (Q T) (V φ) := by
+  rw [Module.finite_def]
+  exact Submodule.fg_def.mpr
+    ⟨Set.range (spanGen φ s), Set.finite_range _, (span_eq_top φ s hspan).symm⟩
+
+end SpanFinite
+
 end GlobalStafford.Chart
