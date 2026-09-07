@@ -1,6 +1,7 @@
 import GlobalStafford.Certificate.OldChartProtection
 import GlobalStafford.Certificate.SquaredAnnihilator
 import GlobalStafford.Chart.PolynomialS38
+import AlgebraicAnalysis.RingTheory.TwoGeneratorIdentity
 import Mathlib.RingTheory.Ideal.Operations
 
 /-!
@@ -177,4 +178,127 @@ theorem chart_step (C : ChartCover k A) [NoZeroDivisors (algebra (k := k) (R := 
     subst hji'
     exact ⟨U, V, hcertNew⟩
 
+/-- Plain induction on `i : ℕ` (via `chart_step`) collects a single global source `B` with a
+same-divisor certificate for `d` on *every* chart. -/
+theorem exists_globalB (C : ChartCover k A) [NoZeroDivisors (algebra (k := k) (R := A))]
+    (hOre : ∀ x y : algebra (k := k) (R := A), x ≠ 0 → y ≠ 0 →
+      ∃ a b : algebra (k := k) (R := A), a ≠ 0 ∧ x * a = y * b)
+    (d : algebra (k := k) (R := A)) (hd : d ≠ 0) :
+    ∃ B : algebra (k := k) (R := A), ∀ j : Fin C.s,
+      ∃ U V : algebra (k := k) (R := C.Af j),
+        (1 : algebra (k := k) (R := C.Af j)) =
+          (C.loc j).ι d * U + (C.loc j).ι B * (C.loc j).ι d * V := by
+  have main : ∀ i : ℕ, ∃ B : algebra (k := k) (R := A), ∀ j : Fin C.s, (j : ℕ) < i →
+      ∃ U V : algebra (k := k) (R := C.Af j),
+        (1 : algebra (k := k) (R := C.Af j)) =
+          (C.loc j).ι d * U + (C.loc j).ι B * (C.loc j).ι d * V := by
+    intro i
+    induction i with
+    | zero => exact ⟨0, fun j hj => absurd hj (Nat.not_lt_zero _)⟩
+    | succ i ih =>
+      obtain ⟨B, hB⟩ := ih
+      by_cases hi : i < C.s
+      · exact chart_step C hOre d hd hi B hB
+      · refine ⟨B, fun j hj => ?_⟩
+        have hjC : (j : ℕ) < C.s := j.isLt
+        exact hB j (by omega)
+  obtain ⟨B, hB⟩ := main C.s
+  exact ⟨B, fun j => hB j j.isLt⟩
+
+/-- Right-clear each chart certificate to a common power `mtot` of the corresponding `f i`,
+then use `Ideal.span_pow_eq_top` and the finite cover hypothesis to write `1` as an
+`A`-combination of these common powers, assembling the individual chart certificates into a
+single same-divisor certificate `1 = d r + B d s` on `A`. This is the Bézout assembly step
+of Theorem 5.1. -/
+theorem certificate_of_common_exponent (C : ChartCover k A) (d B : algebra (k := k) (R := A))
+    (hcerts : ∀ i : Fin C.s, ∃ U V : algebra (k := k) (R := C.Af i),
+      (1 : algebra (k := k) (R := C.Af i)) =
+        (C.loc i).ι d * U + (C.loc i).ι B * (C.loc i).ι d * V) :
+    ∃ r s : algebra (k := k) (R := A), (1 : algebra (k := k) (R := A)) = d * r + B * d * s := by
+  classical
+  choose U V hUV using hcerts
+  choose m A₀ B₀ hclear using fun i => clear_to_base (C.loc i) d B (U i) (V i) (hUV i)
+  set mtot : ℕ := Finset.univ.sup m with hmtotdef
+  have hle : ∀ i : Fin C.s, m i ≤ mtot := by
+    intro i
+    rw [hmtotdef]
+    exact Finset.le_sup (Finset.mem_univ i)
+  have hcommon : ∀ i : Fin C.s, multiplicationD (k := k) (A := A) (C.f i) ^ mtot =
+      d * (A₀ i * multiplicationD (k := k) (A := A) (C.f i) ^ (mtot - m i)) +
+        B * d * (B₀ i * multiplicationD (k := k) (A := A) (C.f i) ^ (mtot - m i)) := by
+    intro i
+    have hpow : multiplicationD (k := k) (A := A) (C.f i) ^ m i *
+        multiplicationD (k := k) (A := A) (C.f i) ^ (mtot - m i) =
+        multiplicationD (k := k) (A := A) (C.f i) ^ mtot := by
+      rw [← pow_add]
+      congr 1
+      have := hle i
+      omega
+    calc multiplicationD (k := k) (A := A) (C.f i) ^ mtot
+        = multiplicationD (k := k) (A := A) (C.f i) ^ m i *
+            multiplicationD (k := k) (A := A) (C.f i) ^ (mtot - m i) := hpow.symm
+      _ = (d * A₀ i + B * d * B₀ i) * multiplicationD (k := k) (A := A) (C.f i) ^ (mtot - m i) := by
+          rw [hclear i]
+      _ = d * (A₀ i * multiplicationD (k := k) (A := A) (C.f i) ^ (mtot - m i)) +
+            B * d * (B₀ i * multiplicationD (k := k) (A := A) (C.f i) ^ (mtot - m i)) := by
+          rw [add_mul, mul_assoc, mul_assoc]
+  have htop : Ideal.span ((fun x : A => x ^ mtot) '' Set.range C.f) = ⊤ :=
+    Ideal.span_pow_eq_top (Set.range C.f) C.cover mtot
+  have himg : (fun x : A => x ^ mtot) '' Set.range C.f = Set.range (fun i => C.f i ^ mtot) := by
+    rw [← Set.range_comp]; rfl
+  have htop' : Ideal.span (Set.range (fun i => C.f i ^ mtot)) = ⊤ := by rw [← himg]; exact htop
+  have hone : (1 : A) ∈ Ideal.span (Set.range (fun i => C.f i ^ mtot)) := by
+    rw [htop']; trivial
+  obtain ⟨a, ha⟩ := Ideal.mem_span_range_iff_exists_fun.mp hone
+  have hsum1 : (1 : algebra (k := k) (R := A)) =
+      ∑ i : Fin C.s, multiplicationD (k := k) (A := A) (C.f i) ^ mtot *
+        multiplicationD (k := k) (A := A) (a i) := by
+    have haA : (1 : A) = ∑ i, C.f i ^ mtot * a i := by
+      rw [← ha]; exact Finset.sum_congr rfl (fun i _ => mul_comm _ _)
+    calc (1 : algebra (k := k) (R := A)) = multiplicationD (k := k) (A := A) (1 : A) :=
+          multiplicationD_one.symm
+      _ = multiplicationD (k := k) (A := A) (∑ i, C.f i ^ mtot * a i) := by rw [← haA]
+      _ = ∑ i, multiplicationD (k := k) (A := A) (C.f i ^ mtot * a i) := multiplicationD_sum _ _
+      _ = ∑ i, multiplicationD (k := k) (A := A) (C.f i ^ mtot) *
+            multiplicationD (k := k) (A := A) (a i) :=
+          Finset.sum_congr rfl (fun i _ => (multiplicationD_mul _ _).symm)
+      _ = ∑ i, multiplicationD (k := k) (A := A) (C.f i) ^ mtot *
+            multiplicationD (k := k) (A := A) (a i) :=
+          Finset.sum_congr rfl (fun i _ => by rw [multiplicationD_pow])
+  have hstep : ∀ i : Fin C.s, multiplicationD (k := k) (A := A) (C.f i) ^ mtot *
+        multiplicationD (k := k) (A := A) (a i) =
+      d * (A₀ i * multiplicationD (k := k) (A := A) (C.f i) ^ (mtot - m i) *
+            multiplicationD (k := k) (A := A) (a i)) +
+        B * d * (B₀ i * multiplicationD (k := k) (A := A) (C.f i) ^ (mtot - m i) *
+            multiplicationD (k := k) (A := A) (a i)) := by
+    intro i
+    rw [hcommon i, add_mul, mul_assoc, mul_assoc]
+    simp only [mul_assoc]
+  refine ⟨∑ i, A₀ i * multiplicationD (k := k) (A := A) (C.f i) ^ (mtot - m i) *
+      multiplicationD (k := k) (A := A) (a i),
+    ∑ i, B₀ i * multiplicationD (k := k) (A := A) (C.f i) ^ (mtot - m i) *
+      multiplicationD (k := k) (A := A) (a i), ?_⟩
+  rw [hsum1, Finset.mul_sum, Finset.mul_sum, ← Finset.sum_add_distrib]
+  exact Finset.sum_congr rfl (fun i _ => hstep i)
+
+/-- **Theorem 5.1.** Given a finite principal cover of `A` by charts, each of which produces
+bounded-order sources (the conclusion of Theorem 4.1, WP-5, taken as an explicit hypothesis
+via `ChartCover.producer` because WP-5 is developed on a separate branch), and given the right
+Ore condition on `D_k(A)`, `D_k(A)` satisfies the two-generator identity: every nonzero `d`
+admits `F, r, s` with `1 = d r + F d s`. -/
+theorem twoGeneratorIdentity_of_charts (C : ChartCover k A) [NoZeroDivisors (algebra (k := k) (R := A))]
+    (hOre : ∀ x y : algebra (k := k) (R := A), x ≠ 0 → y ≠ 0 →
+      ∃ a b : algebra (k := k) (R := A), a ≠ 0 ∧ x * a = y * b) :
+    AlgebraicAnalysis.TwoGeneratorIdentity (algebra (k := k) (R := A)) := by
+  intro d hd
+  obtain ⟨B, hB⟩ := exists_globalB C hOre d hd
+  obtain ⟨r, s, hrs⟩ := certificate_of_common_exponent C d B hB
+  exact ⟨B, r, s, hrs⟩
+
 end GlobalStafford.Descent
+
+#print axioms GlobalStafford.Descent.clear_to_base
+#print axioms GlobalStafford.Descent.chart_step
+#print axioms GlobalStafford.Descent.exists_globalB
+#print axioms GlobalStafford.Descent.certificate_of_common_exponent
+#print axioms GlobalStafford.Descent.twoGeneratorIdentity_of_charts
