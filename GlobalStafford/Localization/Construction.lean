@@ -689,6 +689,242 @@ theorem extendₗ_mem_order : ∀ (r : ℕ) (P : Module.End k A) (hP : P ∈ ord
       exact commutator_mem_order_mul (hA a)
         (commutator_mem_order_of_mul_eq_one hinv (hA (f ^ n)))
 
+/-! ## Step 5: independence of the order bound, and multiplicativity -/
+
+/-- `algebraMap A Af` is `k`-linear, by `IsScalarTower`. -/
+theorem algebraMap_A_smul (c : k) (a : A) :
+    algebraMap A Af (c • a) = c • algebraMap A Af a := by
+  rw [Algebra.smul_def c a, map_mul, ← IsScalarTower.algebraMap_apply, ← Algebra.smul_def]
+
+/-- `(1 : Module.End k R)` has order `0`. -/
+theorem one_mem_order_zero {R : Type*} [CommRing R] [Algebra k R] :
+    (1 : Module.End k R) ∈ order (k := k) (R := R) 0 :=
+  (mem_order_zero_iff_eq_multiplication _).2 (by ext x; simp [multiplication_apply])
+
+include hf in
+/-- **The extension does not depend on the chosen order bound** (`PLAN.md` WP-11
+step 5): both extensions have finite order and agree on the image of `A`. -/
+theorem extendₗ_unique {r₁ r₂ : ℕ} {P : Module.End k A}
+    (hP₁ : P ∈ order (k := k) (R := A) r₁) (hP₂ : P ∈ order (k := k) (R := A) r₂) :
+    (extendₗ f hf P hP₁ : Module.End k Af) = extendₗ f hf P hP₂ := by
+  refine ext_of_finite_order f (r := max r₁ r₂) _ _
+    (order_mono (Nat.le_max_left r₁ r₂) (extendₗ_mem_order f hf r₁ P hP₁))
+    (order_mono (Nat.le_max_right r₁ r₂) (extendₗ_mem_order f hf r₂ P hP₂)) (fun a => ?_)
+  rw [extendₗ_algebraMap, extendₗ_algebraMap]
+
+include hf in
+/-- `extend` is multiplicative (`PLAN.md` WP-11 step 5). -/
+theorem extendₗ_mul {r s t : ℕ} {P Q : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) r) (hQ : Q ∈ order (k := k) (R := A) s)
+    (hPQ : P * Q ∈ order (k := k) (R := A) t) :
+    (extendₗ f hf (P * Q) hPQ : Module.End k Af) = extendₗ f hf P hP * extendₗ f hf Q hQ := by
+  refine ext_of_finite_order f (r := max t (r + s)) _ _
+    (order_mono (le_max_left _ _) (extendₗ_mem_order f hf t _ hPQ))
+    (order_mono (le_max_right _ _)
+      (mul_mem_order (extendₗ_mem_order f hf r P hP) (extendₗ_mem_order f hf s Q hQ)))
+    (fun a => ?_)
+  simp only [Module.End.mul_apply, extendₗ_algebraMap]
+
+include hf in
+/-- `extend` preserves `1` (`PLAN.md` WP-11 step 5). -/
+theorem extendₗ_one {r : ℕ} (hP : (1 : Module.End k A) ∈ order (k := k) (R := A) r) :
+    (extendₗ f hf (1 : Module.End k A) hP : Module.End k Af) = 1 := by
+  refine ext_of_finite_order f (r := r) _ _ (extendₗ_mem_order f hf r _ hP)
+    (order_mono (Nat.zero_le r) one_mem_order_zero) (fun a => ?_)
+  rw [extendₗ_algebraMap]
+  rfl
+
+include hf in
+/-- `extend` preserves `0`. -/
+theorem extendₗ_zero {r : ℕ} (hP : (0 : Module.End k A) ∈ order (k := k) (R := A) r) :
+    (extendₗ f hf (0 : Module.End k A) hP : Module.End k Af) = 0 := by
+  refine ext_of_finite_order f (r := r) _ _ (extendₗ_mem_order f hf r _ hP)
+    (order (k := k) (R := Af) r).zero_mem (fun a => ?_)
+  rw [extendₗ_algebraMap]
+  simp
+
+include hf in
+/-- `extend` is additive (`PLAN.md` WP-11 step 5). -/
+theorem extendₗ_add {r s t : ℕ} {P Q : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) r) (hQ : Q ∈ order (k := k) (R := A) s)
+    (hPQ : P + Q ∈ order (k := k) (R := A) t) :
+    (extendₗ f hf (P + Q) hPQ : Module.End k Af) = extendₗ f hf P hP + extendₗ f hf Q hQ := by
+  refine ext_of_finite_order f (r := max t (max r s)) _ _
+    (order_mono (le_max_left _ _) (extendₗ_mem_order f hf t _ hPQ))
+    ((order (k := k) (R := Af) (max t (max r s))).add_mem
+      (order_mono (le_trans (le_max_left r s) (le_max_right t _))
+        (extendₗ_mem_order f hf r P hP))
+      (order_mono (le_trans (le_max_right r s) (le_max_right t _))
+        (extendₗ_mem_order f hf s Q hQ))) (fun a => ?_)
+  simp only [LinearMap.add_apply, extendₗ_algebraMap, map_add]
+
+include hf in
+/-- `extend` is `k`-homogeneous (`PLAN.md` WP-11 step 5). -/
+theorem extendₗ_smul_op {r s : ℕ} {P : Module.End k A} (c : k)
+    (hP : P ∈ order (k := k) (R := A) r) (hcP : c • P ∈ order (k := k) (R := A) s) :
+    (extendₗ f hf (c • P) hcP : Module.End k Af) = c • extendₗ f hf P hP := by
+  refine ext_of_finite_order f (r := max s r) _ _
+    (order_mono (le_max_left _ _) (extendₗ_mem_order f hf s _ hcP))
+    ((order (k := k) (R := Af) (max s r)).smul_mem c
+      (order_mono (le_max_right _ _) (extendₗ_mem_order f hf r P hP))) (fun a => ?_)
+  simp only [LinearMap.smul_apply, extendₗ_algebraMap, algebraMap_A_smul]
+
+include hf in
+/-- `extend` of a multiplication operator is multiplication by the image. -/
+theorem extendₗ_multiplication {r : ℕ} (a : A)
+    (hP : multiplication (k := k) a ∈ order (k := k) (R := A) r) :
+    (extendₗ f hf (multiplication (k := k) a) hP : Module.End k Af) =
+      multiplication (k := k) (algebraMap A Af a) := by
+  rw [extendₗ_unique f hf hP (multiplication_mem_order_zero (k := k) a),
+    extendₗ_of_order_zero f hf (multiplication_mem_order_zero (k := k) a)]
+  simp [multiplication_apply]
+
+/-! ## Step 5 (continued): the packaged algebra map `ι` -/
+
+/-- A chosen order bound for an element of `D_k(A)`. -/
+noncomputable def ordOf (P : algebra (k := k) (R := A)) : ℕ := (exists_order P).choose
+
+theorem ordOf_spec (P : algebra (k := k) (R := A)) :
+    (P : Module.End k A) ∈ order (k := k) (R := A) (ordOf (k := k) (A := A) P) :=
+  (exists_order P).choose_spec
+
+include hf in
+/-- The underlying function of `ι` (`PLAN.md` WP-11 step 5). -/
+noncomputable def ιFun (P : algebra (k := k) (R := A)) : algebra (k := k) (R := Af) :=
+  ⟨extendₗ f hf (P : Module.End k A) (ordOf_spec P),
+    (mem_algebra_iff _).2 ⟨ordOf (k := k) (A := A) P,
+      extendₗ_mem_order f hf _ _ (ordOf_spec P)⟩⟩
+
+include hf in
+/-- The coercion of `ιFun P` computed with *any* order bound of `P`. -/
+theorem coe_ιFun {r : ℕ} (P : algebra (k := k) (R := A))
+    (hP : (P : Module.End k A) ∈ order (k := k) (R := A) r) :
+    ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af) =
+      extendₗ f hf (P : Module.End k A) hP :=
+  extendₗ_unique f hf _ _
+
+include hf in
+/-- `ι` does not increase order (`PLAN.md` WP-11 step 6). -/
+theorem ιFun_mem_order (r : ℕ) (P : algebra (k := k) (R := A))
+    (hP : (P : Module.End k A) ∈ order (k := k) (R := A) r) :
+    ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af) ∈
+      order (k := k) (R := Af) r := by
+  rw [coe_ιFun f hf P hP]
+  exact extendₗ_mem_order f hf r _ hP
+
+include hf in
+/-- `ι` restricts to `P` on the image of `A`. -/
+theorem ιFun_algebraMap (P : algebra (k := k) (R := A)) (a : A) :
+    ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af) (algebraMap A Af a) =
+      algebraMap A Af ((P : Module.End k A) a) := by
+  rw [coe_ιFun f hf P (ordOf_spec P), extendₗ_algebraMap]
+
+include hf in
+theorem ιFun_one : ιFun f hf (Af := Af) (1 : algebra (k := k) (R := A)) = 1 := by
+  apply Subtype.ext
+  have h1 : ((1 : algebra (k := k) (R := A)) : Module.End k A) ∈ order (k := k) (R := A) 0 :=
+    one_mem_order_zero
+  show ((ιFun f hf (1 : algebra (k := k) (R := A)) : algebra (k := k) (R := Af)) :
+      Module.End k Af) = (1 : Module.End k Af)
+  rw [coe_ιFun f hf _ h1]
+  exact extendₗ_one f hf h1
+
+include hf in
+theorem ιFun_zero : ιFun f hf (Af := Af) (0 : algebra (k := k) (R := A)) = 0 := by
+  apply Subtype.ext
+  have h0 : ((0 : algebra (k := k) (R := A)) : Module.End k A) ∈ order (k := k) (R := A) 0 :=
+    (order (k := k) (R := A) 0).zero_mem
+  show ((ιFun f hf (0 : algebra (k := k) (R := A)) : algebra (k := k) (R := Af)) :
+      Module.End k Af) = (0 : Module.End k Af)
+  rw [coe_ιFun f hf _ h0]
+  exact extendₗ_zero f hf h0
+
+include hf in
+theorem ιFun_mul (P Q : algebra (k := k) (R := A)) :
+    ιFun f hf (Af := Af) (P * Q) = ιFun f hf P * ιFun f hf Q := by
+  apply Subtype.ext
+  have hPQ : ((P * Q : algebra (k := k) (R := A)) : Module.End k A) ∈
+      order (k := k) (R := A) (ordOf (k := k) (A := A) P + ordOf (k := k) (A := A) Q) :=
+    mul_mem_order (ordOf_spec P) (ordOf_spec Q)
+  show ((ιFun f hf (P * Q) : algebra (k := k) (R := Af)) : Module.End k Af) =
+      ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af) *
+        ((ιFun f hf Q : algebra (k := k) (R := Af)) : Module.End k Af)
+  rw [coe_ιFun f hf _ hPQ, coe_ιFun f hf P (ordOf_spec P), coe_ιFun f hf Q (ordOf_spec Q)]
+  exact extendₗ_mul f hf (ordOf_spec P) (ordOf_spec Q) hPQ
+
+include hf in
+theorem ιFun_add (P Q : algebra (k := k) (R := A)) :
+    ιFun f hf (Af := Af) (P + Q) = ιFun f hf P + ιFun f hf Q := by
+  apply Subtype.ext
+  have hPQ : ((P + Q : algebra (k := k) (R := A)) : Module.End k A) ∈
+      order (k := k) (R := A)
+        (max (ordOf (k := k) (A := A) P) (ordOf (k := k) (A := A) Q)) :=
+    (order (k := k) (R := A) _).add_mem
+      (order_mono (le_max_left _ _) (ordOf_spec P))
+      (order_mono (le_max_right _ _) (ordOf_spec Q))
+  show ((ιFun f hf (P + Q) : algebra (k := k) (R := Af)) : Module.End k Af) =
+      ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af) +
+        ((ιFun f hf Q : algebra (k := k) (R := Af)) : Module.End k Af)
+  rw [coe_ιFun f hf _ hPQ, coe_ιFun f hf P (ordOf_spec P), coe_ιFun f hf Q (ordOf_spec Q)]
+  exact extendₗ_add f hf (ordOf_spec P) (ordOf_spec Q) hPQ
+
+include hf in
+theorem ιFun_smul (c : k) (P : algebra (k := k) (R := A)) :
+    ιFun f hf (Af := Af) (c • P) = c • ιFun f hf P := by
+  apply Subtype.ext
+  have hcP : ((c • P : algebra (k := k) (R := A)) : Module.End k A) ∈
+      order (k := k) (R := A) (ordOf (k := k) (A := A) P) :=
+    (order (k := k) (R := A) _).smul_mem c (ordOf_spec P)
+  show ((ιFun f hf (c • P) : algebra (k := k) (R := Af)) : Module.End k Af) =
+      c • ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af)
+  rw [coe_ιFun f hf _ hcP, coe_ιFun f hf P (ordOf_spec P)]
+  exact extendₗ_smul_op f hf c (ordOf_spec P) hcP
+
+include hf in
+/-- **The extension algebra map** `ι : D_k(A) → D_k(A_f)` (`PLAN.md` WP-11
+step 5). -/
+noncomputable def ιHom : algebra (k := k) (R := A) →ₐ[k] algebra (k := k) (R := Af) where
+  toFun := ιFun f hf
+  map_one' := ιFun_one f hf
+  map_mul' := ιFun_mul f hf
+  map_zero' := ιFun_zero f hf
+  map_add' := ιFun_add f hf
+  commutes' := fun c => by
+    rw [Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one, ιFun_smul, ιFun_one]
+
+include hf in
+theorem ιHom_apply (P : algebra (k := k) (R := A)) :
+    ιHom f hf (Af := Af) P = ιFun f hf P := rfl
+
+include hf in
+/-- `PLAN.md` WP-11 step 6: `ι` sends `multiplicationD a` to
+`multiplicationD (algebraMap a)`. -/
+theorem ιHom_multiplicationD (a : A) :
+    ιHom f hf (multiplicationD (k := k) (A := A) a) =
+      multiplicationD (k := k) (A := Af) (algebraMap A Af a) := by
+  apply Subtype.ext
+  have hm : ((multiplicationD (k := k) (A := A) a : algebra (k := k) (R := A)) :
+      Module.End k A) ∈ order (k := k) (R := A) 0 := multiplicationD_mem_order_zero a
+  show ((ιFun f hf (multiplicationD (k := k) (A := A) a) : algebra (k := k) (R := Af)) :
+      Module.End k Af) = _
+  rw [coe_ιFun f hf _ hm]
+  exact extendₗ_multiplication f hf a hm
+
+include hf in
+/-- `PLAN.md` WP-11 step 7: `ι` is injective, since it restricts to `P` on the
+image of `A` and `algebraMap A Af` is injective. -/
+theorem ιHom_injective :
+    Function.Injective (ιHom (k := k) (A := A) (Af := Af) f hf) := by
+  intro P Q hPQ
+  apply Subtype.ext
+  ext a
+  have h : ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af) =
+      ((ιFun f hf Q : algebra (k := k) (R := Af)) : Module.End k Af) :=
+    congrArg (fun T : algebra (k := k) (R := Af) => (T : Module.End k Af)) hPQ
+  have ha := congrArg (fun T : Module.End k Af => T (algebraMap A Af a)) h
+  simp only [ιFun_algebraMap] at ha
+  exact algebraMap_injective f hf ha
+
 end GlobalStafford.Localization
 
 #print axioms GlobalStafford.Localization.ext_of_finite_order
