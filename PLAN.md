@@ -1178,7 +1178,7 @@ be additive.
 | WP-4 | Polynomial evaluation, ρ, E', S38Poly | I | generic part done; `rho`/`squaredInput` open (WP-4b) | sonnet | merged 2026-09-07 |
 | WP-5 | Bounded-order sources (Theorem 4.1) | I | todo | | |
 | WP-6 | Finite-cover patching (Theorem 5.1) | I | todo | | |
-| WP-7 | Finite-right-span ascent (Lemma 6.1) | I | todo | | |
+| WP-7 | Finite-right-span ascent (Lemma 6.1) | I | done | sonnet | merged 2026-09-07; candidate for AA-2 |
 | WP-8 | Étale chart data, Weyl action, chart S38 | I | todo | | needs AA-1 or local copy |
 | WP-9 | Scalar extension interface | I | todo | | |
 | WP-10 | Phase I assembly and audit | I | todo | | |

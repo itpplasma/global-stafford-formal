@@ -5,6 +5,7 @@ import GlobalStafford.Certificate.SquaredAnnihilator
 import GlobalStafford.Localization.Interface
 import GlobalStafford.Conjugation.PolynomialEvaluation
 import GlobalStafford.Chart.PolynomialS38
+import GlobalStafford.Chart.FiniteRankAscent
 
 /-!
 # GlobalStafford
