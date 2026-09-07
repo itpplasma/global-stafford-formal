@@ -9,7 +9,7 @@ paper_source: itpplasma/global-stafford notes/source-changing-descent-2026-09-07
 paper_review: two independent-context model reviews passed 2026-09-07; human review open
 lean_toolchain: leanprover/lean4:v4.33.0
 mathlib: db584cd6d46c92f209a44c0f1c829460d327499d
-algebraic_analysis: dfdd2da091a9d67e7a29cc7914f192d746a2400d
+algebraic_analysis: faa64814d5a310dc925e330af58e000f129f1098
 stafford38_formal: 784b59925beb9a480519142336bd6434f6eeef16
 challenge_declaration: GlobalStaffordChallenge.universalStatement
 palomar_registration: not-submitted
@@ -1115,7 +1115,7 @@ Deliverable: `noncomputable def scalarExtensionInterface : ScalarExtensionInterf
 
 | Id | Change | Consumer | Status |
 | --- | --- | --- | --- |
-| AA-1 | Add `mem_submodule_of_coordinates'` and `mem_subalgebra_of_coordinates'` whose `hcoordinate` quantifies only over `P ∈ algebra`; derive the unprimed theorems from them. Backward compatible. | WP-8, WP-14, WP-16 | todo |
+| AA-1 | Add `mem_submodule_of_coordinates'` and `mem_subalgebra_of_coordinates'` whose `hcoordinate` quantifies only over `P ∈ algebra`; derive the unprimed theorems from them. Backward compatible. | WP-8, WP-14, WP-16 | done (`faa64814`) |
 | AA-2 | `AlgebraicAnalysis/Module/FiniteRightSpanAscent.lean` (WP-7 generic content). | WP-8 | after Phase I |
 | AA-3 | `rightOre_of_rightNoetherian_domain`. | WP-15 | after Phase II |
 | AA-4 | Polynomial evaluation over a noncommutative `k`-algebra (`evalNat`, `scalarPoly`, vanishing lemma, `binomPoly`). | WP-4 | after Phase I |
@@ -1175,7 +1175,7 @@ be additive.
 | WP-1 | Operators: binomial formulas, contractive powers | I | done | sonnet | merged 2026-09-07 |
 | WP-2 | Squared annihilator, Ore data, localization interface | I | done | sonnet | merged 2026-09-07 |
 | WP-3 | Old-chart protection (Lemma 1.2) | I | done | sonnet | merged 2026-09-07; includes `rightClearance` |
-| WP-4 | Polynomial evaluation, ρ, E', S38Poly | I | generic part done; `rho`/`squaredInput` open (WP-4b) | sonnet | merged 2026-09-07 |
+| WP-4 | Polynomial evaluation, ρ, E', S38Poly | I | done | sonnet | merged 2026-09-07 (`RightMoved.lean` holds ρ and E') |
 | WP-5 | Bounded-order sources (Theorem 4.1) | I | todo | | |
 | WP-6 | Finite-cover patching (Theorem 5.1) | I | todo | | |
 | WP-7 | Finite-right-span ascent (Lemma 6.1) | I | done | sonnet | merged 2026-09-07; candidate for AA-2 |
@@ -1191,7 +1191,7 @@ be additive.
 | WP-17 | Smooth cover by étale charts | II | todo | | |
 | WP-18 | Closure and axiom audit | II | todo | | |
 | WP-19 | Solution, consumers, Palomar verification, metadata | III | todo | | |
-| AA-1 | Finite-order coordinate generation in AA | I | done in AA `faa64814`; pin bump pending | sonnet | |
+| AA-1 | Finite-order coordinate generation in AA | I | done; pin bumped to `faa64814` 2026-09-07 | sonnet | |
 
 ## 10. Build and verification commands
 

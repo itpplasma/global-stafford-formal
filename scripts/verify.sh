@@ -25,7 +25,7 @@ expected_toolchain = "leanprover/lean4:v4.33.0"
 expected_mathlib = "db584cd6d46c92f209a44c0f1c829460d327499d"
 expected = {
     "algebraicAnalysis": ("https://github.com/itpplasma/algebraic-analysis.git",
-                          "dfdd2da091a9d67e7a29cc7914f192d746a2400d"),
+                          "faa64814d5a310dc925e330af58e000f129f1098"),
     "stafford38Formal": ("https://github.com/itpplasma/stafford38-formal.git",
                          "784b59925beb9a480519142336bd6434f6eeef16"),
 }

@@ -19,10 +19,10 @@
       "type": "git",
       "subDir": null,
       "scope": "",
-      "rev": "dfdd2da091a9d67e7a29cc7914f192d746a2400d",
+      "rev": "faa64814d5a310dc925e330af58e000f129f1098",
       "name": "algebraicAnalysis",
       "manifestFile": "lake-manifest.json",
-      "inputRev": "dfdd2da091a9d67e7a29cc7914f192d746a2400d",
+      "inputRev": "faa64814d5a310dc925e330af58e000f129f1098",
       "inherited": false,
       "configFile": "lakefile.toml"
     },

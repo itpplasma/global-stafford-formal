@@ -25,7 +25,7 @@ scripts/verify-palomar.sh
 | --- | --- |
 | Project Lean | `leanprover/lean4:v4.33.0` |
 | Mathlib | `db584cd6d46c92f209a44c0f1c829460d327499d` |
-| AlgebraicAnalysis | `dfdd2da091a9d67e7a29cc7914f192d746a2400d` |
+| AlgebraicAnalysis | `faa64814d5a310dc925e330af58e000f129f1098` |
 | Stafford38 formal | `784b59925beb9a480519142336bd6434f6eeef16` |
 | Comparator | `575674928e239f5bc452aab72d1dd7b0f1326494` (Lean `4.34.0-rc1`) |
 | lean4export | `15f6055e299ad5b89345e533cc2192f4cc00f659` |
