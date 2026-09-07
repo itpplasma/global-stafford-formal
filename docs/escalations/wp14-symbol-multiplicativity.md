@@ -296,3 +296,120 @@ easy-to-get-subtly-wrong induction under time pressure and risk a stuck
 committed and pushed, and this file hands off a concrete, checked-against-the-
 actual-file-contents plan for 5–7 to whichever agent (Opus per the
 escalation ladder) picks this up next.
+
+## Resolution (Claude Opus, 2026-09-07)
+
+**Status: resolved, no `sorry`.** Steps 5–7 are implemented in
+`GlobalStafford/Chart/ChartDomain/Symbol.lean` and assembled in
+`GlobalStafford/Chart/ChartDomain.lean`; `tests/ChartDomainOracle.lean` is the
+consumer oracle. `#print axioms
+GlobalStafford.Chart.noZeroDivisors_algebra_of_etale` reports
+`[propext, Classical.choice, Quot.sound]`.
+
+### Route taken
+
+Neither the lexicographic order nor an explicit `coeffs`/`deg`/`symbol` triple
+was needed. Two observations collapse the bookkeeping:
+
+1. **The coefficient carrier is `MvPolynomial (Fin n) C` itself**, and its
+   product *is* the leading-symbol product. Define once
+
+   ```lean
+   def opOf : MvPolynomial (Fin n) C →ₗ[C] Module.End k C :=
+     (Finsupp.linearCombination C partialMonomial).comp
+       (AddMonoidAlgebra.coeffLinearEquiv (R := C) (S := C)).toLinearMap
+   ```
+
+   (`MvPolynomial σ R` is an `abbrev` for the *structure*
+   `AddMonoidAlgebra R (σ →₀ ℕ)` in this Mathlib, so the bridge
+   `AddMonoidAlgebra.coeffLinearEquiv` is required; the two types are not
+   defeq.) Because `LinearIndependent R v` is *by definition*
+   `Function.Injective (Finsupp.linearCombination R v)`,
+   `linearIndependent_partialMonomial` gives `opOf_injective` in three lines,
+   and `mem_span_partialMonomial` plus
+   `Finsupp.mem_span_range_iff_exists_finsupp` gives `exists_opOf`. No
+   `Basis.span`, no `Basis.repr`, no named `coeffs` function.
+
+2. **`Submodule.map opOf (degLt r)` replaces every "lower order terms"
+   phrase**, where
+
+   ```lean
+   def degLt (r : ℕ) : Submodule C (MvPolynomial (Fin n) C) where
+     carrier := {f | ∀ β ∈ f.support, β.degree < r}
+   ```
+
+   (support-based, not `totalDegree < r`, so that `0` is a member also for
+   `r = 0`). Being a submodule, it absorbs the sums, the `C`-scalars and the
+   negation that the argument produces, and injectivity of `opOf` transports
+   membership back to the polynomial side for free.
+
+Declarations, in dependency order (all in `namespace GlobalStafford.Chart`):
+
+| name | statement |
+| --- | --- |
+| `smul_eq_multiplication_mul` | `c • P = multiplication c * P` in `Module.End k C` |
+| `multiplication_mul_multiplication` | `multiplication (a*b) = multiplication a * multiplication b` |
+| `smul_mul_assoc'` | `(c • P) * Q = c • (P * Q)` |
+| `opOf`, `opOf_monomial`, `opOf_injective`, `exists_opOf` | the normal-form realization map |
+| `degLt`, `mem_degLt_iff`, `degLt_mono`, `monomial_mem_degLt`, `mul_monomial_mem_degLt` | the degree filtration |
+| `opOf_mul_partialMonomial` | `opOf f * ∂^β = opOf (f * X^β)` (right composition is exact) |
+| `liftDerivation_mul_multiplication` | `∂_i * mult c = mult c * ∂_i + mult (∂_i c)` |
+| `exists_pred_of_ne_zero` | `α ≠ 0 → ∃ i α', α = α' + single i 1 ∧ α'.degree + 1 = α.degree` |
+| `partialMonomial_commutator_mem_aux`, `partialMonomial_commutator_mem` | **step 6**, the weak composition rule |
+| `opOf_monomial_mul_sub_mem`, `opOf_sum_mul_sub_mem`, `opOf_mul_sub_mem` | **step 5/7**, the product formula |
+| `opOf_mul_ne_zero` | **step 7**, symbol multiplicativity |
+| `noZeroDivisors_algebra_of_etale` (`ChartDomain.lean`) | **the WP-14 deliverable** |
+
+### The two points where the naive plan had to be changed
+
+* **Peel the derivation on the *right*, not the left.** The escalation sketch
+  wrote `partialMonomial (single i 1 + α') = ∂_i * M(α')` and then needed
+  "`∂_i` composed on the left with something of lower degree stays of lower
+  degree" — which is itself an instance of the commutation rule being proved,
+  i.e. circular. Writing `α = α' + single i 1`, so
+  `partialMonomial α = M(α') * ∂_i`, makes the correction terms appear under
+  *right* multiplication by `∂_i`, and right multiplication is the exact,
+  induction-free `opOf_mul_partialMonomial`. The induction is a plain
+  `induction d` on a degree bound with `exists_pred_of_ne_zero` supplying the
+  decomposition; the algebraic identity is
+
+  ```text
+  M(α')∂_i·mult c − mult c·M(α')∂_i
+    = (M(α')·mult c − mult c·M(α'))·∂_i        -- IH for α', pushed right
+    + (M(α')·mult(∂_i c) − mult(∂_i c)·M(α'))  -- IH for α' at the derived coefficient
+    + mult(∂_i c)·M(α')                        -- a normal form of degree α'.degree
+  ```
+
+* **The top-degree slice never has to be constructed.** With the product
+  formula `opOf f * opOf g − opOf (f*g) ∈ map opOf (degLt (p+q))`
+  (`p := f.totalDegree`, `q := g.totalDegree`), assuming `opOf f * opOf g = 0`
+  gives `f * g ∈ degLt (p+q)` by injectivity of `opOf`, while
+  `MvPolynomial.totalDegree_mul_of_isDomain` (Mathlib,
+  `Mathlib/Algebra/MvPolynomial/NoZeroDivisors.lean`) says
+  `(f*g).totalDegree = p + q`, and `Finset.exists_mem_eq_sup` exhibits a
+  support element attaining it. Contradiction. So neither a `symbol` function
+  nor `homogeneousComponent` is needed anywhere.
+
+### Lean notes for whoever touches this next
+
+* `noncomm_ring` normalizes `-1 • (x * y) * z` and `-1 • (x * (y * z))` to
+  different atoms and stalls; `simp only [sub_mul, mul_add, mul_assoc]` followed
+  by `abel` closes those goals. Also: never `set A := …` before such a call,
+  because the let-bound local becomes an atom distinct from its body.
+* The `n`-metavariable pitfall documented above recurs at
+  `Finsupp.mem_span_range_iff_exists_finsupp`; it is fixed by giving `v`
+  explicitly with a type ascription.
+* `hinj` (the WP-13 injectivity of `algebraMap B C`) is **not used**. The
+  linear independence of `partialMonomial` only ever evaluates operators on
+  images of polynomial monomials and needs `algebraMap k C` injective, which is
+  automatic for a field. The hypothesis is kept because `PLAN.md` specifies the
+  signature; `set_option linter.unusedVariables false in` precedes the theorem
+  and the file docstring records why.
+
+### Left for the controller
+
+`GlobalStafford.lean` is on this session's do-not-edit list, so the line
+`import GlobalStafford.Chart.ChartDomain` (which the root-module convention of
+`PLAN.md` asks for) has **not** been added; nor has the WP-14 row of
+`PLAN.md` Section 9 been moved to `done`. Both are one-line changes for the
+merge commit.

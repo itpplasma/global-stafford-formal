@@ -138,14 +138,14 @@ theorem exists_pred_of_ne_zero {α : Fin n →₀ ℕ} (hα : α ≠ 0) :
     · subst hj
       simp only [Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_eq_same]
       omega
-    · simp [Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply, hj, Ne.symm hj]
+    · simp [Finsupp.add_apply, Finsupp.tsub_apply, hj]
   · have hsplit : (α - Finsupp.single i 1) + Finsupp.single i 1 = α := by
       ext j
       by_cases hj : j = i
       · subst hj
         simp only [Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_eq_same]
         omega
-      · simp [Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply, hj, Ne.symm hj]
+      · simp [Finsupp.add_apply, Finsupp.tsub_apply, hj]
     calc (α - Finsupp.single i 1).degree + 1
         = (α - Finsupp.single i 1).degree + (Finsupp.single i 1 : Fin n →₀ ℕ).degree := by
           rw [Finsupp.degree_single]
@@ -199,7 +199,7 @@ theorem partialMonomial_commutator_mem_aux : ∀ (d : ℕ) (α : Fin n →₀ �
         rw [mul_assoc (partialMonomial (k := k) (C := C) α')
           (liftDerivation (k := k) (C := C) i).toLinearMap
           (multiplication (k := k) (R := C) c), hstep]
-        simp only [sub_mul, mul_sub, mul_add, add_mul, mul_assoc]
+        simp only [sub_mul, mul_add, mul_assoc]
         abel
 
 /-- **Composition rule (weak form)**, the form used below. -/
@@ -297,3 +297,13 @@ theorem opOf_mul_ne_zero {f g : MvPolynomial (Fin n) C} (hf : f ≠ 0) (hg : g �
 
 end
 end GlobalStafford.Chart
+
+#print axioms GlobalStafford.Chart.opOf_monomial
+#print axioms GlobalStafford.Chart.opOf_injective
+#print axioms GlobalStafford.Chart.exists_opOf
+#print axioms GlobalStafford.Chart.opOf_mul_partialMonomial
+#print axioms GlobalStafford.Chart.liftDerivation_mul_multiplication
+#print axioms GlobalStafford.Chart.partialMonomial_commutator_mem
+#print axioms GlobalStafford.Chart.opOf_monomial_mul_sub_mem
+#print axioms GlobalStafford.Chart.opOf_mul_sub_mem
+#print axioms GlobalStafford.Chart.opOf_mul_ne_zero
