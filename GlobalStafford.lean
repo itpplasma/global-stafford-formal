@@ -22,6 +22,8 @@ import GlobalStafford.Chart.GenericFibre
 import GlobalStafford.Chart.SmoothCover
 import GlobalStafford.Chart.ChartDomain.Monomials
 import GlobalStafford.Chart.ChartDomain.NormalForm
+import GlobalStafford.Chart.ChartDomain.Symbol
+import GlobalStafford.Chart.ChartDomain
 import GlobalStafford.Weyl.OreDomain
 
 /-!

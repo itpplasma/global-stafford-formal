@@ -1185,7 +1185,7 @@ be additive.
 | WP-11 | Localization interface construction | II | done | sonnet+opus | merged 2026-09-07; `localizationInterface`, `localizationInterfaceAway` |
 | WP-12 | Étale derivations and coordinate rigidity | II | done | sonnet | merged 2026-09-07 |
 | WP-13 | Finite generic fibre | II | done | sonnet | merged 2026-09-07 |
-| WP-14 | Chart operator ring is a domain | II | wip: steps 1-4 done (sonnet), steps 5-7 escalated to opus (`docs/escalations/wp14-symbol-multiplicativity.md`) | opus | largest |
+| WP-14 | Chart operator ring is a domain | II | done | sonnet+opus | merged 2026-09-07; `noZeroDivisors_algebra_of_etale` (lex-free total-degree route) |
 | WP-15 | Weyl domain and right Ore | II | done | sonnet | merged 2026-09-07; right-noetherian route; contains the AA-3 lemma |
 | WP-16 | Scalar extension construction | II | done | sonnet | merged 2026-09-07; `scalarExtensionInterface`, `DK k C` |
 | WP-17 | Smooth cover by étale charts | II | done | sonnet | merged 2026-09-07; presentation route (`EtaleCoordinateChart`, `exists_finite_etale_cover`) |
