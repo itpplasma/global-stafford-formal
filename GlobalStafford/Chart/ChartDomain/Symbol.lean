@@ -247,5 +247,53 @@ theorem opOf_sum_mul_sub_mem (r : ℕ) (s t : Finset (Fin n →₀ ℕ)) (a b : 
   exact Submodule.sum_mem _ (fun β hβ =>
     opOf_monomial_mul_sub_mem (k := k) (C := C) α β (a α) (b β) r (hst α hα β hβ))
 
+theorem finsupp_degree_eq_sum (d : Fin n →₀ ℕ) : d.degree = d.sum fun _ e => e := rfl
+
+/-- **Product formula**: composition of two normal forms agrees with the polynomial product of
+their coefficient polynomials, up to a normal form of total degree `< p + q`. -/
+theorem opOf_mul_sub_mem (f g : MvPolynomial (Fin n) C) (p q : ℕ)
+    (hf : ∀ α ∈ f.support, α.degree ≤ p) (hg : ∀ β ∈ g.support, β.degree ≤ q) :
+    opOf (k := k) (C := C) f * opOf (k := k) (C := C) g -
+        opOf (k := k) (C := C) (f * g) ∈
+      Submodule.map (opOf (k := k) (C := C) (n := n)) (degLt (C := C) (n := n) (p + q)) := by
+  have h := opOf_sum_mul_sub_mem (k := k) (C := C) (p + q) f.support g.support
+    (fun α => MvPolynomial.coeff α f) (fun β => MvPolynomial.coeff β g)
+    (fun α hα β hβ => Nat.add_le_add (hf α hα) (hg β hβ))
+  rwa [← MvPolynomial.as_sum f, ← MvPolynomial.as_sum g] at h
+
+/-! ## 7b. The leading symbol separates: `opOf` of a product is nonzero -/
+
+/-- **Symbol multiplicativity**: the composition of two nonzero normal forms is nonzero, because
+its degree-`(p+q)` part is the product of the two leading symbols in the domain
+`MvPolynomial (Fin n) C`. -/
+theorem opOf_mul_ne_zero {f g : MvPolynomial (Fin n) C} (hf : f ≠ 0) (hg : g ≠ 0) :
+    opOf (k := k) (C := C) f * opOf (k := k) (C := C) g ≠ 0 := by
+  intro hzero
+  obtain ⟨e, he, heq⟩ := opOf_mul_sub_mem (k := k) (C := C) f g f.totalDegree g.totalDegree
+    (fun α hα => by
+      rw [finsupp_degree_eq_sum]; exact MvPolynomial.le_totalDegree hα)
+    (fun β hβ => by
+      rw [finsupp_degree_eq_sum]; exact MvPolynomial.le_totalDegree hβ)
+  rw [hzero, zero_sub] at heq
+  have hfg : f * g = -e := by
+    refine opOf_injective (k := k) (C := C) (n := n) ?_
+    rw [map_neg, heq, neg_neg]
+  have hmem : f * g ∈ degLt (C := C) (n := n) (f.totalDegree + g.totalDegree) := by
+    rw [hfg]
+    exact Submodule.neg_mem _ he
+  have hne : f * g ≠ 0 := mul_ne_zero hf hg
+  have hsup : (f * g).support.Nonempty := by
+    rw [Finset.nonempty_iff_ne_empty]
+    intro hcon
+    exact hne (MvPolynomial.support_eq_empty.mp hcon)
+  obtain ⟨β, hβ, hβeq⟩ := Finset.exists_mem_eq_sup (f * g).support hsup
+    (fun s : Fin n →₀ ℕ => s.sum fun _ e => e)
+  have hdeg : (f * g).totalDegree = f.totalDegree + g.totalDegree :=
+    MvPolynomial.totalDegree_mul_of_isDomain hf hg
+  have hβdeg : β.degree = f.totalDegree + g.totalDegree := by
+    rw [finsupp_degree_eq_sum, ← hβeq]
+    exact hdeg
+  exact absurd hβdeg (Nat.ne_of_lt (hmem β hβ))
+
 end
 end GlobalStafford.Chart
