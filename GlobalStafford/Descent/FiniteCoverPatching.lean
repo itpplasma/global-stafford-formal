@@ -80,4 +80,23 @@ structure ChartCover (k A : Type u) [Field k] [CharZero k] [CommRing A] [IsDomai
 attribute [instance] ChartCover.instCommRing ChartCover.instAlgk ChartCover.instAlgA
   ChartCover.instTower ChartCover.instLoc
 
+variable {Af' : Type u} [CommRing Af'] [Algebra k Af'] [Algebra A Af'] [IsScalarTower k A Af']
+  {g : A} [IsLocalization.Away g Af']
+
+/-- Right-clearing a same-divisor certificate `1 = ι d * U + ι X * ι d * V` on a chart `Af'`
+at `g` to a same-divisor identity `g^m = d A₀ + X d B₀` back on `A`. Used both for the new
+chart at each induction step (with `X` the perturbed source `F`) and, at the end, for every
+chart against the final global source `B`. -/
+theorem clear_to_base (Lg : LocalizationInterface (k := k) (A := A) (Af := Af') g)
+    (d X : algebra (k := k) (R := A)) (U V : algebra (k := k) (R := Af'))
+    (hcert : (1 : algebra (k := k) (R := Af')) = Lg.ι d * U + Lg.ι X * Lg.ι d * V) :
+    ∃ (m : ℕ) (A₀ B₀ : algebra (k := k) (R := A)),
+      multiplicationD (k := k) (A := A) g ^ m = d * A₀ + X * d * B₀ := by
+  obtain ⟨m, A₀, B₀, hA₀, hB₀⟩ := Lg.rightClearance_pair U V
+  refine ⟨m, A₀, B₀, ?_⟩
+  apply Lg.ι_injective
+  rw [Lg.ι_pow_multiplicationD]
+  simp only [map_add, map_mul]
+  rw [← hA₀, ← hB₀, ← mul_assoc, ← mul_assoc, ← add_mul, ← hcert, one_mul]
+
 end GlobalStafford.Descent
