@@ -1,5 +1,7 @@
 import GlobalStafford.Chart.ScalarExtensionConstruction
 import GlobalStafford.Chart.GenericFibre
+import GlobalStafford.Assembly.PhaseI
+import GlobalStafford.Weyl.OreDomain
 
 /-!
 # Étale chart data over `K = RatFunc k` (WP-18b)
@@ -415,5 +417,83 @@ theorem finiteGenericFibreK :
 
 end FiniteGenericFibreK
 
+/-! ## 7. Assembly: `etaleChartDataK` and `s38Poly_chart` -/
+
+section Assembly
+
+variable {k : Type u} [Field k] [CharZero k] {n : ℕ} {C : Type u} [CommRing C] [IsDomain C]
+  [Algebra k C] [Algebra (B k n) C] [IsScalarTower k (B k n) C] [Algebra.Etale (B k n) C]
+
+/-- Coordinate rigidity over `K`, restated with the `xC`-form hypothesis expected by the
+`coordinateRigidity` field of `EtaleChartData`: `xC (RatFunc k) n (CK k C) i` is definitionally
+`algebraMap (B (RatFunc k) n) (CK k C) (X i)`, which `algebraMap_BK_X` identifies with
+`xCK k n C i`. Stated as a standalone declaration (rather than inline in the structure
+literal) so that the implicit `n` is fixed before elaborating the proof term. -/
+theorem coordinateRigidityK' (P : Module.End (RatFunc k) (CK k C))
+    (hP : P ∈ algebra (k := RatFunc k) (R := CK k C))
+    (hcomm : ∀ i, commutator P (xC (RatFunc k) n (CK k C) i) = 0) :
+    P = multiplication (P 1) :=
+  coordinateRigidityK (n := n) P hP (fun i => by rw [← algebraMap_BK_X (n := n) i]; exact hcomm i)
+
+/-- Duality of `liftDerivationK` with coordinates, restated with the `xC`-form hypothesis
+expected by the `«∂_coord»` field of `EtaleChartData` (see `coordinateRigidityK'`). -/
+theorem liftDerivationK_coord' (i j : Fin n) :
+    liftDerivationK (k := k) (n := n) (C := C) i (xC (RatFunc k) n (CK k C) j) =
+      if i = j then 1 else 0 := by
+  rw [show xC (RatFunc k) n (CK k C) j = xCK k n C j from algebraMap_BK_X (k := k) (n := n) j]
+  exact liftDerivationK_coord (k := k) (n := n) (C := C) i j
+
+set_option maxHeartbeats 800000 in
+/-- **WP-18b deliverable**: the étale chart data of the scalar-extended ring `C_K = K ⊗_k C`
+over `K = RatFunc k`, assembled from the WP-16 scalar-extension construction
+(coordinate derivations `liftDerivationK`, coordinate rigidity `coordinateRigidityK`) and the
+WP-13 finite generic fibre base-changed to `K` (`finiteGenericFibreK`), given that `D_k(C)`
+has no zero divisors (`hdom`, supplied by WP-14). Every field is given with `n` (and `k`, `C`)
+pinned explicitly: `n` does not occur in the target type `EtaleChartData (RatFunc k) n (CK k C)`
+through `CK k C` alone, so leaving it implicit stalls elaboration on a metavariable. -/
+noncomputable def etaleChartDataK (hdom : NoZeroDivisors (algebra (k := k) (R := C))) :
+    EtaleChartData (RatFunc k) n (CK k C) where
+  «∂» := liftDerivationK (k := k) (n := n) (C := C)
+  «∂_coord» := liftDerivationK_coord' (k := k) (n := n) (C := C)
+  «∂_comm» := liftDerivationK_comm (k := k) (n := n) (C := C)
+  coordinateRigidity := coordinateRigidityK' (k := k) (n := n) (C := C)
+  finiteGenericFibre := finiteGenericFibreK (k := k) (n := n) (C := C)
+  algebraMap_ne_zero := algebraMap_ne_zero_K (k := k) (n := n) (C := C)
+  noZeroDivisors := by
+    haveI := hdom
+    haveI := nontrivial_algebra (k := k) (C := C)
+    exact noZeroDivisors_of_scalarExtension (scalarExtensionInterface (k := k) (C := C) (n := n))
+
+set_option maxHeartbeats 800000 in
+include n in
+/-- **WP-18b terminal deliverable**: the polynomial chart hypothesis `S38Poly` of the chart `C`
+over `k`, closing the remaining `Inputs.chartS38Poly` leaf of Phase I (WP-10) via
+`s38Poly_of_chartData`, `etaleChartDataK`, and `scalarExtensionInterface`. Note `n` does not
+occur in the statement (`S38Poly k (algebra k C)` does not mention it): the `include n in`
+pragma forces its inclusion as an implicit argument, since the proof needs it (through
+`etaleChartDataK` and `scalarExtensionInterface`) and plain `variable`-scanning of the
+statement alone would otherwise omit it. -/
+theorem s38Poly_chart (hdom : NoZeroDivisors (algebra (k := k) (R := C))) :
+    S38Poly k (algebra (k := k) (R := C)) := by
+  have hSI := scalarExtensionInterface (k := k) (C := C) (n := n)
+  have hEK : EtaleChartData (RatFunc k) n (CK k C) := etaleChartDataK hdom
+  exact GlobalStafford.PhaseI.s38Poly_of_chartData hEK hSI
+
+end Assembly
+
 end
 end GlobalStafford.Chart
+
+#print axioms GlobalStafford.Chart.noZeroDivisors_of_scalarExtension
+#print axioms GlobalStafford.Chart.nontrivial_algebra
+#print axioms GlobalStafford.Chart.nontrivial_CK
+#print axioms GlobalStafford.Chart.instAlgebraBK
+#print axioms GlobalStafford.Chart.instIsScalarTowerBK
+#print axioms GlobalStafford.Chart.algebraMap_BK_mapBK
+#print axioms GlobalStafford.Chart.liftDerivationK_comm
+#print axioms GlobalStafford.Chart.algebraMap_ne_zero_K
+#print axioms GlobalStafford.Chart.finiteGenericFibreK
+#print axioms GlobalStafford.Chart.coordinateRigidityK'
+#print axioms GlobalStafford.Chart.liftDerivationK_coord'
+#print axioms GlobalStafford.Chart.etaleChartDataK
+#print axioms GlobalStafford.Chart.s38Poly_chart
