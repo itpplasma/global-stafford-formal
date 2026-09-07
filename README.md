@@ -19,17 +19,18 @@ source-changing local-to-global argument.
 
 ## Status
 
-Formalization in progress. [`PLAN.md`](PLAN.md) is the live plan: Phase I
-proves every project-owned step over the intrinsic differential-operator
-carrier with the literature inputs as explicit hypotheses; Phase II
-discharges those hypotheses from Mathlib and the pinned dependencies;
-Phase III packages the Palomar Challenge/Solution pair and the independent
-verification. Nothing is verified yet, and no release, registration or
-publication is claimed.
-
-[`Challenge.lean`](Challenge.lean) states the theorem with Mathlib only
-(`GlobalStaffordChallenge.universalStatement`, one deliberate `sorry`).
-`Solution.lean` will transport the proved theorem to it.
+The formalization is complete through Phase II: `GlobalStafford.universalStatement`
+(`GlobalStafford/Assembly/Closure.lean`) proves the theorem for the intrinsic
+algebra of finite-order differential operators, and `Solution.lean` transports
+it to the Mathlib-only statement `GlobalStaffordChallenge.universalStatement`
+of [`Challenge.lean`](Challenge.lean). Both depend only on `propext`,
+`Classical.choice`, and `Quot.sound`; `scripts/verify.sh` (build, pins,
+source audit, endpoint axioms, Challenge/Solution import closures) passes.
+Phase III (Comparator, NanoDa and Lean-kernel replay in an isolated clone,
+verification record, release metadata) is in progress; see [`PLAN.md`](PLAN.md)
+and [`docs/verification.md`](docs/verification.md). No release, registration,
+or publication is claimed, and human expert review of the paper proof and of
+the statement correspondence remains open.
 
 | Dependency | Exact version |
 | --- | --- |

@@ -13,7 +13,7 @@ work packages close.
 | `D_k(A)`, finite-order operators, composition product | `AlgebraicAnalysis.DifferentialOperators.algebra (k := k) (R := A)`; in `Challenge.lean` the predicate `IsDifferentialOperator` on `Module.End k A` | Same inductive definition; `Solution.lean` proves `IsOrderLE n P ↔ P ∈ order n` |
 | smooth integral affine `A/k`, char 0 | `[Field k] [CharZero k] [CommRing A] [IsDomain A] [Algebra k A] [Algebra.Smooth k A]` | Mathlib smooth = formally smooth + finite presentation |
 | `1 = dR + FdS` | `(1 : _) = d * R + F * d * S` | order preserved; both `k`-linear compositions |
-| GS-DX (Theorem 6.3) | `GlobalStafford.universalStatement`; `GlobalStaffordChallenge.universalStatement` | Phase II / Phase III |
+| GS-DX (Theorem 6.3) | `GlobalStafford.universalStatement`; `GlobalStaffordChallenge.universalStatement` | proved; only `propext`, `Classical.choice`, `Quot.sound` |
 
 ## Proof steps
 
@@ -35,9 +35,17 @@ work packages close.
 | Lemma 6.1 | `GlobalStafford.Chart.twoGeneratorIdentity_of_finiteRightSpan`, `finiteRightSpan_weylAction` | 7 | done |
 | Lemma 6.2 (rank) | `GlobalStafford.Chart.twoGeneratorIdentity_chart`, `twoGeneratorIdentity_chart_of_weyl` | 8 | done |
 | Lemma 6.2 over `k(t)` | `GlobalStafford.Chart.s38Poly_of_scalarExtension`, `GlobalStafford.PhaseI.s38Poly_of_chartData` | 9, 10 | done |
-| Theorem 6.3 cover | `GlobalStafford.Chart.SmoothCover` | 17 | todo |
+| Theorem 6.3 cover | `GlobalStafford.Chart.exists_finite_etale_cover`, `EtaleCoordinateChart` | 17 | done |
 | Weyl S38 import | `Stafford38.universalStatement` at pin `784b5992` | — | imported, axiom-clean |
 | Phase I assembly | `GlobalStafford.PhaseI.twoGeneratorIdentity_of_inputs`, `universalStatement_of_inputs` | 10 | done |
+| Operator localization and clearance (Section 1, Section 8 inputs) | `GlobalStafford.Localization.localizationInterface` | 11 | done |
+| Étale lifting, Weyl relations, coordinate rigidity (Lemma 6.2) | `GlobalStafford.Chart.liftDerivation`, `liftDerivation_comm`, `coordinateRigidity` | 12 | done |
+| Finite generic fibre and `B → C` injective (Lemma 6.2) | `GlobalStafford.Chart.finiteGenericFibre_of_etale`, `algebraMap_injective_of_etale` | 13 | done |
+| `D_k(C)` is a domain (Section 8 input) | `GlobalStafford.Chart.noZeroDivisors_algebra_of_etale` | 14 | done |
+| Weyl algebra domain and right Ore (Section 8 input) | `GlobalStafford.Weyl.OreDomain` instances, `weyl_rightOre` | 15 | done |
+| Scalar extension to `k(t)` (Lemma 6.2) | `GlobalStafford.Chart.scalarExtensionInterface`, `etaleChartDataK`, `s38Poly_chart` | 16, 18b | done |
+| `T → S` injective (Lemma 6.2) | `GlobalStafford.Chart.weylAction_injective` | 18a | done |
+| GS-DX (Theorem 6.3) | `GlobalStafford.universalStatement`; `GlobalStaffordChallenge.universalStatement` (`Solution.lean`) | 18, 19 | done; Palomar replay pending |
 
 ## Literature inputs and their discharge
 

@@ -1142,6 +1142,8 @@ be additive.
 | Global domain and right Ore | `Inputs.globalDomain, rightOre` | WP-18 (from chart 0 and clearance) |
 | Weyl S38 | `Stafford38.universalStatement` (imported, axiom-clean) | none needed |
 
+All leaves were discharged on 2026-09-07 (WP-11..WP-18); `docs/paper-lean-specification.md` lists the Lean names.
+
 ## 8. Agent workflow
 
 - Work packages are claimed by editing the status column of Section 9
