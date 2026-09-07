@@ -13,6 +13,7 @@ import GlobalStafford.Conjugation.RightMoved
 import GlobalStafford.Chart.PolynomialS38
 import GlobalStafford.Chart.FiniteRankAscent
 import GlobalStafford.Chart.ScalarExtension
+import GlobalStafford.Chart.EtaleChartData
 
 /-!
 # GlobalStafford
