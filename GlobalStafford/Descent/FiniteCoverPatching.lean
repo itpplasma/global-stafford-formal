@@ -99,4 +99,82 @@ theorem clear_to_base (Lg : LocalizationInterface (k := k) (A := A) (Af := Af') 
   simp only [map_add, map_mul]
   rw [← hA₀, ← hB₀, ← mul_assoc, ← mul_assoc, ← add_mul, ← hcert, one_mul]
 
+/-- The induction step of Theorem 5.1: given a same-divisor certificate for `d` and `B` on
+every chart `j < i` (`hInv`), Theorem 4.1 (`C.producer`) at chart `i` and old-chart protection
+(`protect_old_chart`, Lemma 1.2) produce a new global source `B'` with a same-divisor
+certificate on every chart `j < i + 1`. -/
+theorem chart_step (C : ChartCover k A) [NoZeroDivisors (algebra (k := k) (R := A))]
+    (hOre : ∀ x y : algebra (k := k) (R := A), x ≠ 0 → y ≠ 0 →
+      ∃ a b : algebra (k := k) (R := A), a ≠ 0 ∧ x * a = y * b)
+    (d : algebra (k := k) (R := A)) (hd : d ≠ 0) {i : ℕ} (hi : i < C.s)
+    (B : algebra (k := k) (R := A))
+    (hInv : ∀ j : Fin C.s, (j : ℕ) < i →
+      ∃ U V : algebra (k := k) (R := C.Af j),
+        (1 : algebra (k := k) (R := C.Af j)) =
+          (C.loc j).ι d * U + (C.loc j).ι B * (C.loc j).ι d * V) :
+    ∃ B' : algebra (k := k) (R := A), ∀ j : Fin C.s, (j : ℕ) < i + 1 →
+      ∃ U V : algebra (k := k) (R := C.Af j),
+        (1 : algebra (k := k) (R := C.Af j)) =
+          (C.loc j).ι d * U + (C.loc j).ι B' * (C.loc j).ι d * V := by
+  classical
+  set i' : Fin C.s := ⟨i, hi⟩ with hi'def
+  obtain ⟨od⟩ := OreData.of_rightOre hOre d B hd
+  obtain ⟨M, l, H, hH, hprod⟩ := C.producer i' d B od hd
+  -- Old certificates, extracted by choice from `hInv`.
+  let oldU : ∀ j : Fin C.s, (j : ℕ) < i → algebra (k := k) (R := C.Af j) :=
+    fun j hj => (hInv j hj).choose
+  let oldV : ∀ j : Fin C.s, (j : ℕ) < i → algebra (k := k) (R := C.Af j) :=
+    fun j hj => (hInv j hj).choose_spec.choose
+  have oldCert : ∀ (j : Fin C.s) (hj : (j : ℕ) < i),
+      (1 : algebra (k := k) (R := C.Af j)) =
+        (C.loc j).ι d * oldU j hj + (C.loc j).ι B * (C.loc j).ι d * oldV j hj :=
+    fun j hj => (hInv j hj).choose_spec.choose_spec
+  -- Orders needed to invoke `protect_old_chart`: `rd` for `d`, `Rmax` a common bound for
+  -- the orders of all the old `V`'s.
+  obtain ⟨rd, hrd⟩ := exists_order d
+  set Rmax : ℕ :=
+      Finset.univ.sup (fun j : {j : Fin C.s // (j : ℕ) < i} => (exists_order (oldV j.1 j.2)).choose)
+    with hRmaxdef
+  have hRmax : ∀ j : Fin C.s, (hj : (j : ℕ) < i) →
+      (oldV j hj : Module.End k (C.Af j)) ∈ order Rmax := by
+    intro j hj
+    have hmem : (⟨j, hj⟩ : {j : Fin C.s // (j : ℕ) < i}) ∈ (Finset.univ : Finset _) :=
+      Finset.mem_univ _
+    have hle : (exists_order (oldV j hj)).choose ≤ Rmax := by
+      rw [hRmaxdef]
+      exact Finset.le_sup
+        (f := fun j : {j : Fin C.s // (j : ℕ) < i} => (exists_order (oldV j.1 j.2)).choose) hmem
+    exact order_mono hle (exists_order (oldV j hj)).choose_spec
+  -- Choose `N` large enough for the Theorem 4.1 admissibility bound, and large enough that
+  -- old-chart protection applies to every old chart.
+  obtain ⟨N₀, hN₀⟩ := GlobalStafford.Chart.exists_admissible_bound hH
+  set N : ℕ := max (max (l + M) N₀) (l + 2 * M + rd + Rmax + 1) with hNdef
+  have hN1 : l + M ≤ N := le_trans (le_max_left _ _) (le_max_left _ _)
+  have hN2 : N₀ ≤ N := le_trans (le_max_right _ _) (le_max_left _ _)
+  have hN3 : l + 2 * M + rd + Rmax + 1 ≤ N := le_max_right _ _
+  have hHN : H.eval (N : k) ≠ 0 := hN₀ N hN2
+  obtain ⟨T, hT, U, V, hcertNew⟩ := hprod N hN1 hHN
+  set B' : algebra (k := k) (R := A) :=
+      B + multiplicationD (k := k) (A := A) (C.f i') ^ (N - l - M) * T with hB'def
+  -- Right-clear the new-chart certificate to a same-divisor identity on `A`.
+  obtain ⟨m, A₀, B₀, hclear⟩ := clear_to_base (C.loc i') d B' U V hcertNew
+  -- Old-chart protection: the new source `B'` still succeeds on every old chart.
+  have step_old : ∀ (j : Fin C.s) (hj : (j : ℕ) < i), ∃ U' V' : algebra (k := k) (R := C.Af j),
+      (1 : algebra (k := k) (R := C.Af j)) =
+        (C.loc j).ι d * U' + (C.loc j).ι B' * (C.loc j).ι d * V' := by
+    intro j hj
+    have hL : M + rd + Rmax < N - l - M := by omega
+    exact protect_old_chart (Lg := C.loc j) (f := C.f i') hrd hT (hRmax j hj) hL (oldCert j hj)
+      hclear
+  refine ⟨B', fun j hj1 => ?_⟩
+  by_cases hji : (j : ℕ) < i
+  · exact step_old j hji
+  · have hjeq : (j : ℕ) = i := by omega
+    have hji' : j = i' := by
+      apply Fin.ext
+      rw [hi'def]
+      exact hjeq
+    subst hji'
+    exact ⟨U, V, hcertNew⟩
+
 end GlobalStafford.Descent
