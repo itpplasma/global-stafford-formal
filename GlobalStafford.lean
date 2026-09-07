@@ -6,6 +6,8 @@ import GlobalStafford.Localization.Interface
 import GlobalStafford.Certificate.OldChartProtection
 import GlobalStafford.Descent.BoundedOrderSource
 import GlobalStafford.Descent.FiniteCoverPatching
+import GlobalStafford.Assembly.Inputs
+import GlobalStafford.Assembly.PhaseI
 import GlobalStafford.Conjugation.PolynomialEvaluation
 import GlobalStafford.Conjugation.RightMoved
 import GlobalStafford.Chart.PolynomialS38
