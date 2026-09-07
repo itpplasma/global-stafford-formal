@@ -1,5 +1,6 @@
 import Mathlib.RingTheory.OreLocalization.Ring
 import Mathlib.LinearAlgebra.FiniteDimensional.Basic
+import Mathlib.Tactic.NoncommRing
 import AlgebraicAnalysis.Module.RankTorsion
 import AlgebraicAnalysis.Ore.Localization
 import AlgebraicAnalysis.RingTheory.TwoGeneratorIdentity
@@ -312,4 +313,85 @@ theorem moduleFinite : Module.Finite (Q T) (V φ) := by
 
 end SpanFinite
 
+/-- Lemma 6.1: if `S` is spanned as a right `T`-module by finitely many elements, then
+every nonzero `d ∈ S` admits `y ∈ S` and nonzero `a ∈ T` with `d * y = φ a`. -/
+theorem exists_mul_eq_of_finiteRightSpan (φ : T →+* S) (h : FiniteRightSpan φ) (d : S)
+    (hd : d ≠ 0) : ∃ (y : S) (a : T), a ≠ 0 ∧ d * y = φ a := by
+  classical
+  obtain ⟨m, s, hspan⟩ := h
+  haveI := moduleFinite φ s hspan
+  obtain ⟨z, hz⟩ :=
+    Ld_surjective φ hd ((⟨(1 : S)⟩ : RightModule φ) /ₒ (1 : (Tᵐᵒᵖ)⁰))
+  induction z using OreLocalization.ind with
+  | _ y den =>
+    rw [Ld_oreDiv, OreLocalization.oreDiv_eq_iff] at hz
+    obtain ⟨u, v, hv1, hv2⟩ := hz
+    have hveq : d * (y.v * φ v.unop) = φ (u : Tᵐᵒᵖ).unop := by
+      have := congrArg RightModule.v hv1
+      simp only [Submonoid.smul_def, RightModule.smul_v, one_mul] at this
+      simpa [mul_assoc] using this.symm
+    have hune : (u : Tᵐᵒᵖ).unop ≠ 0 := by
+      intro hzero
+      exact (nonZeroDivisors.ne_zero u.2) (MulOpposite.unop_eq_zero_iff _ |>.mp hzero)
+    exact ⟨y.v * φ v.unop, (u : Tᵐᵒᵖ).unop, hune, hveq⟩
+
+/-- Lemma 6.1 (S38 transfer): if `S` is spanned as a right `T`-module by finitely many
+elements and `T` satisfies the two-generator identity, then so does `S`. -/
+theorem twoGeneratorIdentity_of_finiteRightSpan {φ : T →+* S} (h : FiniteRightSpan φ)
+    (hT : AlgebraicAnalysis.TwoGeneratorIdentity T) :
+    AlgebraicAnalysis.TwoGeneratorIdentity S := by
+  intro q hq
+  obtain ⟨y, a, ha, hqa⟩ := exists_mul_eq_of_finiteRightSpan φ h q hq
+  obtain ⟨F, r, sc, hone⟩ := hT a ha
+  refine ⟨φ F, y * φ r, y * φ sc, ?_⟩
+  have hm := congrArg φ hone
+  simp only [map_add, map_mul, map_one] at hm
+  calc
+    (1 : S) = φ a * φ r + φ F * φ a * φ sc := by simpa using hm
+    _ = q * (y * φ r) + φ F * q * (y * φ sc) := by rw [← hqa]; noncomm_ring
+
+/-- The right Ore condition on `T`, extracted from `[OreLocalization.OreSet (Tᵐᵒᵖ)⁰]`
+(the right Ore condition, encoded through `Tᵐᵒᵖ` following the convention of
+`AlgebraicAnalysis.Module.RankTorsion`). -/
+theorem rightOre_of_oreSet (τ₁ τ₂ : T) (hτ₁ : τ₁ ≠ 0) (hτ₂ : τ₂ ≠ 0) :
+    ∃ σ₁ σ₂ : T, σ₁ ≠ 0 ∧ τ₁ * σ₁ = τ₂ * σ₂ := by
+  have hτ₂' : (MulOpposite.op τ₂ : Tᵐᵒᵖ) ≠ 0 := by
+    simpa [MulOpposite.op_eq_zero_iff] using hτ₂
+  obtain ⟨r, s, heq⟩ := OreLocalization.oreCondition (MulOpposite.op τ₁ : Tᵐᵒᵖ)
+    (⟨MulOpposite.op τ₂, mem_nonZeroDivisors_of_ne_zero hτ₂'⟩ : (Tᵐᵒᵖ)⁰)
+  have heq' := congrArg MulOpposite.unop heq
+  simp only [MulOpposite.unop_mul, MulOpposite.unop_op] at heq'
+  refine ⟨(s : Tᵐᵒᵖ).unop, r.unop, ?_, heq'⟩
+  intro hzero
+  exact (nonZeroDivisors.ne_zero s.2) (MulOpposite.unop_eq_zero_iff _ |>.mp hzero)
+
+/-- Lemma 6.1 (right Ore transfer): if `S` is spanned as a right `T`-module by finitely
+many elements through an injective `φ`, and `T` is right Ore (via `[OreLocalization.OreSet
+(Tᵐᵒᵖ)⁰]`), then `S` is right Ore. -/
+theorem rightOre_of_finiteRightSpan {φ : T →+* S} (h : FiniteRightSpan φ)
+    (hφ : Function.Injective φ) :
+    ∀ x y : S, x ≠ 0 → y ≠ 0 → ∃ a b : S, a ≠ 0 ∧ x * a = y * b := by
+  intro x y hx hy
+  obtain ⟨x', a', ha', hxa'⟩ := exists_mul_eq_of_finiteRightSpan φ h x hx
+  obtain ⟨y', b', hb', hyb'⟩ := exists_mul_eq_of_finiteRightSpan φ h y hy
+  obtain ⟨τ1, τ2, hτ1, haτ⟩ := rightOre_of_oreSet a' b' ha' hb'
+  have hkey : x * (x' * φ τ1) = y * (y' * φ τ2) := by
+    calc x * (x' * φ τ1) = (x * x') * φ τ1 := by rw [mul_assoc]
+      _ = φ a' * φ τ1 := by rw [hxa']
+      _ = φ (a' * τ1) := by rw [map_mul]
+      _ = φ (b' * τ2) := by rw [haτ]
+      _ = φ b' * φ τ2 := by rw [map_mul]
+      _ = (y * y') * φ τ2 := by rw [hyb']
+      _ = y * (y' * φ τ2) := by rw [mul_assoc]
+  refine ⟨x' * φ τ1, y' * φ τ2, ?_, hkey⟩
+  intro hcontra
+  have hzero : x * (x' * φ τ1) = 0 := by rw [hcontra, mul_zero]
+  rw [← mul_assoc, hxa', ← map_mul] at hzero
+  exact (mul_ne_zero ha' hτ1) (hφ (by simpa using hzero))
+
 end GlobalStafford.Chart
+
+#print axioms GlobalStafford.Chart.exists_mul_eq_of_finiteRightSpan
+#print axioms GlobalStafford.Chart.twoGeneratorIdentity_of_finiteRightSpan
+#print axioms GlobalStafford.Chart.rightOre_of_oreSet
+#print axioms GlobalStafford.Chart.rightOre_of_finiteRightSpan
