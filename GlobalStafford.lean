@@ -4,6 +4,7 @@ import GlobalStafford.Operators.ContractivePowers
 import GlobalStafford.Certificate.SquaredAnnihilator
 import GlobalStafford.Localization.Interface
 import GlobalStafford.Certificate.OldChartProtection
+import GlobalStafford.Descent.BoundedOrderSource
 import GlobalStafford.Descent.FiniteCoverPatching
 import GlobalStafford.Conjugation.PolynomialEvaluation
 import GlobalStafford.Conjugation.RightMoved

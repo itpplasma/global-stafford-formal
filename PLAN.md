@@ -1176,7 +1176,7 @@ be additive.
 | WP-2 | Squared annihilator, Ore data, localization interface | I | done | sonnet | merged 2026-09-07 |
 | WP-3 | Old-chart protection (Lemma 1.2) | I | done | sonnet | merged 2026-09-07; includes `rightClearance` |
 | WP-4 | Polynomial evaluation, ρ, E', S38Poly | I | done | sonnet | merged 2026-09-07 (`RightMoved.lean` holds ρ and E') |
-| WP-5 | Bounded-order sources (Theorem 4.1) | I | todo | | |
+| WP-5 | Bounded-order sources (Theorem 4.1) | I | done | sonnet | merged 2026-09-07 |
 | WP-6 | Finite-cover patching (Theorem 5.1) | I | done | sonnet | merged 2026-09-07; takes `BoundedSourceProducer` (WP-5 shape) as hypothesis, wired in WP-10 |
 | WP-7 | Finite-right-span ascent (Lemma 6.1) | I | done | sonnet | merged 2026-09-07; candidate for AA-2 |
 | WP-8 | Étale chart data, Weyl action, chart S38 | I | todo | | needs AA-1 or local copy |
