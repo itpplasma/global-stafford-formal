@@ -1187,7 +1187,7 @@ be additive.
 | WP-13 | Finite generic fibre | II | done | sonnet | merged 2026-09-07 |
 | WP-14 | Chart operator ring is a domain | II | wip: steps 1-4 done (sonnet), steps 5-7 escalated to opus (`docs/escalations/wp14-symbol-multiplicativity.md`) | opus | largest |
 | WP-15 | Weyl domain and right Ore | II | done | sonnet | merged 2026-09-07; right-noetherian route; contains the AA-3 lemma |
-| WP-16 | Scalar extension construction | II | todo | | |
+| WP-16 | Scalar extension construction | II | done | sonnet | merged 2026-09-07; `scalarExtensionInterface`, `DK k C` |
 | WP-17 | Smooth cover by étale charts | II | done | sonnet | merged 2026-09-07; presentation route (`EtaleCoordinateChart`, `exists_finite_etale_cover`) |
 | WP-18 | Closure and axiom audit | II | todo | | |
 | WP-19 | Solution, consumers, Palomar verification, metadata | III | todo | | |

@@ -14,6 +14,7 @@ import GlobalStafford.Conjugation.RightMoved
 import GlobalStafford.Chart.PolynomialS38
 import GlobalStafford.Chart.FiniteRankAscent
 import GlobalStafford.Chart.ScalarExtension
+import GlobalStafford.Chart.ScalarExtensionConstruction
 import GlobalStafford.Chart.EtaleChartData
 import GlobalStafford.Chart.EtaleDerivations
 import GlobalStafford.Chart.GenericFibre
