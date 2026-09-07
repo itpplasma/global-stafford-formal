@@ -1190,7 +1190,7 @@ be additive.
 | WP-16 | Scalar extension construction | II | done | sonnet | merged 2026-09-07; `scalarExtensionInterface`, `DK k C` |
 | WP-17 | Smooth cover by étale charts | II | done | sonnet | merged 2026-09-07; presentation route (`EtaleCoordinateChart`, `exists_finite_etale_cover`) |
 | WP-18 | Closure and axiom audit | II | todo | | |
-| WP-19 | Solution, consumers, Palomar verification, metadata | III | todo | | |
+| WP-19 | Solution, consumers, Palomar verification, metadata | III | wip: `Assembly/ChallengeTransport.lean` done (sonnet); Solution and verification pending Phase II | | |
 | AA-1 | Finite-order coordinate generation in AA | I | done; pin bumped to `faa64814` 2026-09-07 | sonnet | |
 
 ## 10. Build and verification commands

@@ -9,6 +9,7 @@ import GlobalStafford.Descent.BoundedOrderSource
 import GlobalStafford.Descent.FiniteCoverPatching
 import GlobalStafford.Assembly.Inputs
 import GlobalStafford.Assembly.PhaseI
+import GlobalStafford.Assembly.ChallengeTransport
 import GlobalStafford.Conjugation.PolynomialEvaluation
 import GlobalStafford.Conjugation.RightMoved
 import GlobalStafford.Chart.PolynomialS38
