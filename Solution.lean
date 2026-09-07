@@ -1,12 +1,23 @@
+import GlobalStafford.Assembly.Closure
+
 /-!
-# Solution (Phase III deliverable)
+# Solution
 
-This file will import `GlobalStafford.Assembly.Closure`, restate the
-definitions of `Challenge.lean` verbatim in the namespace
-`GlobalStaffordChallenge` without importing `Challenge`, prove
-`IsOrderLE n P ↔ P ∈ AlgebraicAnalysis.DifferentialOperators.order n`, and
-transport `GlobalStafford.universalStatement` to
-`GlobalStaffordChallenge.universalStatement`. See `PLAN.md`, WP-19.
-
-Until Phase II closes, this file intentionally declares nothing.
+Transport of the proved Global Stafford theorem to the Palomar statement.
+The definitions of `Challenge.lean` are restated verbatim in
+`GlobalStafford/Assembly/ChallengeTransport.lean` (this file does not import
+`Challenge`); the theorem below has the exact name and type of the compared
+declaration `GlobalStaffordChallenge.universalStatement`.
 -/
+
+namespace GlobalStaffordChallenge
+
+universe u
+
+/-- Global Stafford, in the Mathlib-only form of `Challenge.lean`. -/
+theorem universalStatement : UniversalStatement.{u} :=
+  GlobalStafford.challengeStatement.{u}
+
+end GlobalStaffordChallenge
+
+#print axioms GlobalStaffordChallenge.universalStatement

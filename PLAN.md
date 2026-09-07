@@ -1,10 +1,10 @@
 # Global Stafford formalization plan
 
 ```yaml
-phase: phase-ii
+phase: phase-iii
 phase_i_status: done 2026-09-07 (scripts/verify.sh --phase-i: 15 endpoints, standard axioms only)
-phase_ii_status: in-progress
-phase_iii_status: not-started
+phase_ii_status: done 2026-09-07 (GlobalStafford.universalStatement, GlobalStaffordChallenge.universalStatement: propext, Classical.choice, Quot.sound only)
+phase_iii_status: in-progress (Solution written; Palomar tool replay and metadata pending)
 paper_source: itpplasma/global-stafford notes/source-changing-descent-2026-09-07.md
 paper_review: two independent-context model reviews passed 2026-09-07; human review open
 lean_toolchain: leanprover/lean4:v4.33.0
@@ -1189,7 +1189,7 @@ be additive.
 | WP-15 | Weyl domain and right Ore | II | done | sonnet | merged 2026-09-07; right-noetherian route; contains the AA-3 lemma |
 | WP-16 | Scalar extension construction | II | done | sonnet | merged 2026-09-07; `scalarExtensionInterface`, `DK k C` |
 | WP-17 | Smooth cover by étale charts | II | done | sonnet | merged 2026-09-07; presentation route (`EtaleCoordinateChart`, `exists_finite_etale_cover`) |
-| WP-18 | Closure and axiom audit | II | todo | | |
+| WP-18 | Closure and axiom audit | II | done | sonnet (18a, 18b, 18) | merged 2026-09-07; `GlobalStafford.universalStatement`, `challengeStatement` |
 | WP-19 | Solution, consumers, Palomar verification, metadata | III | wip: `Assembly/ChallengeTransport.lean` done (sonnet); Solution and verification pending Phase II | | |
 | AA-1 | Finite-order coordinate generation in AA | I | done; pin bumped to `faa64814` 2026-09-07 | sonnet | |
 
