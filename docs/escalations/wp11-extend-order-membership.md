@@ -271,3 +271,115 @@ the many examples already in the file). Steps 5-7 are comparatively
 routine once step 4 lands. Step 8 (`clearance`) has not been scoped in
 this session beyond the summary in `PLAN.md` §4 WP-11 and should get its
 own escalation-budget pass.
+
+## Resolution (Claude Opus, 2026-09-07)
+
+**Status: resolved.** WP-11 steps 4-8 are complete.
+`GlobalStafford/Localization/Construction.lean` builds with no `sorry`, no
+`axiom`, and `#print axioms GlobalStafford.Localization.localizationInterface`
+reports exactly `[propext, Classical.choice, Quot.sound]`.
+
+### Route taken for step 4
+
+The roadmap above (4a-4d) was followed only in part. Steps 4a (the special
+commutator with `algebraMap f`) and 4c/4d (inverse and Leibniz applied to
+`fInv'^n`) were **not** needed. The simplification is this:
+
+For a fixed `D : Module.End k Af` and a fixed `s : ℕ`, the set
+`{x : A_f | commutator D x ∈ order s}` is closed under products and inverses,
+purely by the *second-argument* Leibniz rule
+
+```text
+commutator D (x * y) = multiplication x * commutator D y + commutator D x * multiplication y
+```
+
+(`commutator_mul_right`, the companion to `commutator_mul` in
+`AlgebraicAnalysis.DifferentialOperators.Basic`), because multiplication
+operators have order `0` and `order s` is a submodule. Inverses follow from the
+same identity at `x * y = 1`: `commutator D v = -(v · [D, u] · v)` whenever
+`u v = 1` (`commutator_mem_order_of_mul_eq_one`). Since every `x : A_f` is
+`algebraMap a * mk' 1 (f^n)` and `mk' 1 (f^n)` is the inverse of
+`algebraMap (f^n)`, the *only* thing left to prove is the commutator with the
+image of `A` — i.e. step 4b alone. No `fInv`, no power induction, no `4a`.
+
+Step 4b itself is the identity
+
+```text
+termFun r P (a * b) n = algebraMap a * termFun r P b n + termFun r (commutator P a) b n
+```
+
+(`termFun_commutator`), proved **termwise** with *no* order hypothesis and at
+the *same* truncation length `r` on both sides, from `commutator_apply`
+(`Q (a b) = a · Q b + [Q, a] b`) plus the Jacobi-type commuting fact
+`(ad f)^[j] (commutator P a) = commutator ((ad f)^[j] P) a`
+(`ad_iterate_commutator`, from `commutator_commutator_comm`, which holds in any
+*commutative* algebra). The truncation lengths are reconciled afterwards by
+`termFun_order_mono` (raising the truncation length above the order bound of
+`P` changes nothing, since the extra summands vanish). The outer induction on
+`r` is an ordinary `induction r`, with `extendₗ_of_order_zero` as base case.
+
+Before any of this, `extend` had to be upgraded from a bare function to a
+`Module.End k Af` (the plan's step 2 "`extend P` is `k`-linear" had not been
+formalized): `mk'_smul_k`, `termFun_add_num`, `termFun_smul_num`,
+`exists_common_rep`, `extend_add`, `extend_smul`, `extendₗ`.
+
+### Route taken for step 8 (`clearance`)
+
+`exists_span_of_order`: outer induction on `r`; for `r + 1` take a finite
+algebra generating set `s` of `A` (`Algebra.FiniteType.out`), the induction
+hypothesis for each `commutator Q (algebraMap g)` with `g ∈ s`, and
+`V := insert (Q 1) (s.biUnion Vg)`. The inner argument runs in *two* layers,
+which is what makes the `mul` case of a naive `Algebra.adjoin_induction`
+(which would need commutators with arbitrary elements) unnecessary:
+
+1. `Submonoid.closure_induction_left` over the multiplicative closure of `s` —
+   its step is `x ∈ s`, `y ∈ closure s`, so only commutators with *generators*
+   ever appear;
+2. `Submodule.span_induction` over the `k`-span of that closure, reaching all
+   of `A` through `Algebra.adjoin_eq_span` and `Algebra.FiniteType.out`.
+
+Denominator clearing is `IsLocalization.exist_integer_multiples_of_finset`; the
+resulting `f^l`-multiple maps the image of `A` into itself because
+`Submodule.span_le` reduces the claim to the finitely many `v ∈ V`. The
+restriction `P₀` is obtained by `choose` plus injectivity of `algebraMap A Af`,
+its linearity from injectivity, and its order bound from the new general lemma
+`mem_order_of_algebraMap_comm` (induction on `r`: `[P, c]` is computed by
+`[Q, algebraMap c]`). `ext_of_finite_order` then identifies `extendₗ P₀` with
+the cleared operator.
+
+### Declarations added
+
+Generic commutator layer: `multiplication_mem_order_zero`, `commutator_one`,
+`commutator_mul_right`, `commutator_mem_order_mul`,
+`commutator_mem_order_of_mul_eq_one`, `commutator_commutator_comm`.
+
+`ad`/Jacobi: `ad_commutator`, `ad_iterate_commutator`.
+
+Extension: `mk'_smul_k`, `termFun_add_num`, `termFun_smul_num`,
+`termFun_order_mono`, `termFun_commutator`, `exists_common_rep`, `extend_add`,
+`extend_smul`, `extendₗ`, `extendₗ_apply`, `extendₗ_algebraMap`, `extendₗ_mk'`,
+`extendₗ_of_order_zero`, `extendₗ_commutator_algebraMap`, `extendₗ_mem_order`.
+
+Algebra structure: `algebraMap_A_smul`, `one_mem_order_zero`, `extendₗ_unique`,
+`extendₗ_mul`, `extendₗ_one`, `extendₗ_zero`, `extendₗ_add`, `extendₗ_smul_op`,
+`extendₗ_multiplication`, `ordOf`, `ordOf_spec`, `ιFun`, `coe_ιFun`,
+`ιFun_mem_order`, `ιFun_algebraMap`, `ιFun_one`, `ιFun_zero`, `ιFun_mul`,
+`ιFun_add`, `ιFun_smul`, `ιHom`, `ιHom_apply`, `ιHom_multiplicationD`,
+`ιHom_injective`.
+
+Clearance and assembly: `mem_order_of_algebraMap_comm`, `exists_span_of_order`,
+`ιHom_clearance`, `localizationInterface`, `localizationInterfaceAway`,
+`localizationInterface_ι_algebraMap`.
+
+Test: `tests/LocalizationConstructionOracle.lean` constructs the interface at
+`k = ℚ`, `A = ℚ[X]`, `f = X`, `A_f = Localization.Away X` with no hypotheses
+and checks `ι (d/dX)` on `algebraMap X` (`= 1`) and on `algebraMap (X^2)`
+(`= algebraMap (2X)`) by `simp`/`norm_num` on `ℚ[X]`, plus
+`ι_multiplicationD`, `ι_mem_order`, `ι_injective` and `clearance` as literal
+consumers, each with `#print axioms`.
+
+### Note for the controller
+
+`PLAN.md` was not edited (the escalation brief forbade it); the WP-11 row in
+Section 9 still reads `wip: steps 1-3 done (sonnet), steps 4-8 escalated to
+opus` and should be set to `done` when this branch is merged.

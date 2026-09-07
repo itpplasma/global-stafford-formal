@@ -1016,7 +1016,7 @@ theorem exists_span_of_order :
                 ring
               rw [hstep]
               exact Submodule.add_mem _ (Submodule.smul_mem _ g ihy) (hgen g hg y)
-      | zero => simpa using Submodule.zero_mem _
+      | zero => simp
       | add x y _ _ ihx ihy =>
           rw [map_add, map_add]
           exact Submodule.add_mem _ ihx ihy
@@ -1116,6 +1116,24 @@ noncomputable def localizationInterface :
   clearance := ιHom_clearance f hf
 
 
+include hf in
+/-- Instance-level corollary (`PLAN.md` WP-11 acceptance): the localization
+interface for the canonical `f`-power localization `Localization.Away f`. -/
+noncomputable def localizationInterfaceAway :
+    LocalizationInterface (k := k) (A := A) (Af := Localization.Away f) f :=
+  localizationInterface f hf
+
+
+include hf in
+/-- Public evaluation rule for the assembled interface: `ι P` restricts to `P`
+on the image of `A`. This is the identity a consumer needs in order to compute
+with `localizationInterface` at a concrete carrier. -/
+theorem localizationInterface_ι_algebraMap (P : algebra (k := k) (R := A)) (a : A) :
+    (((localizationInterface f hf (Af := Af)).ι P : algebra (k := k) (R := Af)) :
+        Module.End k Af) (algebraMap A Af a) = algebraMap A Af ((P : Module.End k A) a) :=
+  ιFun_algebraMap f hf P a
+
+
 end GlobalStafford.Localization
 
 #print axioms GlobalStafford.Localization.ext_of_finite_order
@@ -1132,3 +1150,5 @@ end GlobalStafford.Localization
 #print axioms GlobalStafford.Localization.exists_span_of_order
 #print axioms GlobalStafford.Localization.ιHom_clearance
 #print axioms GlobalStafford.Localization.localizationInterface
+#print axioms GlobalStafford.Localization.localizationInterfaceAway
+#print axioms GlobalStafford.Localization.localizationInterface_ι_algebraMap
