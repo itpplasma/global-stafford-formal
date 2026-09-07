@@ -1182,7 +1182,7 @@ be additive.
 | WP-8 | Étale chart data, Weyl action, chart S38 | I | done | sonnet | merged 2026-09-07; extra leaf field `algebraMap_ne_zero`; `polynomialToWeyl` replaced by an existence lemma |
 | WP-9 | Scalar extension interface | I | done | sonnet | merged 2026-09-07 |
 | WP-10 | Phase I assembly and audit | I | done | sonnet | merged 2026-09-07; `verify.sh --phase-i` passes |
-| WP-11 | Localization interface construction | II | todo | | |
+| WP-11 | Localization interface construction | II | wip: steps 1-3 done (sonnet), steps 4-8 escalated to opus (`docs/escalations/wp11-extend-order-membership.md`) | opus | |
 | WP-12 | Étale derivations and coordinate rigidity | II | done | sonnet | merged 2026-09-07 |
 | WP-13 | Finite generic fibre | II | done | sonnet | merged 2026-09-07 |
 | WP-14 | Chart operator ring is a domain | II | todo | | largest |
