@@ -25,6 +25,7 @@ import GlobalStafford.Chart.ChartDomain.Monomials
 import GlobalStafford.Chart.ChartDomain.NormalForm
 import GlobalStafford.Chart.ChartDomain.Symbol
 import GlobalStafford.Chart.ChartDomain
+import GlobalStafford.Chart.WeylActionInjective
 import GlobalStafford.Weyl.OreDomain
 
 /-!
