@@ -180,6 +180,105 @@ theorem pderiv_iterate_monomial (i : Fin n) (a : ℕ) (β : Fin n →₀ ℕ) (r
         ring
       rw [hexp, hcoeff]
 
+/-! ## 3. Action of `partialMonomial` on polynomial monomials, over an arbitrary finset -/
+
+theorem algebraMap_C (c : k) :
+    algebraMap (B k n) C (MvPolynomial.C c) = algebraMap k C c := by
+  calc
+    algebraMap (B k n) C (MvPolynomial.C c)
+        = algebraMap (B k n) C (algebraMap k (B k n) c) := by rw [MvPolynomial.algebraMap_eq]
+    _ = algebraMap k C c := (IsScalarTower.algebraMap_apply k (B k n) C c).symm
+
+/-- The action of the partial-derivative product indexed by an arbitrary finset `S` on the
+image of a polynomial monomial: a descending-factorial coefficient over `S`, and the exponents
+in `S` truncated-subtracted. -/
+theorem partialMonomial_finset_monomial (S : Finset (Fin n)) (α β : Fin n →₀ ℕ) (r : k) :
+    (S.noncommProd (fun i => (liftDerivation (k := k) (C := C) i).toLinearMap ^ α i)
+        (liftDerivation_pow_commute_pairwise α S))
+      (algebraMap (B k n) C (MvPolynomial.monomial β r)) =
+    algebraMap (B k n) C
+      (MvPolynomial.monomial (β - S.sum (fun i => Finsupp.single i (α i)))
+        (r * ∏ i ∈ S, (Nat.descFactorial (β i) (α i) : k))) := by
+  induction S using Finset.cons_induction with
+  | empty => simp
+  | cons i S hiS ih =>
+      rw [Finset.noncommProd_cons, Module.End.mul_apply, ih, liftDerivation_pow_algebraMap,
+        pderiv_iterate_monomial]
+      have hSi : (S.sum (fun j => Finsupp.single j (α j)) : Fin n →₀ ℕ) i = 0 := by
+        rw [Finsupp.finsetSum_apply]
+        apply Finset.sum_eq_zero
+        intro j hj
+        have hji : j ≠ i := fun h => hiS (h ▸ hj)
+        simp [Finsupp.single_apply, hji]
+      have hidx : (β - S.sum (fun j => Finsupp.single j (α j)) : Fin n →₀ ℕ) i = β i := by
+        rw [Finsupp.tsub_apply, hSi, Nat.sub_zero]
+      have hexp : (β - S.sum (fun j => Finsupp.single j (α j)) : Fin n →₀ ℕ)
+          - Finsupp.single i (α i) =
+          β - (Finset.cons i S hiS).sum (fun j => Finsupp.single j (α j)) := by
+        rw [Finset.sum_cons]
+        ext j
+        by_cases hj : j = i
+        · subst hj
+          simp only [Finsupp.tsub_apply, Finsupp.single_eq_same, Finsupp.add_apply, hidx]
+          omega
+        · have hSj : (Finsupp.single i (α i) + S.sum (fun l => Finsupp.single l (α l))
+              : Fin n →₀ ℕ) j = (S.sum (fun l => Finsupp.single l (α l)) : Fin n →₀ ℕ) j := by
+            simp [Finsupp.add_apply, Finsupp.single_apply, hj]
+          simp [Finsupp.tsub_apply, Finsupp.single_apply, hj, hSj]
+      have hcoeff : (r * ∏ j ∈ S, (Nat.descFactorial (β j) (α j) : k)) *
+          (Nat.descFactorial
+              ((β - S.sum (fun j => Finsupp.single j (α j)) : Fin n →₀ ℕ) i) (α i) : k) =
+          r * ∏ j ∈ Finset.cons i S hiS, (Nat.descFactorial (β j) (α j) : k) := by
+        rw [hidx, Finset.prod_cons]
+        ring
+      rw [hexp, hcoeff]
+
+/-- The diagonal value of `partialMonomial` on the matching monomial: a nonzero scalar
+multiple determined by the factorials of the exponents. -/
+theorem partialMonomial_monomial_self (β : Fin n →₀ ℕ) :
+    partialMonomial (k := k) (C := C) β (algebraMap (B k n) C (MvPolynomial.monomial β (1 : k))) =
+      algebraMap k C (∏ i, (β i).factorial : k) := by
+  unfold partialMonomial
+  rw [partialMonomial_finset_monomial Finset.univ β β 1]
+  have hsum : (Finset.univ.sum (fun i => Finsupp.single i (β i)) : Fin n →₀ ℕ) = β :=
+    Finsupp.univ_sum_single β
+  have hself : ∀ i, (Nat.descFactorial (β i) (β i) : k) = ((β i).factorial : k) := by
+    intro i; exact_mod_cast Nat.descFactorial_self (β i)
+  rw [hsum, tsub_self, one_mul, Finset.prod_congr rfl (fun i _ => hself i),
+    ← MvPolynomial.C_apply, algebraMap_C]
+
+/-- Every exponent multi-index with a coordinate strictly exceeding `β`'s makes the
+descending-factorial coefficient (and hence the action of `partialMonomial`) vanish, provided
+the total degrees compare the other way. -/
+theorem exists_lt_of_ne_of_degree_le {α β : Fin n →₀ ℕ} (hle : β.degree ≤ α.degree)
+    (hne : α ≠ β) : ∃ i, β i < α i := by
+  by_contra hcon
+  push_neg at hcon
+  have hne' : ∃ i, α i ≠ β i := by
+    by_contra hall
+    push_neg at hall
+    exact hne (Finsupp.ext hall)
+  obtain ⟨i0, hi0⟩ := hne'
+  have hlt : α i0 < β i0 := lt_of_le_of_ne (hcon i0) hi0
+  have hcontra : α.degree < β.degree := by
+    rw [Finsupp.degree_eq_sum, Finsupp.degree_eq_sum]
+    exact Finset.sum_lt_sum (fun i _ => hcon i) ⟨i0, Finset.mem_univ i0, hlt⟩
+  omega
+
+/-- **`partialMonomial_monomial_eq_zero_of_degree_le`**: if `α ≠ β` and `β`'s total degree is at
+most `α`'s, `partialMonomial α` kills the image of the monomial `X^β`. -/
+theorem partialMonomial_monomial_eq_zero_of_degree_le (α β : Fin n →₀ ℕ)
+    (hle : β.degree ≤ α.degree) (hne : α ≠ β) (r : k) :
+    partialMonomial (k := k) (C := C) α (algebraMap (B k n) C (MvPolynomial.monomial β r)) = 0 := by
+  unfold partialMonomial
+  rw [partialMonomial_finset_monomial Finset.univ α β r]
+  obtain ⟨i0, hi0⟩ := exists_lt_of_ne_of_degree_le hle hne
+  have hz : (Nat.descFactorial (β i0) (α i0) : k) = 0 := by
+    exact_mod_cast Nat.descFactorial_eq_zero_iff_lt.mpr hi0
+  have hprod : (∏ i, (Nat.descFactorial (β i) (α i) : k)) = 0 :=
+    Finset.prod_eq_zero (Finset.mem_univ i0) hz
+  rw [hprod, mul_zero, MvPolynomial.monomial_zero, map_zero]
+
 end
 end GlobalStafford.Chart
 
@@ -188,3 +287,6 @@ end GlobalStafford.Chart
 #print axioms GlobalStafford.Chart.partialMonomial_mem_algebra
 #print axioms GlobalStafford.Chart.liftDerivation_pow_algebraMap
 #print axioms GlobalStafford.Chart.pderiv_iterate_monomial
+#print axioms GlobalStafford.Chart.partialMonomial_finset_monomial
+#print axioms GlobalStafford.Chart.partialMonomial_monomial_self
+#print axioms GlobalStafford.Chart.partialMonomial_monomial_eq_zero_of_degree_le
