@@ -1186,7 +1186,7 @@ be additive.
 | WP-12 | Étale derivations and coordinate rigidity | II | done | sonnet | merged 2026-09-07 |
 | WP-13 | Finite generic fibre | II | done | sonnet | merged 2026-09-07 |
 | WP-14 | Chart operator ring is a domain | II | todo | | largest |
-| WP-15 | Weyl domain and right Ore | II | done | sonnet | `Weyl/OreDomain.lean`; `NoZeroDivisors`/`OreSet` instances and `weyl_rightOre` via `NormalOre`-tower domain + right-Noetherian transport (route 2/fallback of the plan), not the symbol calculus of route 1; `#print axioms` standard only |
+| WP-15 | Weyl domain and right Ore | II | done | sonnet | merged 2026-09-07; right-noetherian route; contains the AA-3 lemma |
 | WP-16 | Scalar extension construction | II | todo | | |
 | WP-17 | Smooth cover by étale charts | II | todo | | |
 | WP-18 | Closure and axiom audit | II | todo | | |

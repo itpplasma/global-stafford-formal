@@ -16,6 +16,7 @@ import GlobalStafford.Chart.ScalarExtension
 import GlobalStafford.Chart.EtaleChartData
 import GlobalStafford.Chart.EtaleDerivations
 import GlobalStafford.Chart.GenericFibre
+import GlobalStafford.Weyl.OreDomain
 
 /-!
 # GlobalStafford
