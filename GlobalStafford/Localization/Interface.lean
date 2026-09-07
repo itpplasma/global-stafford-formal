@@ -1,5 +1,6 @@
 import Mathlib.RingTheory.Localization.Away.Basic
-import GlobalStafford.Operators.Basic
+import Mathlib.Data.Fin.VecNotation
+import GlobalStafford.Operators.Commutator
 
 /-!
 # Localization presentation of the differential-operator algebra (paper §1)
@@ -112,8 +113,68 @@ theorem clearance_eq (L : LocalizationInterface (k := k) (A := A) (Af := Af) f)
   refine ⟨l, P, ?_⟩
   rw [← hlP, ← mul_assoc, fInv_pow_mul_pow, one_mul]
 
--- rightClearance: WP-3
+/-- Right denominator clearance (paper §1, used throughout §§3-5): every
+`Q : D_k(A_f)` can be cleared to the image of `D_k(A)` by right
+multiplication by a sufficiently high power of multiplication by `f`. -/
+theorem rightClearance (L : LocalizationInterface (k := k) (A := A) (Af := Af) f)
+    (Q : algebra (k := k) (R := Af)) :
+    ∃ (m : ℕ) (P : algebra (k := k) (R := A)),
+      Q * multiplicationD (k := k) (A := Af) (algebraMap A Af f) ^ m = L.ι P := by
+  obtain ⟨l, P₀, hP₀⟩ := clearance_eq (k := k) L Q
+  obtain ⟨r, hr⟩ := exists_order (k := k) (A := A) P₀
+  obtain ⟨Q', hQ', hQ'eq⟩ :=
+    exists_mul_multiplicationD_pow_eq (k := k) (A := A) (f := f) (n := l + r) hr (Nat.le_add_left r l)
+  refine ⟨l + r, Q', ?_⟩
+  have hstep : Q * multiplicationD (k := k) (A := Af) (algebraMap A Af f) ^ (l + r) =
+      fInv (k := k) f ^ l * L.ι (P₀ * multiplicationD (k := k) (A := A) f ^ (l + r)) := by
+    rw [hP₀, mul_assoc, map_mul, ι_pow_multiplicationD]
+  rw [hstep, hQ'eq]
+  have hlr : l + r - r = l := by omega
+  rw [hlr, map_mul, ι_pow_multiplicationD, ← mul_assoc, fInv_pow_mul_pow, one_mul]
+
+/-- `rightClearance` for a finite family, with a common exponent `m`. -/
+theorem rightClearance_family (L : LocalizationInterface (k := k) (A := A) (Af := Af) f)
+    {ι' : Type*} [Fintype ι'] (Q : ι' → algebra (k := k) (R := Af)) :
+    ∃ m : ℕ, ∀ i, ∃ P : algebra (k := k) (R := A),
+      Q i * multiplicationD (k := k) (A := Af) (algebraMap A Af f) ^ m = L.ι P := by
+  classical
+  have h : ∀ i, ∃ (mi : ℕ) (P : algebra (k := k) (R := A)),
+      Q i * multiplicationD (k := k) (A := Af) (algebraMap A Af f) ^ mi = L.ι P :=
+    fun i => rightClearance (k := k) L (Q i)
+  choose mi Pi hPi using h
+  refine ⟨Finset.univ.sup mi, fun i => ?_⟩
+  have hle : mi i ≤ Finset.univ.sup mi := Finset.le_sup (Finset.mem_univ i)
+  obtain ⟨e, he⟩ := Nat.exists_eq_add_of_le hle
+  refine ⟨Pi i * multiplicationD (k := k) (A := A) f ^ e, ?_⟩
+  rw [he, pow_add, ← mul_assoc, hPi i, map_mul, ι_pow_multiplicationD]
+
+/-- Convenience form of `rightClearance` for a pair. -/
+theorem rightClearance_pair (L : LocalizationInterface (k := k) (A := A) (Af := Af) f)
+    (U V : algebra (k := k) (R := Af)) :
+    ∃ (m : ℕ) (A₀ B₀ : algebra (k := k) (R := A)),
+      U * multiplicationD (k := k) (A := Af) (algebraMap A Af f) ^ m = L.ι A₀ ∧
+      V * multiplicationD (k := k) (A := Af) (algebraMap A Af f) ^ m = L.ι B₀ := by
+  obtain ⟨m, hm⟩ := rightClearance_family (k := k) L (![U, V])
+  obtain ⟨A₀, hA₀⟩ := hm 0
+  obtain ⟨B₀, hB₀⟩ := hm 1
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one] at hA₀ hB₀
+  exact ⟨m, A₀, B₀, hA₀, hB₀⟩
 
 end LocalizationInterface
 
 end GlobalStafford.Localization
+
+#print axioms GlobalStafford.Localization.LocalizationInterface.f_isUnit
+#print axioms GlobalStafford.Localization.LocalizationInterface.mul_fInv
+#print axioms GlobalStafford.Localization.LocalizationInterface.fInv_mul
+#print axioms GlobalStafford.Localization.LocalizationInterface.fInv_commute
+#print axioms GlobalStafford.Localization.LocalizationInterface.fInv_pow_mul_pow
+#print axioms GlobalStafford.Localization.LocalizationInterface.pow_mul_fInv_pow
+#print axioms GlobalStafford.Localization.LocalizationInterface.multiplicationD_pow_mul_fInv_pow_of_le
+#print axioms GlobalStafford.Localization.LocalizationInterface.fInv_pow_mul_multiplicationD_pow_of_le
+#print axioms GlobalStafford.Localization.LocalizationInterface.ι_pow_multiplicationD
+#print axioms GlobalStafford.Localization.LocalizationInterface.ι_multiplicationD_pow_mul
+#print axioms GlobalStafford.Localization.LocalizationInterface.clearance_eq
+#print axioms GlobalStafford.Localization.LocalizationInterface.rightClearance
+#print axioms GlobalStafford.Localization.LocalizationInterface.rightClearance_family
+#print axioms GlobalStafford.Localization.LocalizationInterface.rightClearance_pair
