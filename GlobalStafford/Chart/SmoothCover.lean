@@ -39,6 +39,9 @@ section Construction
 variable {k S : Type u} [Field k] [CommRing S] [Algebra k S] {ι σ : Type} [Finite σ]
   (P : Algebra.SubmersivePresentation k S ι σ) [Finite ι]
 
+noncomputable local instance : Fintype σ := Fintype.ofFinite σ
+noncomputable local instance : DecidableEq σ := Classical.decEq σ
+
 open scoped Classical in
 /-- The complement of `Set.range P.map` inside `ι`, indexed as a `Sigma`-style equivalence
 `ι ≃ σ ⊕ (free variables)`. -/
@@ -130,6 +133,110 @@ lemma transport_pderiv (p : MvPolynomial ι k) (j : σ) :
   classical
   unfold transport
   rw [pderiv_sumAlgEquiv, ← splitEquiv_map P j, pderiv_rename (splitEquiv P).injective]
+
+/-- `transport` as a `k`-algebra isomorphism, splitting the presentation ring `MvPolynomial ι k`
+into relation-indexed variables `σ` over the base `Base P`. -/
+def transportEquiv : MvPolynomial ι k ≃ₐ[k] MvPolynomial σ (Base P) :=
+  (renameEquiv k (splitEquiv P)).trans (sumAlgEquiv k σ (Fin (freeRank P)))
+
+lemma transport_eq (p : MvPolynomial ι k) : transport P p = transportEquiv P p := rfl
+
+lemma surjective_aeval_val : Function.Surjective (aeval (R := Base P) (val P)) := by
+  have hcomp : Function.Surjective ((aeval (val P) : MvPolynomial σ (Base P) →ₐ[Base P] S) ∘
+      (transportEquiv P)) := by
+    have : (aeval (val P) : MvPolynomial σ (Base P) →ₐ[Base P] S) ∘ (transportEquiv P) =
+        fun p => aeval P.val p := by
+      funext p
+      simpa [transport_eq] using aeval_val_transport P p
+    rw [this]
+    exact P.toGenerators.aeval_val_surjective
+  exact hcomp.of_comp
+
+/-- The transported `Generators (Base P) S σ` (Generators.val = `val P`). -/
+noncomputable def generators : Algebra.Generators (Base P) S σ :=
+  Algebra.Generators.ofSurjective (val P) (surjective_aeval_val P)
+
+@[simp] lemma generators_val : (generators P).val = val P := rfl
+
+/-- `aeval (val P)` as a plain `RingHom`. -/
+def valRingHom : MvPolynomial σ (Base P) →+* S := (aeval (val P)).toRingHom
+
+/-- `aeval P.val` as a plain `RingHom`. -/
+def PvalRingHom : MvPolynomial ι k →+* S := (aeval P.val).toRingHom
+
+lemma generators_ker : (generators P).ker = RingHom.ker (valRingHom P) :=
+  Algebra.Generators.ker_eq_ker_aeval_val _
+
+/-- `transportEquiv P` as a plain `RingHom`. -/
+def transportRingHom : MvPolynomial ι k →+* MvPolynomial σ (Base P) :=
+  (transportEquiv P).toAlgHom.toRingHom
+
+lemma transportRingHom_apply (p : MvPolynomial ι k) : transportRingHom P p = transport P p :=
+  (transport_eq P p).symm
+
+lemma aeval_val_comp_transportRingHom :
+    (valRingHom P).comp (transportRingHom P) = PvalRingHom P := by
+  apply RingHom.ext
+  intro p
+  show aeval (val P) (transportRingHom P p) = aeval P.val p
+  rw [transportRingHom_apply, aeval_val_transport]
+
+lemma ker_eq_comap :
+    P.ker = Ideal.comap (transportRingHom P) (RingHom.ker (valRingHom P)) := by
+  rw [P.ker_eq_ker_aeval_val]
+  show RingHom.ker (PvalRingHom P) = Ideal.comap (transportRingHom P) (RingHom.ker (valRingHom P))
+  rw [← aeval_val_comp_transportRingHom, RingHom.comap_ker]
+
+lemma map_ker_eq :
+    Ideal.map (transportRingHom P) P.ker = RingHom.ker (valRingHom P) := by
+  rw [ker_eq_comap]
+  exact Ideal.map_comap_of_surjective (transportRingHom P) (transportEquiv P).surjective _
+
+/-- The transported presentation of `S` over `Base P`, with relations indexed by `σ` (the same
+type as `P`'s relations). -/
+noncomputable def presentation : Algebra.Presentation (Base P) S σ σ where
+  toGenerators := generators P
+  relation j := transport P (P.relation j)
+  span_range_relation_eq_ker := by
+    rw [generators_ker, ← map_ker_eq, ← P.span_range_relation_eq_ker, Ideal.map_span,
+      ← Set.range_comp]
+    congr 1
+
+/-- The transported pre-submersive presentation, with `map := id`. -/
+noncomputable def preSubmersivePresentation : Algebra.PreSubmersivePresentation (Base P) S σ σ where
+  toPresentation := presentation P
+  map := id
+  map_inj := Function.injective_id
+
+lemma preSubmersivePresentation_jacobiMatrix_apply (i j : σ) :
+    (preSubmersivePresentation P).jacobiMatrix i j = pderiv i (transport P (P.relation j)) := by
+  rw [Algebra.PreSubmersivePresentation.jacobiMatrix_apply]
+  rfl
+
+lemma preSubmersivePresentation_jacobian_eq : (preSubmersivePresentation P).jacobian = P.jacobian := by
+  have e1 : (preSubmersivePresentation P).jacobian =
+      aeval (val P) (preSubmersivePresentation P).jacobiMatrix.det := by
+    rw [Algebra.PreSubmersivePresentation.jacobian_eq_jacobiMatrix_det]
+    exact Algebra.Generators.algebraMap_apply _ _
+  have e2 : P.jacobian = aeval P.val P.jacobiMatrix.det := by
+    rw [Algebra.PreSubmersivePresentation.jacobian_eq_jacobiMatrix_det]
+    exact Algebra.Generators.algebraMap_apply _ _
+  rw [e1, e2, AlgHom.map_det, AlgHom.map_det]
+  congr 1
+  ext i j
+  rw [AlgHom.mapMatrix_apply, AlgHom.mapMatrix_apply, Matrix.map_apply, Matrix.map_apply,
+    preSubmersivePresentation_jacobiMatrix_apply]
+  show aeval (val P) (pderiv i (transport P (P.relation j))) = aeval P.val (P.jacobiMatrix i j)
+  rw [transport_pderiv, aeval_val_transport, Algebra.PreSubmersivePresentation.jacobiMatrix_apply]
+
+/-- **The transported submersive presentation**: `S` presented over `Base P` with variables
+and relations both indexed by `σ`, `map := id`, and the same Jacobian as `P` (hence a unit). -/
+noncomputable def submersivePresentation : Algebra.SubmersivePresentation (Base P) S σ σ where
+  toPreSubmersivePresentation := preSubmersivePresentation P
+  jacobian_isUnit := by rw [preSubmersivePresentation_jacobian_eq]; exact P.jacobian_isUnit
+
+lemma submersivePresentation_dimension : (submersivePresentation P).dimension = 0 := by
+  simp [Algebra.Presentation.dimension]
 
 end Construction
 
