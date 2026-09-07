@@ -1,6 +1,7 @@
 import AlgebraicAnalysis.Ore.RightHilbertBasis
 import AlgebraicAnalysis.RingTheory.TwoGeneratorIdentity
 import Stafford38.Weyl.IteratedEquivalence
+import Stafford38.FoundationClosure
 import Mathlib.RingTheory.OreLocalization.OreSet
 import Mathlib.RingTheory.Noetherian.Basic
 
@@ -195,6 +196,132 @@ theorem rightOre_of_rightNoetherian_domain [IsNoetherianRing Rᵐᵒᵖ]
   exact hx (eq_zero_of_mem_span_shifted_powers hy hcon' n (fun i => (c i).unop) hc')
 
 end RightOreOfRightNoetherian
+
+/-! ## The iterated Ore tower is a right-Noetherian domain -/
+
+section Tower
+
+variable (k : Type u) [Field k]
+
+/-- The recursively iterated Ore construction is transposed
+right-Noetherian at every stage: `IsNoetherianRing (IteratedPairStage k n)ᵐᵒᵖ`.
+Induction on `n`; the base case is the field `k`, the successor case adjoins
+two derivation-Ore stages (`CoordinateStage` then `PairStage`) via
+`derivationOre_rightHilbertBasis`, applied twice. -/
+theorem iteratedPairStage_isNoetherianRing_op :
+    ∀ n : ℕ, IsNoetherianRing (IteratedPairStage k n)ᵐᵒᵖ
+  | 0 => (inferInstance : IsNoetherianRing kᵐᵒᵖ)
+  | n + 1 =>
+      have ih := iteratedPairStage_isNoetherianRing_op n
+      have h1 : IsNoetherianRing (CoordinateStage (B := IteratedPairStage k n))ᵐᵒᵖ :=
+        derivationOre_rightHilbertBasis ih zeroDerivation
+      derivationOre_rightHilbertBasis h1 coordinateDerivation
+
+/-- The recursively iterated Ore construction is a domain at every stage. -/
+theorem iteratedPairStage_domain :
+    ∀ n : ℕ, NoZeroDivisors (IteratedPairStage k n) ∧
+      Nontrivial (IteratedPairStage k n)
+  | 0 => ⟨(inferInstance : NoZeroDivisors k), (inferInstance : Nontrivial k)⟩
+  | n + 1 => by
+      obtain ⟨hz, hn⟩ := iteratedPairStage_domain n
+      haveI := hz
+      haveI := hn
+      haveI hz1 : NoZeroDivisors (CoordinateStage (B := IteratedPairStage k n)) :=
+        normalOreNoZeroDivisors (zeroDerivation (B := IteratedPairStage k n))
+      haveI hn1 : Nontrivial (CoordinateStage (B := IteratedPairStage k n)) :=
+        normalOreNontrivial (zeroDerivation (B := IteratedPairStage k n))
+      exact ⟨normalOreNoZeroDivisors
+          (coordinateDerivation (B := IteratedPairStage k n)),
+        normalOreNontrivial (coordinateDerivation (B := IteratedPairStage k n))⟩
+
+end Tower
+
+/-! ## Transport to the presented Weyl algebra -/
+
+variable (k : Type u) [Field k] (n : ℕ)
+
+/-- The presented rank-`n` Weyl algebra has no zero divisors (`PLAN.md`
+WP-15, route 2/fallback: leading-coefficient degree argument at every
+`NormalOre` stage of the recursive tower, transported along
+`presentedIteratedEquiv`). -/
+instance instNoZeroDivisorsPresentedWeyl : NoZeroDivisors (PresentedWeyl k n) :=
+  have hdomain := (iteratedPairStage_domain k n).1
+  Function.Injective.noZeroDivisors (presentedIteratedEquiv k n)
+    (presentedIteratedEquiv k n).injective (map_zero _) (map_mul _)
+
+/-- The presented rank-`n` Weyl algebra is nontrivial. -/
+instance instNontrivialPresentedWeyl : Nontrivial (PresentedWeyl k n) :=
+  have hnontrivial := (iteratedPairStage_domain k n).2
+  (presentedIteratedEquiv k n).toEquiv.nontrivial
+
+/-- Right-Noetherianity of the presented rank-`n` Weyl algebra's opposite,
+transported from the iterated Ore tower along `presentedIteratedEquiv`. -/
+instance instIsNoetherianRingOpPresentedWeyl :
+    IsNoetherianRing (PresentedWeyl k n)ᵐᵒᵖ :=
+  have h := iteratedPairStage_isNoetherianRing_op k n
+  isNoetherianRing_of_ringEquiv (IteratedPairStage k n)ᵐᵒᵖ
+    (RingEquiv.op (presentedIteratedEquiv k n).toRingEquiv).symm
+
+/-- The right Ore condition for the presented rank-`n` Weyl algebra
+(`PLAN.md` WP-15, route 2): from right-Noetherianity of the opposite ring
+and the domain property, via `rightOre_of_rightNoetherian_domain`. -/
+theorem weyl_rightOre : ∀ x y : PresentedWeyl k n, x ≠ 0 → y ≠ 0 →
+    ∃ a b : PresentedWeyl k n, a ≠ 0 ∧ x * a = y * b :=
+  rightOre_of_rightNoetherian_domain
+
+/-- Skolemized data for the `OreSet` instance below: for every `r` in the
+opposite ring and every nonzero-divisor denominator `s`, a numerator `a` and
+a nonzero denominator-witness `b` with `s.unop * a = r.unop * b`. The case
+`r = 0` is trivial (`a = 0`, `b = 1`); otherwise `b ≠ 0` follows from
+`a ≠ 0` (`weyl_rightOre`) together with the domain property. -/
+private theorem exists_opOreWitness (r : (PresentedWeyl k n)ᵐᵒᵖ)
+    (s : ((PresentedWeyl k n)ᵐᵒᵖ)⁰) :
+    ∃ a b : PresentedWeyl k n, s.1.unop * a = r.unop * b ∧ b ≠ 0 := by
+  by_cases hr : r = 0
+  · refine ⟨0, 1, ?_, one_ne_zero⟩
+    rw [mul_zero, hr, MulOpposite.unop_zero, zero_mul]
+  · have hy : r.unop ≠ 0 := fun h =>
+      hr (by rw [← MulOpposite.op_unop r, h, MulOpposite.op_zero])
+    have hx0 : (s.1 : (PresentedWeyl k n)ᵐᵒᵖ) ≠ 0 :=
+      mem_nonZeroDivisors_iff_ne_zero.mp s.2
+    have hx : s.1.unop ≠ 0 := fun h =>
+      hx0 (by rw [← MulOpposite.op_unop s.1, h, MulOpposite.op_zero])
+    obtain ⟨a, b, ha, hab⟩ := weyl_rightOre k n s.1.unop r.unop hx hy
+    refine ⟨a, b, hab, fun hb0 => ?_⟩
+    rw [hb0, mul_zero] at hab
+    exact ha ((mul_eq_zero.mp hab).resolve_left hx)
+
+/-- The right Ore condition on `T = PresentedWeyl k n`, packaged as an
+`OreLocalization.OreSet` instance for `((PresentedWeyl k n)ᵐᵒᵖ)⁰`: the left
+Ore condition in `(PresentedWeyl k n)ᵐᵒᵖ` is the right Ore condition in
+`PresentedWeyl k n` (`weyl_rightOre`), and cancellability of nonzero
+denominators is automatic in a domain (`OreLocalization.oreSetOfNoZeroDivisors`). -/
+instance instOreSetPresentedWeylMop :
+    OreLocalization.OreSet ((PresentedWeyl k n)ᵐᵒᵖ)⁰ := by
+  choose oreNumFn oreDenomFn hEq hDenomNe using exists_opOreWitness k n
+  refine OreLocalization.oreSetOfNoZeroDivisors
+    (S := ((PresentedWeyl k n)ᵐᵒᵖ)⁰)
+    (fun r s => MulOpposite.op (oreNumFn r s))
+    (fun r s => ⟨MulOpposite.op (oreDenomFn r s),
+      mem_nonZeroDivisors_of_ne_zero (fun h => hDenomNe r s (by
+        simpa using congrArg MulOpposite.unop h))⟩)
+    (fun r s => by
+      apply MulOpposite.unop_injective
+      simp only [MulOpposite.unop_mul, MulOpposite.unop_op]
+      exact (hEq r s).symm)
+
+/-- The Weyl-algebra two-generator identity (`Stafford38.universalStatement`),
+restated as `AlgebraicAnalysis.TwoGeneratorIdentity` for the presented
+rank-`n` Weyl algebra, for a sanity check of the WP-15 instances against a
+literal consumer. -/
+theorem twoGeneratorIdentity_presentedWeyl [CharZero k] :
+    AlgebraicAnalysis.TwoGeneratorIdentity (PresentedWeyl k n) :=
+  Stafford38.universalStatement k n
+
+#print axioms instNoZeroDivisorsPresentedWeyl
+#print axioms weyl_rightOre
+#print axioms instOreSetPresentedWeylMop
+#print axioms twoGeneratorIdentity_presentedWeyl
 
 end
 end GlobalStafford.Weyl
