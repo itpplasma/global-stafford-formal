@@ -1,6 +1,7 @@
 import GlobalStafford.Localization.Interface
 import Mathlib.RingTheory.Binomial
 import Mathlib.RingTheory.FiniteType
+import Mathlib.Tactic.LinearCombination
 
 /-!
 # Construction of the localization interface (paper §1, WP-11)
@@ -217,6 +218,68 @@ private theorem pascal_neg_shift_sum (n r : ℕ) (G : ℕ → Af) (hvanish : ∀
     _ = ∑ j ∈ Finset.range (r + 1 + 1), (Ring.choose (-(n : ℤ)) j) • G j := by rw [← hsplit]
     _ = ∑ j ∈ Finset.range (r + 1), (Ring.choose (-(n : ℤ)) j) • G j := hpad3
 
+/-- Shifting numerator and denominator by `f` leaves `mk'` unchanged, from
+`mk'_cancel`. -/
+theorem mk'_shift_num_denom (b : A) (m : ℕ) :
+    IsLocalization.mk' Af (f * b) (fPow f (m + 1)) = IsLocalization.mk' Af b (fPow f m) := by
+  have hcancel : IsLocalization.mk' Af (b * (fPow f 1 : A)) (fPow f m * fPow f 1) =
+      IsLocalization.mk' Af b (fPow f m) := IsLocalization.mk'_cancel b (fPow f m) (fPow f 1)
+  rw [coe_fPow, pow_one, fPow_mul] at hcancel
+  rw [← hcancel, mul_comm]
+
+/-- The vanishing of `(ad f)^[j] P` applied to `a`, for `j` beyond the order
+bound of `P`, transported through `mk'` to `Af`. -/
+theorem termFun_summand_vanish {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k := k) (R := A) r)
+    (a : A) (n : ℕ) {j : ℕ} (hj : r < j) :
+    IsLocalization.mk' Af (((ad (k := k) (A := A) f)^[j] P) a) (fPow f (n + j)) = 0 := by
+  have h0 : ((ad (k := k) (A := A) f)^[j] P) a = 0 := by
+    rw [ad_iterate_eq_zero_of_lt hP hj]; rfl
+  rw [h0]
+  symm
+  rw [IsLocalization.eq_mk'_iff_mul_eq]
+  simp
+
+/-- **Extension formula, representative shift** (`PLAN.md` WP-11 step 1): the
+value `termFun r P a n` is unchanged under shifting the representative
+`(a, n) ↦ (f * a, n + 1)`. Combines `ad_iterate_apply_mul` (splitting the
+iterate at `f * a`), `mk'_shift_num_denom` (absorbing the extra factor of
+`f` into the denominator) and `pascal_neg_shift_sum` (the Pascal-identity
+recombination, using that `P ∈ order r` kills the boundary term). -/
+theorem termFun_shift {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k := k) (R := A) r)
+    (a : A) (n : ℕ) : (termFun f r P a n : Af) = termFun f r P (f * a) (n + 1) := by
+  set G : ℕ → Af := fun j =>
+    IsLocalization.mk' Af (((ad (k := k) (A := A) f)^[j] P) a) (fPow f (n + j)) with hGdef
+  have hvanish : ∀ j, r < j → G j = 0 := fun j hj => termFun_summand_vanish f hP a n hj
+  have hstep : ∀ j ∈ Finset.range (r + 1),
+      (Ring.choose (-((n : ℤ) + 1)) j) •
+          IsLocalization.mk' Af (((ad (k := k) (A := A) f)^[j] P) (f * a)) (fPow f (n + 1 + j)) =
+        (Ring.choose (-((n : ℤ) + 1)) j) • G j +
+          (Ring.choose (-((n : ℤ) + 1)) j) • G (j + 1) := by
+    intro j _
+    rw [ad_iterate_apply_mul f P j a, mk'_add_same_denom]
+    have hexp : n + 1 + j = n + j + 1 := by omega
+    rw [hexp]
+    have hshift : (IsLocalization.mk' Af (f * (((ad (k := k) (A := A) f)^[j] P) a))
+          (fPow f (n + j + 1)) : Af) =
+        IsLocalization.mk' Af (((ad (k := k) (A := A) f)^[j] P) a) (fPow f (n + j)) :=
+      mk'_shift_num_denom f (((ad (k := k) (A := A) f)^[j] P) a) (n + j)
+    rw [hshift, smul_add]
+    congr 2
+  calc (termFun f r P a n : Af)
+      = ∑ j ∈ Finset.range (r + 1), (Ring.choose (-(n : ℤ)) j) • G j := rfl
+    _ = (∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G j) +
+          (∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G (j + 1)) :=
+        (pascal_neg_shift_sum n r G hvanish).symm
+    _ = ∑ j ∈ Finset.range (r + 1),
+          ((Ring.choose (-((n : ℤ) + 1)) j) • G j + (Ring.choose (-((n : ℤ) + 1)) j) • G (j + 1)) := by
+        rw [Finset.sum_add_distrib]
+    _ = ∑ j ∈ Finset.range (r + 1),
+          (Ring.choose (-((n : ℤ) + 1)) j) •
+            IsLocalization.mk' Af (((ad (k := k) (A := A) f)^[j] P) (f * a)) (fPow f (n + 1 + j)) :=
+        (Finset.sum_congr rfl hstep).symm
+    _ = termFun f r P (f * a) (n + 1) := rfl
+
 end GlobalStafford.Localization
 
 #print axioms GlobalStafford.Localization.ext_of_finite_order
+#print axioms GlobalStafford.Localization.termFun_shift
