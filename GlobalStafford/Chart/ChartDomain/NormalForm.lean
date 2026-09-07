@@ -81,8 +81,53 @@ theorem linearIndependent_partialMonomial :
       · subst him; exact hgm
       · exact hrest i (Finset.mem_erase.mpr ⟨him, hi⟩)
 
+/-! ## 4. `C`-spanning -/
+
+/-- **`mem_span_partialMonomial`**: every intrinsic finite-order differential operator on `C`
+lies in the `C`-span of `partialMonomial` (`Chart/ChartDomain/Monomials.lean`), via
+`mem_submodule_of_coordinates'` applied to the `k`-submodule underlying the `C`-span (a `C`-span
+is automatically a `k`-submodule by restriction of scalars along `algebraMap k C`). -/
+theorem mem_span_partialMonomial (P : Module.End k C) (hP : P ∈ algebra (k := k) (R := C)) :
+    P ∈ Submodule.span C
+      (Set.range (partialMonomial (k := k) (C := C) : (Fin n →₀ ℕ) → Module.End k C)) := by
+  set Dspan : Submodule k (Module.End k C) :=
+    (Submodule.span C (Set.range (partialMonomial (k := k) (C := C) (n := n)))).restrictScalars k with hDspan
+  have hmul : ∀ r : C, multiplication (k := k) (R := C) r ∈ Dspan := by
+    intro r
+    rw [hDspan, Submodule.restrictScalars_mem]
+    have heq : multiplication (k := k) (R := C) r =
+        r • partialMonomial (k := k) (C := C) (0 : Fin n →₀ ℕ) := by
+      rw [partialMonomial_zero]
+      ext x
+      simp [multiplication_apply]
+    rw [heq]
+    exact Submodule.smul_mem _ r (Submodule.subset_span ⟨0, rfl⟩)
+  have hright : ∀ (i : Fin n) (Q : Module.End k C), Q ∈ Dspan →
+      Q * (liftDerivation (k := k) (C := C) i).toLinearMap ∈ Dspan := by
+    intro i Q hQ
+    rw [hDspan, Submodule.restrictScalars_mem] at hQ ⊢
+    induction hQ using Submodule.span_induction with
+    | mem x hx =>
+        obtain ⟨α, rfl⟩ := hx
+        rw [← pow_one (liftDerivation (k := k) (C := C) i).toLinearMap,
+          ← partialMonomial_single i 1, ← partialMonomial_add]
+        exact Submodule.subset_span ⟨α + Finsupp.single i 1, rfl⟩
+    | zero =>
+        simpa using Submodule.zero_mem _
+    | add x y _ _ ihx ihy =>
+        rw [add_mul]
+        exact Submodule.add_mem _ ihx ihy
+    | smul c x _ ihx =>
+        rw [smul_mul_assoc]
+        exact Submodule.smul_mem _ c ihx
+  have hmem := AlgebraicAnalysis.DifferentialOperators.CoordinateGeneration.mem_submodule_of_coordinates'
+    (xC k n C) (liftDerivation (k := k) (C := C)) (liftDerivation_coord (k := k) (C := C))
+    (fun P hP h => coordinateRigidity P hP h) Dspan hmul hright P hP
+  rwa [hDspan, Submodule.restrictScalars_mem] at hmem
+
 end
 end GlobalStafford.Chart
 
 #print axioms GlobalStafford.Chart.algebraMap_factorial_ne_zero
 #print axioms GlobalStafford.Chart.linearIndependent_partialMonomial
+#print axioms GlobalStafford.Chart.mem_span_partialMonomial
