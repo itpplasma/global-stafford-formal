@@ -1,6 +1,7 @@
 import GlobalStafford.Localization.Interface
 import Mathlib.RingTheory.Binomial
 import Mathlib.RingTheory.FiniteType
+import Mathlib.RingTheory.Localization.Integer
 import Mathlib.Tactic.LinearCombination
 
 /-!
@@ -25,6 +26,86 @@ The construction follows the eight-step plan in `PLAN.md`:
 namespace GlobalStafford.Localization
 
 open AlgebraicAnalysis.DifferentialOperators GlobalStafford.Operators
+
+/-! ## Generic commutator identities
+
+Companions to `AlgebraicAnalysis.DifferentialOperators.commutator_mul` (Leibniz
+in the *first* argument): here we need the Leibniz rule in the *second*
+argument, `commutator D (x * y)`, together with the resulting closure
+properties of the set `{x | commutator D x ∈ order s}`. These reduce the order
+bound of an operator on `A_f` to its commutators with the image of `A` and with
+the inverse of `algebraMap f`, and they are what makes `extend_mem_order` a
+finite computation. All statements are for an arbitrary commutative
+`k`-algebra `R`; they are applied with `R := A` and `R := A_f`. -/
+
+section GenericCommutator
+
+variable {k R : Type*} [CommRing k] [CommRing R] [Algebra k R]
+
+/-- `multiplication x` has order `0`. -/
+theorem multiplication_mem_order_zero (x : R) :
+    multiplication (k := k) x ∈ order (k := k) (R := R) 0 :=
+  (mem_order_zero_iff_eq_multiplication _).2 (by ext w; simp [multiplication_apply])
+
+/-- `[D, 1] = 0`. -/
+theorem commutator_one (D : Module.End k R) : commutator D (1 : R) = 0 := by
+  ext w; simp [commutator_apply]
+
+/-- **Leibniz rule in the second argument**: `[D, x y] = x [D, y] + [D, x] y`. -/
+theorem commutator_mul_right (D : Module.End k R) (x y : R) :
+    commutator D (x * y) =
+      multiplication (k := k) x * commutator D y + commutator D x * multiplication (k := k) y := by
+  ext w
+  simp only [commutator_apply, LinearMap.add_apply, Module.End.mul_apply, multiplication_apply]
+  rw [show x * y * w = x * (y * w) from mul_assoc x y w]
+  ring
+
+/-- The set of `x` with `[D, x]` of order `≤ s` is closed under multiplication. -/
+theorem commutator_mem_order_mul {D : Module.End k R} {s : ℕ} {x y : R}
+    (hx : commutator D x ∈ order (k := k) (R := R) s)
+    (hy : commutator D y ∈ order (k := k) (R := R) s) :
+    commutator D (x * y) ∈ order (k := k) (R := R) s := by
+  rw [commutator_mul_right]
+  refine (order (k := k) (R := R) s).add_mem ?_ ?_
+  · simpa using mul_mem_order (multiplication_mem_order_zero (k := k) x) hy
+  · simpa using mul_mem_order hx (multiplication_mem_order_zero (k := k) y)
+
+/-- The set of `x` with `[D, x]` of order `≤ s` is closed under inverses:
+`[D, v] = -v [D, u] v` when `u v = 1`. -/
+theorem commutator_mem_order_of_mul_eq_one {D : Module.End k R} {s : ℕ} {u v : R}
+    (huv : u * v = 1) (hu : commutator D u ∈ order (k := k) (R := R) s) :
+    commutator D v ∈ order (k := k) (R := R) s := by
+  have hmul : multiplication (k := k) (R := R) v * multiplication (k := k) (R := R) u = 1 := by
+    ext w
+    simp only [Module.End.mul_apply, multiplication_apply, Module.End.one_apply]
+    rw [← mul_assoc, mul_comm v u, huv, one_mul]
+  have h0 : multiplication (k := k) (R := R) u * commutator D v +
+      commutator D u * multiplication (k := k) (R := R) v = 0 := by
+    rw [← commutator_mul_right, huv, commutator_one]
+  have h1 : commutator D v +
+      multiplication (k := k) (R := R) v * commutator D u *
+        multiplication (k := k) (R := R) v = 0 := by
+    have h2 := congrArg (fun T => multiplication (k := k) (R := R) v * T) h0
+    simp only [mul_add, mul_zero] at h2
+    rwa [← mul_assoc, hmul, one_mul, ← mul_assoc] at h2
+  rw [add_eq_zero_iff_eq_neg] at h1
+  rw [h1]
+  refine (order (k := k) (R := R) s).neg_mem ?_
+  have hstep := mul_mem_order
+    (mul_mem_order (multiplication_mem_order_zero (k := k) v) hu)
+    (multiplication_mem_order_zero (k := k) v)
+  simpa using hstep
+
+/-- **Jacobi-type commuting fact**: commutators with two elements of a
+*commutative* algebra commute with each other. -/
+theorem commutator_commutator_comm (D : Module.End k R) (x y : R) :
+    commutator (commutator D x) y = commutator (commutator D y) x := by
+  ext w
+  simp only [commutator_apply]
+  rw [show y * (x * w) = x * (y * w) from by ring]
+  ring
+
+end GenericCommutator
 
 variable {k A Af : Type*} [CommRing k] [CommRing A] [IsDomain A] [Algebra k A]
   [Algebra.FiniteType k A] [CommRing Af] [Algebra k Af] [Algebra A Af]
@@ -142,6 +223,20 @@ theorem ad_iterate_apply_mul (P : Module.End k A) (j : ℕ) (a : A) :
         (Function.iterate_succ_apply' (ad (k := k) (A := A) f) j P).symm] at heq
     exact heq.symm
   rw [← h]; ring
+
+/-- `ad f` commutes with `commutator (·) a`, by `commutator_commutator_comm`. -/
+theorem ad_commutator (a : A) (P : Module.End k A) :
+    ad (k := k) (A := A) f (commutator P a) = commutator (ad (k := k) (A := A) f P) a :=
+  commutator_commutator_comm P a f
+
+/-- Iterates of `ad f` commute with `commutator (·) a`. -/
+theorem ad_iterate_commutator (a : A) (P : Module.End k A) (j : ℕ) :
+    (ad (k := k) (A := A) f)^[j] (commutator P a) =
+      commutator ((ad (k := k) (A := A) f)^[j] P) a := by
+  induction j with
+  | zero => simp
+  | succ j ih =>
+      rw [Function.iterate_succ_apply', ih, ad_commutator, Function.iterate_succ_apply']
 
 /-- One term of the extension sum: `Σ_{j ≤ r} choose(-(n:ℤ), j) • mk' Af ((ad f)^[j] P a) f^{n+j}`. -/
 noncomputable def termFun (r : ℕ) (P : Module.End k A) (a : A) (n : ℕ) : Af :=
@@ -405,9 +500,655 @@ theorem extend_algebraMap {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k :=
   · intro h0
     exact absurd (Finset.mem_range.2 (Nat.succ_pos r)) h0
 
+/-! ## Step 4, part 1: linearity of `termFun` in the numerator -/
+
+/-- `k`-scalars pass through `mk'`, using `IsScalarTower k A Af`. -/
+theorem mk'_smul_k (c : k) (a : A) (y : Submonoid.powers f) :
+    (IsLocalization.mk' Af (c • a) y : Af) = c • IsLocalization.mk' Af a y := by
+  rw [Algebra.smul_def c a, Algebra.smul_def c (IsLocalization.mk' Af a y),
+    IsScalarTower.algebraMap_apply k A Af, IsLocalization.mul_mk'_eq_mk'_of_mul]
+
+/-- `termFun` is additive in the numerator of the representative. -/
+theorem termFun_add_num (r : ℕ) (P : Module.End k A) (a b : A) (n : ℕ) :
+    (termFun f r P (a + b) n : Af) = termFun f r P a n + termFun f r P b n := by
+  unfold termFun
+  rw [← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  rw [map_add, mk'_add_same_denom, smul_add]
+
+/-- `termFun` is `k`-homogeneous in the numerator of the representative. -/
+theorem termFun_smul_num (r : ℕ) (P : Module.End k A) (c : k) (a : A) (n : ℕ) :
+    (termFun f r P (c • a) n : Af) = c • termFun f r P a n := by
+  unfold termFun
+  rw [Finset.smul_sum]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  rw [map_smul, mk'_smul_k, smul_comm]
+
+/-- The truncation length of `termFun` may be raised above the order bound of
+`P` without changing the value: the extra summands vanish. -/
+theorem termFun_order_mono {r₁ r₂ : ℕ} {P : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) r₁) (h : r₁ ≤ r₂) (a : A) (n : ℕ) :
+    (termFun f r₂ P a n : Af) = termFun f r₁ P a n := by
+  unfold termFun
+  symm
+  refine Finset.sum_subset (Finset.range_subset_range.2 (by omega)) ?_
+  intro j _ hjnot
+  have hgt : r₁ < j := by
+    by_contra hc
+    exact hjnot (Finset.mem_range.2 (by omega))
+  rw [termFun_summand_vanish f hP a n hgt, smul_zero]
+
+/-- **The commutator identity for `termFun`** (`PLAN.md` WP-11 step 4): moving a
+factor `a : A` out of the numerator produces exactly the `termFun` of the
+commutator `[P, a]`, at the *same* truncation length. Termwise consequence of
+`commutator_apply` together with the Jacobi identity `ad_iterate_commutator`,
+which is what lets `[P, a]` replace `P` under the iterated `ad f`. -/
+theorem termFun_commutator (r : ℕ) (P : Module.End k A) (a b : A) (n : ℕ) :
+    (termFun f r P (a * b) n : Af) =
+      algebraMap A Af a * termFun f r P b n + termFun f r (commutator P a) b n := by
+  unfold termFun
+  rw [Finset.mul_sum, ← Finset.sum_add_distrib]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  have hsplit : ((ad (k := k) (A := A) f)^[j] P) (a * b) =
+      a * (((ad (k := k) (A := A) f)^[j] P) b) +
+        (((ad (k := k) (A := A) f)^[j] (commutator P a)) b) := by
+    rw [ad_iterate_commutator f a P j, commutator_apply]
+    ring
+  rw [hsplit, mk'_add_same_denom, smul_add, ← IsLocalization.mul_mk'_eq_mk'_of_mul,
+    mul_smul_comm]
+
+/-! ## Step 4, part 2: `extend` as a `k`-linear endomorphism of `A_f` -/
+
+/-- Two elements of `A_f` admit representatives with a common denominator. -/
+theorem exists_common_rep (x y : Af) :
+    ∃ (a b : A) (N : ℕ), (IsLocalization.mk' Af a (fPow f N) : Af) = x ∧
+      (IsLocalization.mk' Af b (fPow f N) : Af) = y := by
+  obtain ⟨a, n, ha⟩ := exists_fPow_rep f x
+  obtain ⟨b, m, hb⟩ := exists_fPow_rep f y
+  refine ⟨f ^ m * a, f ^ n * b, n + m, ?_, ?_⟩
+  · rw [← mk'_shift_pow f a n m, ha]
+  · rw [show n + m = m + n from by omega, ← mk'_shift_pow f b m n, hb]
+
+include hf in
+/-- `extend` is additive: reduce to a common denominator and use
+`termFun_add_num`. -/
+theorem extend_add {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k := k) (R := A) r) (x y : Af) :
+    (extend f P hP (x + y) : Af) = extend f P hP x + extend f P hP y := by
+  obtain ⟨a, b, N, hx, hy⟩ := exists_common_rep f x y
+  rw [← hx, ← hy, ← mk'_add_same_denom, extend_eq_termFun f hf hP, extend_eq_termFun f hf hP,
+    extend_eq_termFun f hf hP, termFun_add_num]
+
+include hf in
+/-- `extend` is `k`-homogeneous, by `termFun_smul_num`. -/
+theorem extend_smul {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k := k) (R := A) r)
+    (c : k) (x : Af) : (extend f P hP (c • x) : Af) = c • extend f P hP x := by
+  obtain ⟨a, n, ha⟩ := exists_fPow_rep f x
+  rw [← ha, ← mk'_smul_k, extend_eq_termFun f hf hP, extend_eq_termFun f hf hP, termFun_smul_num]
+
+include hf in
+/-- **The extension operator** (`PLAN.md` WP-11 step 2): `extend P` packaged as a
+`k`-linear endomorphism of `A_f`. -/
+noncomputable def extendₗ {r : ℕ} (P : Module.End k A) (hP : P ∈ order (k := k) (R := A) r) :
+    Module.End k Af where
+  toFun := extend f P hP
+  map_add' := extend_add f hf hP
+  map_smul' := fun c x => extend_smul f hf hP c x
+
+include hf in
+@[simp] theorem extendₗ_apply {r : ℕ} {P : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) r) (x : Af) :
+    (extendₗ f hf P hP : Module.End k Af) x = extend f P hP x := rfl
+
+include hf in
+/-- `extendₗ` restricts to `P` on the image of `A`. -/
+theorem extendₗ_algebraMap {r : ℕ} {P : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) r) (a : A) :
+    (extendₗ f hf P hP : Module.End k Af) (algebraMap A Af a) = algebraMap A Af (P a) :=
+  extend_algebraMap f hf hP a
+
+include hf in
+/-- `extendₗ` at a representative. -/
+theorem extendₗ_mk' {r : ℕ} {P : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) r) (a : A) (n : ℕ) :
+    (extendₗ f hf P hP : Module.End k Af) (IsLocalization.mk' Af a (fPow f n)) =
+      termFun f r P a n :=
+  extend_eq_termFun f hf hP a n
+
+/-! ## Step 4, part 3: the order bound -/
+
+include hf in
+/-- Base case of `extendₗ_mem_order`: an operator of order `0` on `A` is
+multiplication by `P 1`, and its extension is multiplication by the image of
+`P 1`. -/
+theorem extendₗ_of_order_zero {P : Module.End k A} (hP : P ∈ order (k := k) (R := A) 0) :
+    (extendₗ f hf P hP : Module.End k Af) =
+      multiplication (k := k) (algebraMap A Af (P 1)) := by
+  have hPa : ∀ b : A, P b = P 1 * b := by
+    intro b
+    have h := (mem_order_zero_iff_eq_multiplication P).1 hP
+    conv_lhs => rw [h]
+    simp [multiplication_apply]
+  ext x
+  obtain ⟨a, n, ha⟩ := exists_fPow_rep f x
+  rw [← ha, extendₗ_mk' f hf hP, multiplication_apply]
+  unfold termFun
+  rw [Finset.sum_range_one]
+  simp only [Function.iterate_zero, id_eq, add_zero, Ring.choose_zero_right, one_smul]
+  rw [hPa a, ← IsLocalization.mul_mk'_eq_mk'_of_mul]
+
+include hf in
+/-- **Step 4b**: the commutator of `extendₗ P` with the image of `a : A` is the
+extension of `[P, a]`. Pointwise on representatives this is
+`termFun_commutator` plus `termFun_order_mono` (the two sides use truncation
+lengths `r' + 1` and `r'`). -/
+theorem extendₗ_commutator_algebraMap {r' : ℕ} {P : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) (r' + 1)) (a : A) :
+    commutator (extendₗ f hf P hP) (algebraMap A Af a) =
+      extendₗ f hf (commutator P a) ((mem_order_succ_iff P r').1 hP a) := by
+  have hQ : commutator P a ∈ order (k := k) (R := A) r' := (mem_order_succ_iff P r').1 hP a
+  ext x
+  obtain ⟨b, n, hb⟩ := exists_fPow_rep f x
+  rw [← hb, commutator_apply, IsLocalization.mul_mk'_eq_mk'_of_mul, extendₗ_mk' f hf hP,
+    extendₗ_mk' f hf hP, extendₗ_mk' f hf hQ, termFun_commutator,
+    termFun_order_mono f hQ (Nat.le_succ r') b n]
+  ring
+
+include hf in
+/-- **Step 4** (`PLAN.md` WP-11): the extension of an operator of order `≤ r` has
+order `≤ r`. Induction on `r`. The base case is `extendₗ_of_order_zero`. In the
+step, the set of `x : A_f` with `[extendₗ P, x]` of order `≤ r'` contains the
+image of `A` (`extendₗ_commutator_algebraMap` plus the induction hypothesis) and
+is closed under products and inverses (`commutator_mem_order_mul`,
+`commutator_mem_order_of_mul_eq_one`); every `x : A_f` is
+`algebraMap a * (algebraMap (f^n))⁻¹`. -/
+theorem extendₗ_mem_order : ∀ (r : ℕ) (P : Module.End k A) (hP : P ∈ order (k := k) (R := A) r),
+    (extendₗ f hf P hP : Module.End k Af) ∈ order (k := k) (R := Af) r := by
+  intro r
+  induction r with
+  | zero =>
+      intro P hP
+      rw [extendₗ_of_order_zero f hf hP]
+      exact multiplication_mem_order_zero (k := k) _
+  | succ r' ih =>
+      intro P hP
+      rw [mem_order_succ_iff]
+      intro z
+      have hA : ∀ a : A, commutator (extendₗ f hf P hP) (algebraMap A Af a) ∈
+          order (k := k) (R := Af) r' := by
+        intro a
+        rw [extendₗ_commutator_algebraMap f hf hP a]
+        exact ih _ _
+      obtain ⟨a, n, ha⟩ := exists_fPow_rep f z
+      have hinv : (algebraMap A Af (f ^ n) : Af) * IsLocalization.mk' Af (1 : A) (fPow f n) = 1 := by
+        have h := IsLocalization.mk'_spec' Af (1 : A) (fPow f n)
+        rw [coe_fPow, map_one] at h
+        exact h
+      have hz : z = algebraMap A Af a * IsLocalization.mk' Af (1 : A) (fPow f n) := by
+        rw [← ha]
+        exact IsLocalization.mk'_eq_mul_mk'_one a (fPow f n)
+      rw [hz]
+      exact commutator_mem_order_mul (hA a)
+        (commutator_mem_order_of_mul_eq_one hinv (hA (f ^ n)))
+
+/-! ## Step 5: independence of the order bound, and multiplicativity -/
+
+/-- `algebraMap A Af` is `k`-linear, by `IsScalarTower`. -/
+theorem algebraMap_A_smul (c : k) (a : A) :
+    algebraMap A Af (c • a) = c • algebraMap A Af a := by
+  rw [Algebra.smul_def c a, map_mul, ← IsScalarTower.algebraMap_apply, ← Algebra.smul_def]
+
+/-- `(1 : Module.End k R)` has order `0`. -/
+theorem one_mem_order_zero {R : Type*} [CommRing R] [Algebra k R] :
+    (1 : Module.End k R) ∈ order (k := k) (R := R) 0 :=
+  (mem_order_zero_iff_eq_multiplication _).2 (by ext x; simp [multiplication_apply])
+
+include hf in
+/-- **The extension does not depend on the chosen order bound** (`PLAN.md` WP-11
+step 5): both extensions have finite order and agree on the image of `A`. -/
+theorem extendₗ_unique {r₁ r₂ : ℕ} {P : Module.End k A}
+    (hP₁ : P ∈ order (k := k) (R := A) r₁) (hP₂ : P ∈ order (k := k) (R := A) r₂) :
+    (extendₗ f hf P hP₁ : Module.End k Af) = extendₗ f hf P hP₂ := by
+  refine ext_of_finite_order f (r := max r₁ r₂) _ _
+    (order_mono (Nat.le_max_left r₁ r₂) (extendₗ_mem_order f hf r₁ P hP₁))
+    (order_mono (Nat.le_max_right r₁ r₂) (extendₗ_mem_order f hf r₂ P hP₂)) (fun a => ?_)
+  rw [extendₗ_algebraMap, extendₗ_algebraMap]
+
+include hf in
+/-- `extend` is multiplicative (`PLAN.md` WP-11 step 5). -/
+theorem extendₗ_mul {r s t : ℕ} {P Q : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) r) (hQ : Q ∈ order (k := k) (R := A) s)
+    (hPQ : P * Q ∈ order (k := k) (R := A) t) :
+    (extendₗ f hf (P * Q) hPQ : Module.End k Af) = extendₗ f hf P hP * extendₗ f hf Q hQ := by
+  refine ext_of_finite_order f (r := max t (r + s)) _ _
+    (order_mono (le_max_left _ _) (extendₗ_mem_order f hf t _ hPQ))
+    (order_mono (le_max_right _ _)
+      (mul_mem_order (extendₗ_mem_order f hf r P hP) (extendₗ_mem_order f hf s Q hQ)))
+    (fun a => ?_)
+  simp only [Module.End.mul_apply, extendₗ_algebraMap]
+
+include hf in
+/-- `extend` preserves `1` (`PLAN.md` WP-11 step 5). -/
+theorem extendₗ_one {r : ℕ} (hP : (1 : Module.End k A) ∈ order (k := k) (R := A) r) :
+    (extendₗ f hf (1 : Module.End k A) hP : Module.End k Af) = 1 := by
+  refine ext_of_finite_order f (r := r) _ _ (extendₗ_mem_order f hf r _ hP)
+    (order_mono (Nat.zero_le r) one_mem_order_zero) (fun a => ?_)
+  rw [extendₗ_algebraMap]
+  rfl
+
+include hf in
+/-- `extend` preserves `0`. -/
+theorem extendₗ_zero {r : ℕ} (hP : (0 : Module.End k A) ∈ order (k := k) (R := A) r) :
+    (extendₗ f hf (0 : Module.End k A) hP : Module.End k Af) = 0 := by
+  refine ext_of_finite_order f (r := r) _ _ (extendₗ_mem_order f hf r _ hP)
+    (order (k := k) (R := Af) r).zero_mem (fun a => ?_)
+  rw [extendₗ_algebraMap]
+  simp
+
+include hf in
+/-- `extend` is additive (`PLAN.md` WP-11 step 5). -/
+theorem extendₗ_add {r s t : ℕ} {P Q : Module.End k A}
+    (hP : P ∈ order (k := k) (R := A) r) (hQ : Q ∈ order (k := k) (R := A) s)
+    (hPQ : P + Q ∈ order (k := k) (R := A) t) :
+    (extendₗ f hf (P + Q) hPQ : Module.End k Af) = extendₗ f hf P hP + extendₗ f hf Q hQ := by
+  refine ext_of_finite_order f (r := max t (max r s)) _ _
+    (order_mono (le_max_left _ _) (extendₗ_mem_order f hf t _ hPQ))
+    ((order (k := k) (R := Af) (max t (max r s))).add_mem
+      (order_mono (le_trans (le_max_left r s) (le_max_right t _))
+        (extendₗ_mem_order f hf r P hP))
+      (order_mono (le_trans (le_max_right r s) (le_max_right t _))
+        (extendₗ_mem_order f hf s Q hQ))) (fun a => ?_)
+  simp only [LinearMap.add_apply, extendₗ_algebraMap, map_add]
+
+include hf in
+/-- `extend` is `k`-homogeneous (`PLAN.md` WP-11 step 5). -/
+theorem extendₗ_smul_op {r s : ℕ} {P : Module.End k A} (c : k)
+    (hP : P ∈ order (k := k) (R := A) r) (hcP : c • P ∈ order (k := k) (R := A) s) :
+    (extendₗ f hf (c • P) hcP : Module.End k Af) = c • extendₗ f hf P hP := by
+  refine ext_of_finite_order f (r := max s r) _ _
+    (order_mono (le_max_left _ _) (extendₗ_mem_order f hf s _ hcP))
+    ((order (k := k) (R := Af) (max s r)).smul_mem c
+      (order_mono (le_max_right _ _) (extendₗ_mem_order f hf r P hP))) (fun a => ?_)
+  simp only [LinearMap.smul_apply, extendₗ_algebraMap, algebraMap_A_smul]
+
+include hf in
+/-- `extend` of a multiplication operator is multiplication by the image. -/
+theorem extendₗ_multiplication {r : ℕ} (a : A)
+    (hP : multiplication (k := k) a ∈ order (k := k) (R := A) r) :
+    (extendₗ f hf (multiplication (k := k) a) hP : Module.End k Af) =
+      multiplication (k := k) (algebraMap A Af a) := by
+  rw [extendₗ_unique f hf hP (multiplication_mem_order_zero (k := k) a),
+    extendₗ_of_order_zero f hf (multiplication_mem_order_zero (k := k) a)]
+  simp [multiplication_apply]
+
+/-! ## Step 5 (continued): the packaged algebra map `ι` -/
+
+/-- A chosen order bound for an element of `D_k(A)`. -/
+noncomputable def ordOf (P : algebra (k := k) (R := A)) : ℕ := (exists_order P).choose
+
+theorem ordOf_spec (P : algebra (k := k) (R := A)) :
+    (P : Module.End k A) ∈ order (k := k) (R := A) (ordOf (k := k) (A := A) P) :=
+  (exists_order P).choose_spec
+
+include hf in
+/-- The underlying function of `ι` (`PLAN.md` WP-11 step 5). -/
+noncomputable def ιFun (P : algebra (k := k) (R := A)) : algebra (k := k) (R := Af) :=
+  ⟨extendₗ f hf (P : Module.End k A) (ordOf_spec P),
+    (mem_algebra_iff _).2 ⟨ordOf (k := k) (A := A) P,
+      extendₗ_mem_order f hf _ _ (ordOf_spec P)⟩⟩
+
+include hf in
+/-- The coercion of `ιFun P` computed with *any* order bound of `P`. -/
+theorem coe_ιFun {r : ℕ} (P : algebra (k := k) (R := A))
+    (hP : (P : Module.End k A) ∈ order (k := k) (R := A) r) :
+    ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af) =
+      extendₗ f hf (P : Module.End k A) hP :=
+  extendₗ_unique f hf _ _
+
+include hf in
+/-- `ι` does not increase order (`PLAN.md` WP-11 step 6). -/
+theorem ιFun_mem_order (r : ℕ) (P : algebra (k := k) (R := A))
+    (hP : (P : Module.End k A) ∈ order (k := k) (R := A) r) :
+    ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af) ∈
+      order (k := k) (R := Af) r := by
+  rw [coe_ιFun f hf P hP]
+  exact extendₗ_mem_order f hf r _ hP
+
+include hf in
+/-- `ι` restricts to `P` on the image of `A`. -/
+theorem ιFun_algebraMap (P : algebra (k := k) (R := A)) (a : A) :
+    ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af) (algebraMap A Af a) =
+      algebraMap A Af ((P : Module.End k A) a) := by
+  rw [coe_ιFun f hf P (ordOf_spec P), extendₗ_algebraMap]
+
+include hf in
+theorem ιFun_one : ιFun f hf (Af := Af) (1 : algebra (k := k) (R := A)) = 1 := by
+  apply Subtype.ext
+  have h1 : ((1 : algebra (k := k) (R := A)) : Module.End k A) ∈ order (k := k) (R := A) 0 :=
+    one_mem_order_zero
+  show ((ιFun f hf (1 : algebra (k := k) (R := A)) : algebra (k := k) (R := Af)) :
+      Module.End k Af) = (1 : Module.End k Af)
+  rw [coe_ιFun f hf _ h1]
+  exact extendₗ_one f hf h1
+
+include hf in
+theorem ιFun_zero : ιFun f hf (Af := Af) (0 : algebra (k := k) (R := A)) = 0 := by
+  apply Subtype.ext
+  have h0 : ((0 : algebra (k := k) (R := A)) : Module.End k A) ∈ order (k := k) (R := A) 0 :=
+    (order (k := k) (R := A) 0).zero_mem
+  show ((ιFun f hf (0 : algebra (k := k) (R := A)) : algebra (k := k) (R := Af)) :
+      Module.End k Af) = (0 : Module.End k Af)
+  rw [coe_ιFun f hf _ h0]
+  exact extendₗ_zero f hf h0
+
+include hf in
+theorem ιFun_mul (P Q : algebra (k := k) (R := A)) :
+    ιFun f hf (Af := Af) (P * Q) = ιFun f hf P * ιFun f hf Q := by
+  apply Subtype.ext
+  have hPQ : ((P * Q : algebra (k := k) (R := A)) : Module.End k A) ∈
+      order (k := k) (R := A) (ordOf (k := k) (A := A) P + ordOf (k := k) (A := A) Q) :=
+    mul_mem_order (ordOf_spec P) (ordOf_spec Q)
+  show ((ιFun f hf (P * Q) : algebra (k := k) (R := Af)) : Module.End k Af) =
+      ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af) *
+        ((ιFun f hf Q : algebra (k := k) (R := Af)) : Module.End k Af)
+  rw [coe_ιFun f hf _ hPQ, coe_ιFun f hf P (ordOf_spec P), coe_ιFun f hf Q (ordOf_spec Q)]
+  exact extendₗ_mul f hf (ordOf_spec P) (ordOf_spec Q) hPQ
+
+include hf in
+theorem ιFun_add (P Q : algebra (k := k) (R := A)) :
+    ιFun f hf (Af := Af) (P + Q) = ιFun f hf P + ιFun f hf Q := by
+  apply Subtype.ext
+  have hPQ : ((P + Q : algebra (k := k) (R := A)) : Module.End k A) ∈
+      order (k := k) (R := A)
+        (max (ordOf (k := k) (A := A) P) (ordOf (k := k) (A := A) Q)) :=
+    (order (k := k) (R := A) _).add_mem
+      (order_mono (le_max_left _ _) (ordOf_spec P))
+      (order_mono (le_max_right _ _) (ordOf_spec Q))
+  show ((ιFun f hf (P + Q) : algebra (k := k) (R := Af)) : Module.End k Af) =
+      ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af) +
+        ((ιFun f hf Q : algebra (k := k) (R := Af)) : Module.End k Af)
+  rw [coe_ιFun f hf _ hPQ, coe_ιFun f hf P (ordOf_spec P), coe_ιFun f hf Q (ordOf_spec Q)]
+  exact extendₗ_add f hf (ordOf_spec P) (ordOf_spec Q) hPQ
+
+include hf in
+theorem ιFun_smul (c : k) (P : algebra (k := k) (R := A)) :
+    ιFun f hf (Af := Af) (c • P) = c • ιFun f hf P := by
+  apply Subtype.ext
+  have hcP : ((c • P : algebra (k := k) (R := A)) : Module.End k A) ∈
+      order (k := k) (R := A) (ordOf (k := k) (A := A) P) :=
+    (order (k := k) (R := A) _).smul_mem c (ordOf_spec P)
+  show ((ιFun f hf (c • P) : algebra (k := k) (R := Af)) : Module.End k Af) =
+      c • ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af)
+  rw [coe_ιFun f hf _ hcP, coe_ιFun f hf P (ordOf_spec P)]
+  exact extendₗ_smul_op f hf c (ordOf_spec P) hcP
+
+include hf in
+/-- **The extension algebra map** `ι : D_k(A) → D_k(A_f)` (`PLAN.md` WP-11
+step 5). -/
+noncomputable def ιHom : algebra (k := k) (R := A) →ₐ[k] algebra (k := k) (R := Af) where
+  toFun := ιFun f hf
+  map_one' := ιFun_one f hf
+  map_mul' := ιFun_mul f hf
+  map_zero' := ιFun_zero f hf
+  map_add' := ιFun_add f hf
+  commutes' := fun c => by
+    rw [Algebra.algebraMap_eq_smul_one, Algebra.algebraMap_eq_smul_one, ιFun_smul, ιFun_one]
+
+include hf in
+theorem ιHom_apply (P : algebra (k := k) (R := A)) :
+    ιHom f hf (Af := Af) P = ιFun f hf P := rfl
+
+include hf in
+/-- `PLAN.md` WP-11 step 6: `ι` sends `multiplicationD a` to
+`multiplicationD (algebraMap a)`. -/
+theorem ιHom_multiplicationD (a : A) :
+    ιHom f hf (multiplicationD (k := k) (A := A) a) =
+      multiplicationD (k := k) (A := Af) (algebraMap A Af a) := by
+  apply Subtype.ext
+  have hm : ((multiplicationD (k := k) (A := A) a : algebra (k := k) (R := A)) :
+      Module.End k A) ∈ order (k := k) (R := A) 0 := multiplicationD_mem_order_zero a
+  show ((ιFun f hf (multiplicationD (k := k) (A := A) a) : algebra (k := k) (R := Af)) :
+      Module.End k Af) = _
+  rw [coe_ιFun f hf _ hm]
+  exact extendₗ_multiplication f hf a hm
+
+include hf in
+/-- `PLAN.md` WP-11 step 7: `ι` is injective, since it restricts to `P` on the
+image of `A` and `algebraMap A Af` is injective. -/
+theorem ιHom_injective :
+    Function.Injective (ιHom (k := k) (A := A) (Af := Af) f hf) := by
+  intro P Q hPQ
+  apply Subtype.ext
+  ext a
+  have h : ((ιFun f hf P : algebra (k := k) (R := Af)) : Module.End k Af) =
+      ((ιFun f hf Q : algebra (k := k) (R := Af)) : Module.End k Af) :=
+    congrArg (fun T : algebra (k := k) (R := Af) => (T : Module.End k Af)) hPQ
+  have ha := congrArg (fun T : Module.End k Af => T (algebraMap A Af a)) h
+  simp only [ιFun_algebraMap] at ha
+  exact algebraMap_injective f hf ha
+
+/-! ## Step 8: clearance -/
+
+include hf in
+/-- If an operator `P` on `A` is computed, through `algebraMap A Af`, by an
+operator `Q` of order `≤ r` on `A_f`, then `P` has order `≤ r`. Induction on
+`r`: the commutator `[P, c]` is computed the same way by
+`[Q, algebraMap c]`. -/
+theorem mem_order_of_algebraMap_comm :
+    ∀ (r : ℕ) (P : Module.End k A) (Q : Module.End k Af), Q ∈ order (k := k) (R := Af) r →
+      (∀ a : A, algebraMap A Af (P a) = Q (algebraMap A Af a)) →
+      P ∈ order (k := k) (R := A) r := by
+  intro r
+  induction r with
+  | zero =>
+      intro P Q hQ hPQ
+      rw [mem_order_zero_iff_eq_multiplication] at hQ
+      rw [mem_order_zero_iff_eq_multiplication]
+      have hQ1 : algebraMap A Af (P 1) = Q 1 := by rw [hPQ 1, map_one]
+      ext a
+      show P a = P 1 * a
+      refine algebraMap_injective (Af := Af) f hf ?_
+      rw [hPQ a, map_mul, hQ1]
+      conv_lhs => rw [hQ]
+      rw [multiplication_apply]
+  | succ r ih =>
+      intro P Q hQ hPQ
+      rw [mem_order_succ_iff]
+      intro c
+      refine ih (commutator P c) (commutator Q (algebraMap A Af c))
+        ((mem_order_succ_iff Q r).1 hQ (algebraMap A Af c)) (fun a => ?_)
+      simp only [commutator_apply, map_sub, map_mul, hPQ]
+
+include hf in
+/-- **Finite-span lemma** (`PLAN.md` WP-11 step 8): the values of an operator of
+order `≤ r` on the image of `A` lie in a *finitely generated* `A`-submodule of
+`A_f`. Outer induction on `r`; the inner induction runs over a finite algebra
+generating set `s` of `A` (`Algebra.FiniteType.out`), first over the multiplicative
+closure of `s` by `Submonoid.closure_induction_left` — which only ever needs
+commutators with the *generators* — and then over its `k`-span by
+`Submodule.span_induction`, using `Algebra.adjoin_eq_span`. -/
+theorem exists_span_of_order :
+    ∀ (r : ℕ) (Q : Module.End k Af), Q ∈ order (k := k) (R := Af) r →
+      ∃ V : Finset Af, ∀ a : A, Q (algebraMap A Af a) ∈ Submodule.span A (V : Set Af) := by
+  classical
+  intro r
+  induction r with
+  | zero =>
+      intro Q hQ
+      rw [mem_order_zero_iff_eq_multiplication] at hQ
+      refine ⟨{Q 1}, fun a => ?_⟩
+      have hval : Q (algebraMap A Af a) = a • Q 1 := by
+        conv_lhs => rw [hQ]
+        rw [multiplication_apply, Algebra.smul_def, mul_comm]
+      rw [hval]
+      exact Submodule.smul_mem _ _ (Submodule.subset_span (by simp))
+  | succ r ih =>
+      intro Q hQ
+      obtain ⟨s, hs⟩ := (Algebra.FiniteType.out : (⊤ : Subalgebra k A).FG)
+      have hcomm : ∀ g : A, ∃ V : Finset Af, ∀ b : A,
+          (commutator Q (algebraMap A Af g)) (algebraMap A Af b) ∈
+            Submodule.span A (V : Set Af) :=
+        fun g => ih _ ((mem_order_succ_iff Q r).1 hQ (algebraMap A Af g))
+      choose Vg hVg using hcomm
+      refine ⟨insert (Q 1) (s.biUnion Vg), fun a => ?_⟩
+      have hQ1 : Q 1 ∈ Submodule.span A
+          ((insert (Q 1) (s.biUnion Vg) : Finset Af) : Set Af) :=
+        Submodule.subset_span (by simp)
+      have hgen : ∀ g ∈ s, ∀ b : A,
+          (commutator Q (algebraMap A Af g)) (algebraMap A Af b) ∈
+            Submodule.span A ((insert (Q 1) (s.biUnion Vg) : Finset Af) : Set Af) := by
+        intro g hg b
+        refine Submodule.span_mono ?_ (hVg g b)
+        exact_mod_cast Finset.coe_subset.2
+          (fun v hv => Finset.mem_insert_of_mem (Finset.mem_biUnion.2 ⟨g, hg, hv⟩))
+      have hmem : a ∈ Submodule.span k ((Submonoid.closure (s : Set A) : Submonoid A) : Set A) := by
+        have h1 : a ∈ Subalgebra.toSubmodule (Algebra.adjoin k (s : Set A)) := by
+          rw [hs]; exact Submodule.mem_top
+        rwa [Algebra.adjoin_eq_span] at h1
+      induction hmem using Submodule.span_induction with
+      | mem x hx =>
+          induction hx using Submonoid.closure_induction_left with
+          | one => simpa using hQ1
+          | mul_left g hg y _ ihy =>
+              have hstep : Q (algebraMap A Af (g * y)) =
+                  g • Q (algebraMap A Af y) +
+                    (commutator Q (algebraMap A Af g)) (algebraMap A Af y) := by
+                rw [map_mul, commutator_apply, Algebra.smul_def]
+                ring
+              rw [hstep]
+              exact Submodule.add_mem _ (Submodule.smul_mem _ g ihy) (hgen g hg y)
+      | zero => simp
+      | add x y _ _ ihx ihy =>
+          rw [map_add, map_add]
+          exact Submodule.add_mem _ ihx ihy
+      | smul c x _ ihx =>
+          rw [algebraMap_A_smul, map_smul, algebra_compatible_smul A c]
+          exact Submodule.smul_mem _ _ ihx
+
+include hf in
+/-- **Clearance** (`PLAN.md` WP-11 step 8): every operator on `A_f` becomes the
+image of an operator on `A` after multiplication by a sufficiently high power of
+multiplication by `f`. The finitely many values produced by
+`exists_span_of_order` have a common denominator `f^l`
+(`IsLocalization.exist_integer_multiples_of_finset`); the resulting operator maps
+the image of `A` into itself, its restriction `P₀` is `k`-linear of order `≤ r`
+(`mem_order_of_algebraMap_comm`), and `ext_of_finite_order` identifies its
+extension with the cleared operator. -/
+theorem ιHom_clearance (Q : algebra (k := k) (R := Af)) :
+    ∃ (l : ℕ) (P : algebra (k := k) (R := A)),
+      multiplicationD (k := k) (A := Af) (algebraMap A Af f) ^ l * Q = ιHom f hf P := by
+  classical
+  obtain ⟨r, hr⟩ := exists_order (k := k) (A := Af) Q
+  obtain ⟨V, hV⟩ := exists_span_of_order f hf r (Q : Module.End k Af) hr
+  obtain ⟨b, hb⟩ :=
+    IsLocalization.exist_integer_multiples_of_finset (S := Af) (Submonoid.powers f) V
+  obtain ⟨l, hl⟩ := (Submonoid.mem_powers_iff (b : A) f).1 b.2
+  -- the values of `Q` on the image of `A` become integral after scaling by `f ^ l`
+  have hspan : ∀ a : A, ∃ c : A, algebraMap A Af c =
+      algebraMap A Af (f ^ l) * (Q : Module.End k Af) (algebraMap A Af a) := by
+    intro a
+    have hT : Submodule.span A (V : Set Af) ≤
+        (LinearMap.range (Algebra.linearMap A Af)).comap
+          (LinearMap.mulLeft A (algebraMap A Af (f ^ l))) := by
+      refine Submodule.span_le.2 (fun v hv => ?_)
+      obtain ⟨c, hc⟩ := hb v (by exact_mod_cast hv)
+      refine ⟨c, ?_⟩
+      show algebraMap A Af c = algebraMap A Af (f ^ l) * v
+      rw [hc, hl, Algebra.smul_def]
+    exact hT (hV a)
+  choose P₀ hP₀ using hspan
+  -- `P₀` is `k`-linear
+  have hQ' : ∀ a : A, algebraMap A Af (P₀ a) =
+      (multiplication (k := k) (algebraMap A Af (f ^ l)) * (Q : Module.End k Af))
+        (algebraMap A Af a) := by
+    intro a
+    rw [hP₀ a]
+    rfl
+  have hadd : ∀ a c : A, P₀ (a + c) = P₀ a + P₀ c := by
+    intro a c
+    refine algebraMap_injective (Af := Af) f hf ?_
+    simp only [map_add, hQ']
+  have hsmul : ∀ (c : k) (a : A), P₀ (c • a) = c • P₀ a := by
+    intro c a
+    refine algebraMap_injective (Af := Af) f hf ?_
+    simp only [algebraMap_A_smul, map_smul, hQ']
+  obtain ⟨P₀ₗ, hPl⟩ : ∃ P₀ₗ : Module.End k A, ∀ a : A, P₀ₗ a = P₀ a :=
+    ⟨{ toFun := P₀, map_add' := hadd, map_smul' := fun c a => hsmul c a }, fun _ => rfl⟩
+  have hQ'ord : (multiplication (k := k) (algebraMap A Af (f ^ l)) * (Q : Module.End k Af)) ∈
+      order (k := k) (R := Af) r := by
+    simpa using
+      mul_mem_order (multiplication_mem_order_zero (k := k) (algebraMap A Af (f ^ l))) hr
+  have hPlQ : ∀ a : A, algebraMap A Af (P₀ₗ a) =
+      (multiplication (k := k) (algebraMap A Af (f ^ l)) * (Q : Module.End k Af))
+        (algebraMap A Af a) := by
+    intro a
+    rw [hPl a]
+    exact hQ' a
+  have hord : P₀ₗ ∈ order (k := k) (R := A) r :=
+    mem_order_of_algebraMap_comm f hf r P₀ₗ _ hQ'ord hPlQ
+  have hext : (extendₗ f hf P₀ₗ hord : Module.End k Af) =
+      multiplication (k := k) (algebraMap A Af (f ^ l)) * (Q : Module.End k Af) :=
+    ext_of_finite_order f (r := r) _ _ (extendₗ_mem_order f hf r _ hord) hQ'ord
+      (fun a => by rw [extendₗ_algebraMap]; exact hPlQ a)
+  have hpow : multiplicationD (k := k) (A := Af) (algebraMap A Af f) ^ l =
+      multiplicationD (k := k) (A := Af) (algebraMap A Af (f ^ l)) := by
+    rw [multiplicationD_pow, map_pow]
+  refine ⟨l, ⟨P₀ₗ, (mem_algebra_iff _).2 ⟨r, hord⟩⟩, ?_⟩
+  rw [hpow, ιHom_apply]
+  apply Subtype.ext
+  rw [Subalgebra.coe_mul, coe_ιFun f hf _ hord, hext]
+  rfl
+
+/-! ## Step 9: the assembled interface -/
+
+include hf in
+/-- **The localization interface** (`PLAN.md` WP-11): `D_k(A_f)` is an
+order-preserving, injective, `f`-power-clearable extension of `D_k(A)`.
+This discharges the literature input recorded in `Localization/Interface.lean`
+(WP-2) for every finitely generated integral domain `A` over `k`. -/
+noncomputable def localizationInterface :
+    LocalizationInterface (k := k) (A := A) (Af := Af) f where
+  ι := ιHom f hf
+  ι_multiplicationD := ιHom_multiplicationD f hf
+  ι_mem_order := fun r P hP => by
+    rw [ιHom_apply]
+    exact ιFun_mem_order f hf r P hP
+  ι_injective := ιHom_injective f hf
+  clearance := ιHom_clearance f hf
+
+
+include hf in
+/-- Instance-level corollary (`PLAN.md` WP-11 acceptance): the localization
+interface for the canonical `f`-power localization `Localization.Away f`. -/
+noncomputable def localizationInterfaceAway :
+    LocalizationInterface (k := k) (A := A) (Af := Localization.Away f) f :=
+  localizationInterface f hf
+
+
+include hf in
+/-- Public evaluation rule for the assembled interface: `ι P` restricts to `P`
+on the image of `A`. This is the identity a consumer needs in order to compute
+with `localizationInterface` at a concrete carrier. -/
+theorem localizationInterface_ι_algebraMap (P : algebra (k := k) (R := A)) (a : A) :
+    (((localizationInterface f hf (Af := Af)).ι P : algebra (k := k) (R := Af)) :
+        Module.End k Af) (algebraMap A Af a) = algebraMap A Af ((P : Module.End k A) a) :=
+  ιFun_algebraMap f hf P a
+
+
 end GlobalStafford.Localization
 
 #print axioms GlobalStafford.Localization.ext_of_finite_order
 #print axioms GlobalStafford.Localization.termFun_shift
 #print axioms GlobalStafford.Localization.termFun_well_defined
 #print axioms GlobalStafford.Localization.extend_algebraMap
+#print axioms GlobalStafford.Localization.termFun_commutator
+#print axioms GlobalStafford.Localization.extendₗ_of_order_zero
+#print axioms GlobalStafford.Localization.extendₗ_commutator_algebraMap
+#print axioms GlobalStafford.Localization.extendₗ_mem_order
+#print axioms GlobalStafford.Localization.extendₗ_mul
+#print axioms GlobalStafford.Localization.ιHom_multiplicationD
+#print axioms GlobalStafford.Localization.ιHom_injective
+#print axioms GlobalStafford.Localization.exists_span_of_order
+#print axioms GlobalStafford.Localization.ιHom_clearance
+#print axioms GlobalStafford.Localization.localizationInterface
+#print axioms GlobalStafford.Localization.localizationInterfaceAway
+#print axioms GlobalStafford.Localization.localizationInterface_ι_algebraMap
