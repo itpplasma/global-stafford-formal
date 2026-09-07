@@ -1173,8 +1173,8 @@ be additive.
 | WP | Title | Phase | Status | Owner | Notes |
 | --- | --- | --- | --- | --- | --- |
 | WP-1 | Operators: binomial formulas, contractive powers | I | done | sonnet | merged 2026-09-07 |
-| WP-2 | Squared annihilator, Ore data, localization interface | I | done except `rightClearance` (moved to WP-3) | sonnet | merged 2026-09-07 |
-| WP-3 | Old-chart protection (Lemma 1.2) | I | todo | | |
+| WP-2 | Squared annihilator, Ore data, localization interface | I | done | sonnet | merged 2026-09-07 |
+| WP-3 | Old-chart protection (Lemma 1.2) | I | done | sonnet | merged 2026-09-07; includes `rightClearance` |
 | WP-4 | Polynomial evaluation, ρ, E', S38Poly | I | generic part done; `rho`/`squaredInput` open (WP-4b) | sonnet | merged 2026-09-07 |
 | WP-5 | Bounded-order sources (Theorem 4.1) | I | todo | | |
 | WP-6 | Finite-cover patching (Theorem 5.1) | I | todo | | |
