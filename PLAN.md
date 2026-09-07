@@ -1,9 +1,9 @@
 # Global Stafford formalization plan
 
 ```yaml
-phase: phase-i
-phase_i_status: in-progress (WP-1, WP-2 core, WP-4 generic, AA-1 done)
-phase_ii_status: not-started
+phase: phase-ii
+phase_i_status: done 2026-09-07 (scripts/verify.sh --phase-i: 15 endpoints, standard axioms only)
+phase_ii_status: in-progress
 phase_iii_status: not-started
 paper_source: itpplasma/global-stafford notes/source-changing-descent-2026-09-07.md
 paper_review: two independent-context model reviews passed 2026-09-07; human review open
@@ -1181,7 +1181,7 @@ be additive.
 | WP-7 | Finite-right-span ascent (Lemma 6.1) | I | done | sonnet | merged 2026-09-07; candidate for AA-2 |
 | WP-8 | Étale chart data, Weyl action, chart S38 | I | done | sonnet | merged 2026-09-07; extra leaf field `algebraMap_ne_zero`; `polynomialToWeyl` replaced by an existence lemma |
 | WP-9 | Scalar extension interface | I | done | sonnet | merged 2026-09-07 |
-| WP-10 | Phase I assembly and audit | I | todo | | |
+| WP-10 | Phase I assembly and audit | I | done | sonnet | merged 2026-09-07; `verify.sh --phase-i` passes |
 | WP-11 | Localization interface construction | II | todo | | |
 | WP-12 | Étale derivations and coordinate rigidity | II | todo | | |
 | WP-13 | Finite generic fibre | II | todo | | |
