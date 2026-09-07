@@ -26,6 +26,12 @@ theorem smul_eq_multiplication_mul (c : C) (P : Module.End k C) :
   ext x
   simp [multiplication_apply]
 
+theorem multiplication_mul_multiplication (a b : C) :
+    multiplication (k := k) (R := C) (a * b) =
+      multiplication (k := k) (R := C) a * multiplication (k := k) (R := C) b := by
+  ext x
+  simp [multiplication_apply, mul_assoc]
+
 theorem smul_mul_assoc' (c : C) (P Q : Module.End k C) : (c • P) * Q = c • (P * Q) := by
   rw [smul_eq_multiplication_mul, smul_eq_multiplication_mul, mul_assoc]
 
@@ -195,6 +201,51 @@ theorem partialMonomial_commutator_mem_aux : ∀ (d : ℕ) (α : Fin n →₀ �
           (multiplication (k := k) (R := C) c), hstep]
         simp only [sub_mul, mul_sub, mul_add, add_mul, mul_assoc]
         abel
+
+/-- **Composition rule (weak form)**, the form used below. -/
+theorem partialMonomial_commutator_mem (α : Fin n →₀ ℕ) (c : C) :
+    partialMonomial (k := k) (C := C) α * multiplication (k := k) (R := C) c -
+        multiplication (k := k) (R := C) c * partialMonomial (k := k) (C := C) α ∈
+      Submodule.map (opOf (k := k) (C := C) (n := n)) (degLt (C := C) (n := n) α.degree) :=
+  partialMonomial_commutator_mem_aux α.degree α le_rfl c
+
+/-! ## 7a. Multiplicativity of `opOf` modulo lower degree -/
+
+/-- The single-monomial case of the product formula: composing two normal-form monomials
+reproduces the polynomial product up to a normal form of total degree `< r`. -/
+theorem opOf_monomial_mul_sub_mem (α β : Fin n →₀ ℕ) (a b : C) (r : ℕ)
+    (hr : α.degree + β.degree ≤ r) :
+    opOf (k := k) (C := C) (MvPolynomial.monomial α a) *
+        opOf (k := k) (C := C) (MvPolynomial.monomial β b) -
+        opOf (k := k) (C := C) (MvPolynomial.monomial α a * MvPolynomial.monomial β b) ∈
+      Submodule.map (opOf (k := k) (C := C) (n := n)) (degLt (C := C) (n := n) r) := by
+  obtain ⟨h, hh, hheq⟩ := partialMonomial_commutator_mem (k := k) (C := C) α b
+  refine ⟨a • (h * MvPolynomial.monomial β (1 : C)), ?_, ?_⟩
+  · refine Submodule.smul_mem _ a ?_
+    exact degLt_mono hr (mul_monomial_mem_degLt (C := C) (n := n) hh β)
+  · rw [map_smul, ← opOf_mul_partialMonomial]
+    rw [MvPolynomial.monomial_mul, opOf_monomial, opOf_monomial, opOf_monomial, hheq]
+    simp only [smul_eq_multiplication_mul (k := k),
+      multiplication_mul_multiplication (k := k), partialMonomial_add,
+      sub_mul, mul_sub, mul_assoc]
+
+/-- The product formula for finite sums of monomials: composition of two normal forms agrees
+with the polynomial product up to total degree `< r`. -/
+theorem opOf_sum_mul_sub_mem (r : ℕ) (s t : Finset (Fin n →₀ ℕ)) (a b : (Fin n →₀ ℕ) → C)
+    (hst : ∀ α ∈ s, ∀ β ∈ t, α.degree + β.degree ≤ r) :
+    opOf (k := k) (C := C) (∑ α ∈ s, MvPolynomial.monomial α (a α)) *
+        opOf (k := k) (C := C) (∑ β ∈ t, MvPolynomial.monomial β (b β)) -
+        opOf (k := k) (C := C)
+          ((∑ α ∈ s, MvPolynomial.monomial α (a α)) *
+            (∑ β ∈ t, MvPolynomial.monomial β (b β))) ∈
+      Submodule.map (opOf (k := k) (C := C) (n := n)) (degLt (C := C) (n := n) r) := by
+  rw [map_sum, map_sum, Finset.sum_mul_sum, Finset.sum_mul_sum, map_sum]
+  simp only [map_sum]
+  rw [← Finset.sum_sub_distrib]
+  refine Submodule.sum_mem _ (fun α hα => ?_)
+  rw [← Finset.sum_sub_distrib]
+  exact Submodule.sum_mem _ (fun β hβ =>
+    opOf_monomial_mul_sub_mem (k := k) (C := C) α β (a α) (b β) r (hst α hα β hβ))
 
 end
 end GlobalStafford.Chart
