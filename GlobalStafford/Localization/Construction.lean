@@ -105,6 +105,49 @@ theorem ext_of_finite_order {r : ℕ} (Q₁ Q₂ : Module.End k Af)
         simpa using this
       exact sub_eq_zero.mp hDzero
 
+/-! ## Step 2: the extension formula -/
+
+/-- The submonoid element `f^n`, as a member of `Submonoid.powers f`. -/
+def fPow (n : ℕ) : Submonoid.powers f :=
+  ⟨f ^ n, (Submonoid.mem_powers_iff (f ^ n) f).2 ⟨n, rfl⟩⟩
+
+@[simp] theorem coe_fPow (n : ℕ) : (fPow f n : A) = f ^ n := rfl
+
+theorem fPow_mul (n m : ℕ) : fPow f n * fPow f m = fPow f (n + m) := by
+  apply Subtype.ext
+  show f ^ n * f ^ m = f ^ (n + m)
+  rw [pow_add]
+
+/-- Every `x : A_f` has a representative `mk' Af a (fPow f n)`. -/
+theorem exists_fPow_rep (x : Af) : ∃ (a : A) (n : ℕ), IsLocalization.mk' Af a (fPow f n) = x := by
+  obtain ⟨⟨a, m⟩, hz⟩ := IsLocalization.mk'_surjective (Submonoid.powers f) x
+  simp only at hz
+  obtain ⟨n, hn⟩ := (Submonoid.mem_powers_iff (m : A) f).1 m.2
+  refine ⟨a, n, ?_⟩
+  have hm : fPow f n = m := Subtype.ext hn
+  rw [hm]
+  exact hz
+
+/-- Bridging identity: iterating `ad f` and evaluating at `f * a` splits off the
+next iterate, from `commutator_apply` and `ad_iterate_succ`. -/
+theorem ad_iterate_apply_mul (P : Module.End k A) (j : ℕ) (a : A) :
+    ((ad (k := k) (A := A) f)^[j] P) (f * a) =
+      f * (((ad (k := k) (A := A) f)^[j] P) a) + (((ad (k := k) (A := A) f)^[j + 1] P) a) := by
+  have h : ((ad (k := k) (A := A) f)^[j] P) (f * a) -
+      f * (((ad (k := k) (A := A) f)^[j] P) a) = (((ad (k := k) (A := A) f)^[j + 1] P) a) := by
+    have heq := commutator_apply (k := k) (R := A) ((ad (k := k) (A := A) f)^[j] P) f a
+    rw [show commutator (k := k) (R := A) ((ad (k := k) (A := A) f)^[j] P) f =
+        (ad (k := k) (A := A) f)^[j + 1] P from
+        (Function.iterate_succ_apply' (ad (k := k) (A := A) f) j P).symm] at heq
+    exact heq.symm
+  rw [← h]; ring
+
+/-- One term of the extension sum: `Σ_{j ≤ r} choose(-(n:ℤ), j) • mk' Af ((ad f)^[j] P a) f^{n+j}`. -/
+noncomputable def termFun (r : ℕ) (P : Module.End k A) (a : A) (n : ℕ) : Af :=
+  ∑ j ∈ Finset.range (r + 1),
+    (Ring.choose (-(n : ℤ)) j) •
+      IsLocalization.mk' Af (((ad (k := k) (A := A) f)^[j] P) a) (fPow f (n + j))
+
 end GlobalStafford.Localization
 
 #print axioms GlobalStafford.Localization.ext_of_finite_order
