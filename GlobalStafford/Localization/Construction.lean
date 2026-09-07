@@ -350,8 +350,64 @@ theorem termFun_well_defined {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k
     _ = termFun f r P (f ^ t₂ * a₂) (n₂ + t₂) := by rw [hnum, ht₁, ht₂]
     _ = termFun f r P a₂ n₂ := (termFun_shift_pow f hP a₂ n₂ t₂).symm
 
+/-! ## Step 2 (continued): the extension function -/
+
+/-- The numerator of a chosen `fPow`-representative of `x`. -/
+noncomputable def repA (x : Af) : A := (exists_fPow_rep f x).choose
+
+/-- The exponent of a chosen `fPow`-representative of `x`. -/
+noncomputable def repN (x : Af) : ℕ := (exists_fPow_rep f x).choose_spec.choose
+
+theorem repSpec (x : Af) :
+    (IsLocalization.mk' Af (repA f x) (fPow f (repN f x)) : Af) = x :=
+  (exists_fPow_rep f x).choose_spec.choose_spec
+
+/-- The extension of a finite-order operator `P` on `A` to `A_f` (`PLAN.md` WP-11 step 2),
+via `termFun` at a chosen representative. -/
+noncomputable def extend {r : ℕ} (P : Module.End k A) (hP : P ∈ order (k := k) (R := A) r)
+    (x : Af) : Af :=
+  termFun f r P (repA f x) (repN f x)
+
+include hf in
+/-- `extend` does not depend on the chosen representative: its value at
+`mk' Af a (fPow f n)` is `termFun f r P a n`, by `termFun_well_defined`. -/
+theorem extend_eq_termFun {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k := k) (R := A) r)
+    (a : A) (n : ℕ) :
+    (extend f P hP (IsLocalization.mk' Af a (fPow f n)) : Af) = termFun f r P a n := by
+  unfold extend
+  exact termFun_well_defined f hf hP (repSpec f _)
+
+/-- `fPow f 0` is the identity element of `Submonoid.powers f`. -/
+theorem fPow_zero : fPow f 0 = (1 : Submonoid.powers f) := by
+  apply Subtype.ext
+  show f ^ 0 = 1
+  exact pow_zero f
+
+/-- `Ring.choose (0 : ℤ) j` is `1` at `j = 0` and `0` otherwise. -/
+theorem choose_zero_int (j : ℕ) : Ring.choose (0 : ℤ) j = if j = 0 then 1 else 0 :=
+  Ring.choose_zero_ite ℤ j
+
+include hf in
+/-- **`extend` restricts to `P` on the image of `A`** (`PLAN.md` WP-11 step 2/`extend_algebraMap`):
+only the `j = 0` term of `termFun f r P a 0` survives, since `Ring.choose (0:ℤ) j = 0` for `j ≠ 0`. -/
+theorem extend_algebraMap {r : ℕ} {P : Module.End k A} (hP : P ∈ order (k := k) (R := A) r)
+    (a : A) : (extend f P hP (algebraMap A Af a) : Af) = algebraMap A Af (P a) := by
+  have h1 : (algebraMap A Af a : Af) = IsLocalization.mk' Af a (fPow f 0) := by
+    rw [fPow_zero, IsLocalization.mk'_one]
+  rw [h1, extend_eq_termFun f hf hP]
+  unfold termFun
+  simp only [Nat.cast_zero, neg_zero]
+  rw [Finset.sum_eq_single 0]
+  · simp only [Function.iterate_zero, id_eq, add_zero, choose_zero_int, if_true, one_smul,
+      fPow_zero, IsLocalization.mk'_one]
+  · intro j _ hj
+    rw [choose_zero_int, if_neg hj, zero_smul]
+  · intro h0
+    exact absurd (Finset.mem_range.2 (Nat.succ_pos r)) h0
+
 end GlobalStafford.Localization
 
 #print axioms GlobalStafford.Localization.ext_of_finite_order
 #print axioms GlobalStafford.Localization.termFun_shift
 #print axioms GlobalStafford.Localization.termFun_well_defined
+#print axioms GlobalStafford.Localization.extend_algebraMap
