@@ -3,6 +3,7 @@ import GlobalStafford.Chart.EtaleDerivations
 import Mathlib.FieldTheory.RatFunc.AsPolynomial
 import Mathlib.RingTheory.PolynomialAlgebra
 import Mathlib.RingTheory.Flat.Basic
+import Mathlib.Algebra.Polynomial.Basic
 
 /-!
 # Construction of the scalar extension interface (WP-16)
@@ -223,6 +224,138 @@ theorem aeval_X_ne_zero (h : Polynomial k) (hh : h ≠ 0) :
   rw [RatFunc.aeval_X_left_eq_algebraMap]
   intro h0
   exact hh (RatFunc.algebraMap_injective k (by rw [h0, map_zero]))
+
+/-! ## 3. Injectivity of `Θ` -/
+
+/-- The powers of `t` are `k`-linearly independent in `C_K` in the strong sense that a finite
+combination `∑ t^i ⊗ y i` vanishes only if every coefficient `y i` vanishes. The `k`-linear map
+`k[X] → K`, `X ↦ t`, is injective, `C` is flat (indeed free) over the field `k`, so the base
+change `k[X] ⊗ C → K ⊗ C` is injective; and `k[X] ⊗[k] C ≃ C[X]` (`polyEquivTensor`) reads off
+the coefficients. -/
+theorem eq_zero_of_sum_tmul_pow_eq_zero (s : Finset ℕ) (y : ℕ → C)
+    (hy : ∑ i ∈ s, ((RatFunc.X : RatFunc k) ^ i) ⊗ₜ[k] y i = (0 : CK k C)) :
+    ∀ i ∈ s, y i = 0 := by
+  classical
+  set f : Polynomial k →ₗ[k] RatFunc k :=
+    (Polynomial.aeval (RatFunc.X : RatFunc k)).toLinearMap with hfdef
+  have hfapp : ∀ a : Polynomial k, f a = algebraMap (Polynomial k) (RatFunc k) a := by
+    intro a
+    show Polynomial.aeval (RatFunc.X : RatFunc k) a = _
+    rw [RatFunc.aeval_X_left_eq_algebraMap]
+  have hfinj : Function.Injective f := by
+    intro a b hab
+    exact RatFunc.algebraMap_injective k (by rw [← hfapp, ← hfapp, hab])
+  have hrinj : Function.Injective (f.rTensor C) :=
+    Module.Flat.rTensor_preserves_injective_linearMap f hfinj
+  have hmap : (f.rTensor C) (∑ i ∈ s, ((Polynomial.X : Polynomial k) ^ i) ⊗ₜ[k] y i) = 0 := by
+    rw [map_sum, ← hy]
+    refine Finset.sum_congr rfl fun i _ => ?_
+    rw [LinearMap.rTensor_tmul]
+    congr 1
+    rw [hfapp, map_pow, RatFunc.algebraMap_X]
+  have h0 : ∑ i ∈ s, ((Polynomial.X : Polynomial k) ^ i) ⊗ₜ[k] y i = 0 :=
+    hrinj (by rw [hmap, map_zero])
+  set Ψ : (Polynomial k) ⊗[k] C →ₗ[k] Polynomial C :=
+    (polyEquivTensor k C).symm.toLinearMap ∘ₗ
+      (TensorProduct.comm k (Polynomial k) C).toLinearMap with hΨdef
+  have hΨ : ∀ (i : ℕ) (c : C),
+      Ψ (((Polynomial.X : Polynomial k) ^ i) ⊗ₜ[k] c) = Polynomial.monomial i c := by
+    intro i c
+    show (polyEquivTensor k C).symm (c ⊗ₜ[k] ((Polynomial.X : Polynomial k) ^ i)) = _
+    rw [polyEquivTensor_symm_apply_tmul_eq_smul, Polynomial.map_pow, Polynomial.map_X,
+      Polynomial.smul_eq_C_mul, Polynomial.C_mul_X_pow_eq_monomial]
+  have hsum : ∑ i ∈ s, Polynomial.monomial i (y i) = (0 : Polynomial C) := by
+    have hall := congrArg Ψ h0
+    rw [map_sum, map_zero] at hall
+    rw [← hall]
+    exact Finset.sum_congr rfl fun i _ => (hΨ i (y i)).symm
+  intro j hj
+  have hcoeff := congrArg (fun q : Polynomial C => q.coeff j) hsum
+  simp only [Polynomial.finsetSum_coeff, Polynomial.coeff_monomial, Polynomial.coeff_zero] at hcoeff
+  rwa [Finset.sum_ite_eq' s j y, if_pos hj] at hcoeff
+
+/-- The scalars of `K` inside `C_K`. -/
+@[simp] theorem algebraMap_CK (κ : RatFunc k) :
+    algebraMap (RatFunc k) (CK k C) κ = κ ⊗ₜ[k] (1 : C) := by
+  simp [Algebra.TensorProduct.algebraMap_apply]
+
+/-- The scalars of `K` inside `D_K(C_K)` are the corresponding multiplication operators. -/
+theorem coe_algebraMap_DK (κ : RatFunc k) :
+    ((algebraMap (RatFunc k) (DK k C) κ : DK k C) : Module.End (RatFunc k) (CK k C)) =
+      multiplication (algebraMap (RatFunc k) (CK k C) κ) := by
+  rw [algebraMap_eq_multiplicationD, GlobalStafford.Operators.coe_multiplicationD]
+
+/-- Value of `Θ p` on the pure tensor `1 ⊗ c`: it reads off the coefficients of `p`. -/
+theorem bigTheta_apply_one_tmul (p : Polynomial (algebra (k := k) (R := C))) (c : C) :
+    ((bigTheta p : DK k C) : Module.End (RatFunc k) (CK k C)) ((1 : RatFunc k) ⊗ₜ[k] c) =
+      ∑ i ∈ p.support,
+        ((RatFunc.X : RatFunc k) ^ i) ⊗ₜ[k] ((p.coeff i : Module.End k C) c) := by
+  classical
+  have hterm : ∀ i : ℕ,
+      (((bcHom (p.coeff i) * algebraMap (RatFunc k) (DK k C) (RatFunc.X : RatFunc k) ^ i :
+          DK k C)) : Module.End (RatFunc k) (CK k C)) ((1 : RatFunc k) ⊗ₜ[k] c) =
+        ((RatFunc.X : RatFunc k) ^ i) ⊗ₜ[k] ((p.coeff i : Module.End k C) c) := by
+    intro i
+    rw [Subalgebra.coe_mul, ← map_pow, Module.End.mul_apply, coe_algebraMap_DK, coe_bcHom,
+      multiplication_apply, algebraMap_CK, Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul,
+      baseChangeEnd_tmul]
+  rw [bigTheta_apply, Polynomial.eval₂_eq_sum, Polynomial.sum_def]
+  rw [show ((∑ i ∈ p.support, bcHom (p.coeff i) *
+        algebraMap (RatFunc k) (DK k C) (RatFunc.X : RatFunc k) ^ i : DK k C) :
+        Module.End (RatFunc k) (CK k C)) =
+      ∑ i ∈ p.support, (((bcHom (p.coeff i) *
+        algebraMap (RatFunc k) (DK k C) (RatFunc.X : RatFunc k) ^ i : DK k C)) :
+        Module.End (RatFunc k) (CK k C)) from
+      map_sum (DK k C).val _ _]
+  rw [LinearMap.sum_apply]
+  exact Finset.sum_congr rfl fun i _ => hterm i
+
+/-- `Θ` has trivial kernel. -/
+theorem bigTheta_eq_zero (p : Polynomial (algebra (k := k) (R := C)))
+    (hp : bigTheta p = 0) : p = 0 := by
+  classical
+  by_contra hne
+  obtain ⟨j, hj⟩ : p.support.Nonempty := Polynomial.support_nonempty.mpr hne
+  have hcoeff : ∀ c : C, (p.coeff j : Module.End k C) c = 0 := by
+    intro c
+    refine eq_zero_of_sum_tmul_pow_eq_zero (k := k) p.support
+      (fun i => (p.coeff i : Module.End k C) c) ?_ j hj
+    rw [← bigTheta_apply_one_tmul p c, hp]
+    rfl
+  exact (Polynomial.mem_support_iff.mp hj)
+    (Subtype.ext (LinearMap.ext fun c => by rw [hcoeff c]; rfl))
+
+/-- The same, summing over any finite set containing the support of `p`. -/
+theorem bigTheta_apply_one_tmul' (p : Polynomial (algebra (k := k) (R := C))) (s : Finset ℕ)
+    (hs : p.support ⊆ s) (c : C) :
+    ((bigTheta p : DK k C) : Module.End (RatFunc k) (CK k C)) ((1 : RatFunc k) ⊗ₜ[k] c) =
+      ∑ i ∈ s, ((RatFunc.X : RatFunc k) ^ i) ⊗ₜ[k] ((p.coeff i : Module.End k C) c) := by
+  rw [bigTheta_apply_one_tmul]
+  refine Finset.sum_subset hs fun i _ hi => ?_
+  rw [Polynomial.notMem_support_iff.mp hi, Subalgebra.coe_zero, LinearMap.zero_apply,
+    TensorProduct.tmul_zero]
+
+/-- **`Θ_injective`** (`PLAN.md` WP-16.4): `Θ` is injective, because the powers `t^i` of the
+scalar `t` are `k`-linearly independent in `K` and `C` is free over `k`. -/
+theorem bigTheta_injective :
+    Function.Injective (bigTheta (k := k) (C := C)) := by
+  classical
+  intro p q hpq
+  refine Polynomial.ext fun i => Subtype.ext (LinearMap.ext fun c => ?_)
+  set s : Finset ℕ := p.support ∪ q.support with hsdef
+  have h1 := bigTheta_apply_one_tmul' p s Finset.subset_union_left c
+  have h2 := bigTheta_apply_one_tmul' q s Finset.subset_union_right c
+  have hsum : ∑ j ∈ s, ((RatFunc.X : RatFunc k) ^ j) ⊗ₜ[k]
+      ((p.coeff j : Module.End k C) c - (q.coeff j : Module.End k C) c) = (0 : CK k C) := by
+    simp only [TensorProduct.tmul_sub, Finset.sum_sub_distrib, ← h1, ← h2, hpq, sub_self]
+  have hz := eq_zero_of_sum_tmul_pow_eq_zero (k := k) s _ hsum
+  by_cases hi : i ∈ s
+  · exact sub_eq_zero.mp (hz i hi)
+  · have hp0 : p.coeff i = 0 :=
+      Polynomial.notMem_support_iff.mp fun h => hi (Finset.mem_union_left _ h)
+    have hq0 : q.coeff i = 0 :=
+      Polynomial.notMem_support_iff.mp fun h => hi (Finset.mem_union_right _ h)
+    rw [hp0, hq0]
 
 end
 
