@@ -111,5 +111,79 @@ theorem nontrivial_CK [Nontrivial C] : Nontrivial (CK k C) := by
 
 end Setup
 
+/-! ## 3. `MvPolynomial (Fin n) K` acts on `C_K` through `xCK` -/
+
+section AlgebraBK
+
+variable {k : Type u} [Field k] {n : ℕ} {C : Type u} [CommRing C] [Algebra k C]
+  [Algebra (B k n) C] [IsScalarTower k (B k n) C]
+
+/-- `MvPolynomial (Fin n) K` acts on `C_K = K ⊗_k C` through the coordinates `xCK`,
+i.e. `X i ↦ xCK i`. This supplies the `Algebra (B K n) (C_K)` instance required by
+`EtaleChartData K n (C_K)`; there is no pre-existing such instance (only
+`Algebra (B k n) C` and `Algebra K (C_K)` are given), so registering it as a plain
+`instance` is safe. -/
+noncomputable instance instAlgebraBK : Algebra (B (RatFunc k) n) (CK k C) :=
+  ((MvPolynomial.aeval (xCK k n C)).toRingHom).toAlgebra
+
+theorem algebraMap_BK_X (i : Fin n) :
+    algebraMap (B (RatFunc k) n) (CK k C) (MvPolynomial.X i) = xCK k n C i :=
+  MvPolynomial.aeval_X (xCK k n C) i
+
+theorem algebraMap_BK_apply (q : B (RatFunc k) n) :
+    algebraMap (B (RatFunc k) n) (CK k C) q = MvPolynomial.aeval (xCK k n C) q := rfl
+
+/-- `K` acts as scalars compatibly through `B K n = MvPolynomial (Fin n) K`: `aeval xCK` is
+a `K`-algebra homomorphism, so it commutes with the algebra map from `K`. -/
+instance instIsScalarTowerBK : IsScalarTower (RatFunc k) (B (RatFunc k) n) (CK k C) := by
+  refine IsScalarTower.of_algebraMap_eq fun x => ?_
+  rw [algebraMap_BK_apply]
+  exact (AlgHom.commutes (MvPolynomial.aeval (xCK k n C)) x).symm
+
+/-- The base-changed coefficient map `B k n → B K n`. -/
+abbrev mapBK (b : B k n) : B (RatFunc k) n := MvPolynomial.map (algebraMap k (RatFunc k)) b
+
+theorem mapBK_ne_zero {b : B k n} (hb : b ≠ 0) : mapBK (k := k) (n := n) b ≠ 0 := by
+  have hinj : Function.Injective (MvPolynomial.map (algebraMap k (RatFunc k)) :
+      B k n → B (RatFunc k) n) :=
+    MvPolynomial.map_injective _ (FaithfulSMul.algebraMap_injective k (RatFunc k))
+  exact fun h0 => hb (hinj (h0.trans (map_zero _).symm))
+
+/-- The base-changed coefficient map, followed by `algebraMap (B K n) C_K`, is `1 ⊗ (algebraMap
+(B k n) C -)`: expand by induction on `b` following the pattern of `exists_weylAction_eq_multiplicationD`
+and `commutator_algebraMap`. -/
+theorem algebraMap_BK_mapBK (b : B k n) :
+    algebraMap (B (RatFunc k) n) (CK k C) (mapBK b) =
+      (1 : RatFunc k) ⊗ₜ[k] (algebraMap (B k n) C b) := by
+  induction b using MvPolynomial.induction_on with
+  | C c =>
+      have hcB : algebraMap (B k n) C (MvPolynomial.C c) = algebraMap k C c := by
+        calc
+          algebraMap (B k n) C (MvPolynomial.C c)
+              = algebraMap (B k n) C (algebraMap k (B k n) c) := by
+                rw [MvPolynomial.algebraMap_eq]
+          _ = algebraMap k C c := (IsScalarTower.algebraMap_apply k (B k n) C c).symm
+      have hmapC : mapBK (k := k) (n := n) (MvPolynomial.C c) =
+          MvPolynomial.C (algebraMap k (RatFunc k) c) := MvPolynomial.map_C _ _
+      have hCeq : algebraMap (RatFunc k) (B (RatFunc k) n) (algebraMap k (RatFunc k) c) =
+          MvPolynomial.C (algebraMap k (RatFunc k) c) := by
+        rw [MvPolynomial.algebraMap_eq]
+      rw [hmapC, ← hCeq, algebraMap_BK_apply, AlgHom.commutes, hcB, one_tmul_algebraMap,
+        ← IsScalarTower.algebraMap_apply k (RatFunc k) (CK k C)]
+  | add f g hf hg =>
+      have hmapadd : mapBK (k := k) (n := n) (f + g) = mapBK f + mapBK g := map_add _ _ _
+      rw [hmapadd, map_add, map_add, hf, hg, TensorProduct.tmul_add]
+  | mul_X f i hf =>
+      have hmapX : mapBK (k := k) (n := n) (f * MvPolynomial.X i) =
+          mapBK f * MvPolynomial.X i := by
+        show MvPolynomial.map (algebraMap k (RatFunc k)) (f * MvPolynomial.X i) = _
+        rw [map_mul, MvPolynomial.map_X]
+      have hfX : algebraMap (B k n) C (f * MvPolynomial.X i) =
+          algebraMap (B k n) C f * xC k n C i := by rw [map_mul]; rfl
+      rw [hmapX, map_mul, algebraMap_BK_X, hf, hfX, xCK,
+        Algebra.TensorProduct.tmul_mul_tmul, one_mul]
+
+end AlgebraBK
+
 end
 end GlobalStafford.Chart
