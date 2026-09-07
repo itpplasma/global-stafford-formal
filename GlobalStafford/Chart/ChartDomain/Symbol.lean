@@ -93,5 +93,108 @@ theorem mul_monomial_mem_degLt {r : ℕ} {f : MvPolynomial (Fin n) C}
   rw [map_add]
   exact Nat.add_lt_add_right (hf β₁ hβ₁) _
 
+/-! ## 6. The composition rule -/
+
+/-- Right composition with `∂^β` on a normal form is the polynomial multiplication by `X^β`. -/
+theorem opOf_mul_partialMonomial (f : MvPolynomial (Fin n) C) (β : Fin n →₀ ℕ) :
+    opOf (k := k) (C := C) f * partialMonomial (k := k) (C := C) β =
+      opOf (k := k) (C := C) (f * MvPolynomial.monomial β (1 : C)) := by
+  induction f using MvPolynomial.induction_on' with
+  | monomial α a =>
+      rw [MvPolynomial.monomial_mul, mul_one, opOf_monomial, opOf_monomial,
+        smul_mul_assoc' (k := k), partialMonomial_add]
+  | add f g hf hg =>
+      rw [add_mul, map_add, map_add, add_mul, hf, hg]
+
+/-- One-step commutation: `∂_i` moves past a multiplication operator at the price of the
+derivative of the coefficient (`Derivation.leibniz`). -/
+theorem liftDerivation_mul_multiplication (i : Fin n) (c : C) :
+    (liftDerivation (k := k) (C := C) i).toLinearMap * multiplication (k := k) (R := C) c =
+      multiplication (k := k) (R := C) c *
+          (liftDerivation (k := k) (C := C) i).toLinearMap +
+        multiplication (k := k) (R := C) ((liftDerivation (k := k) (C := C) i) c) := by
+  ext x
+  simp only [Module.End.mul_apply, multiplication_apply, LinearMap.add_apply,
+    Derivation.coeFn_coe]
+  rw [(liftDerivation (k := k) (C := C) i).leibniz]
+  simp [smul_eq_mul, mul_comm]
+
+/-- Removing one derivation from a nonzero multi-index. -/
+theorem exists_pred_of_ne_zero {α : Fin n →₀ ℕ} (hα : α ≠ 0) :
+    ∃ (i : Fin n) (α' : Fin n →₀ ℕ), α = α' + Finsupp.single i 1 ∧ α'.degree + 1 = α.degree := by
+  obtain ⟨i, hi⟩ : ∃ i, α i ≠ 0 := by
+    by_contra hcon
+    push_neg at hcon
+    exact hα (Finsupp.ext hcon)
+  refine ⟨i, α - Finsupp.single i 1, ?_, ?_⟩
+  · ext j
+    by_cases hj : j = i
+    · subst hj
+      simp only [Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_eq_same]
+      omega
+    · simp [Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply, hj, Ne.symm hj]
+  · have hsplit : (α - Finsupp.single i 1) + Finsupp.single i 1 = α := by
+      ext j
+      by_cases hj : j = i
+      · subst hj
+        simp only [Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_eq_same]
+        omega
+      · simp [Finsupp.add_apply, Finsupp.tsub_apply, Finsupp.single_apply, hj, Ne.symm hj]
+    calc (α - Finsupp.single i 1).degree + 1
+        = (α - Finsupp.single i 1).degree + (Finsupp.single i 1 : Fin n →₀ ℕ).degree := by
+          rw [Finsupp.degree_single]
+      _ = ((α - Finsupp.single i 1) + Finsupp.single i 1 : Fin n →₀ ℕ).degree := (map_add _ _ _).symm
+      _ = α.degree := by rw [hsplit]
+
+/-- **Composition rule (weak form)**: `∂^α` commutes with a multiplication operator up to a
+normal form of strictly smaller total degree. -/
+theorem partialMonomial_commutator_mem_aux : ∀ (d : ℕ) (α : Fin n →₀ ℕ), α.degree ≤ d →
+    ∀ c : C, partialMonomial (k := k) (C := C) α * multiplication (k := k) (R := C) c -
+        multiplication (k := k) (R := C) c * partialMonomial (k := k) (C := C) α ∈
+      Submodule.map (opOf (k := k) (C := C) (n := n)) (degLt (C := C) (n := n) α.degree) := by
+  intro d
+  induction d with
+  | zero =>
+      intro α hα c
+      have hα0 : α = 0 := (Finsupp.degree_eq_zero_iff α).mp (Nat.le_zero.mp hα)
+      subst hα0
+      simp
+  | succ d ih =>
+      intro α hα c
+      by_cases hα0 : α = 0
+      · subst hα0; simp
+      obtain ⟨i, α', hsplit, hdeg⟩ := exists_pred_of_ne_zero hα0
+      have hα'd : α'.degree ≤ d := by omega
+      have hαA : partialMonomial (k := k) (C := C) α =
+          partialMonomial (k := k) (C := C) α' *
+            (liftDerivation (k := k) (C := C) i).toLinearMap := by
+        rw [hsplit, partialMonomial_add, partialMonomial_single, pow_one]
+      -- first correction: the induction hypothesis for `α'`, pushed right past `∂_i`
+      obtain ⟨h₁, hh₁, hh₁eq⟩ := ih α' hα'd c
+      -- second correction: the induction hypothesis for `α'` and the derived coefficient
+      obtain ⟨h₂, hh₂, hh₂eq⟩ := ih α' hα'd ((liftDerivation (k := k) (C := C) i) c)
+      refine ⟨h₁ * MvPolynomial.monomial (Finsupp.single i 1) (1 : C) + h₂ +
+        MvPolynomial.monomial α' ((liftDerivation (k := k) (C := C) i) c), ?_, ?_⟩
+      · refine Submodule.add_mem _ (Submodule.add_mem _ ?_ ?_) ?_
+        · have := mul_monomial_mem_degLt (C := C) (n := n) hh₁ (Finsupp.single i 1)
+          rw [Finsupp.degree_single] at this
+          exact degLt_mono (by omega) this
+        · exact degLt_mono (by omega) hh₂
+        · exact monomial_mem_degLt (by omega) _
+      · have hexp : opOf (k := k) (C := C)
+            (h₁ * MvPolynomial.monomial (Finsupp.single i 1) (1 : C)) =
+              opOf (k := k) (C := C) h₁ *
+                (liftDerivation (k := k) (C := C) i).toLinearMap := by
+          rw [← opOf_mul_partialMonomial, partialMonomial_single, pow_one]
+        rw [map_add, map_add, hexp, hh₁eq, hh₂eq, opOf_monomial,
+          smul_eq_multiplication_mul (k := k)]
+        rw [hαA]
+        have hstep := liftDerivation_mul_multiplication (k := k) (C := C) i c
+        rw [mul_assoc (partialMonomial (k := k) (C := C) α')
+          (liftDerivation (k := k) (C := C) i).toLinearMap
+          (multiplication (k := k) (R := C) c), hstep]
+        simp only [sub_mul, mul_sub, mul_add, add_mul, mul_assoc]
+        abel
+
 end
 end GlobalStafford.Chart
