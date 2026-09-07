@@ -271,6 +271,45 @@ theorem exists_etaleCoordinateChart (k S : Type u) [Field k] [CommRing S] [Algeb
     Algebra.Etale.iff_isStandardSmoothOfRelativeDimension_zero.mpr hstd
   exact ⟨⟨freeRank P, inferInstance, inferInstance, hetale⟩⟩
 
+/-- **WP-17 (B) / Theorem 6.3**: every smooth integral affine `k`-algebra `A` (`k` a
+characteristic-zero field) has a finite principal cover by nonzero elements `f : Fin s → A`
+such that each `Localization.Away (f i)` carries an `EtaleCoordinateChart`. Route:
+`Algebra.Smooth.exists_span_eq_top_isStandardSmooth` gives a spanning set of standard-smooth
+localizations; `Ideal.span_eq_top_iff_finite` extracts a finite subcover; `0` is discarded
+(it does not affect the span); each remaining `Localization.Away x` (`x ≠ 0`) is a domain
+(`IsLocalization.isDomain_localization`, since `A` is a domain) and standard smooth, hence
+carries an `EtaleCoordinateChart` by `exists_etaleCoordinateChart`. -/
+theorem exists_finite_etale_cover (k A : Type u) [Field k] [CharZero k] [CommRing A]
+    [IsDomain A] [Algebra k A] [Algebra.Smooth k A] :
+    ∃ (s : ℕ) (f : Fin s → A), Ideal.span (Set.range f) = ⊤ ∧
+      ∀ i, f i ≠ 0 ∧ Nonempty (EtaleCoordinateChart k (Localization.Away (f i))) := by
+  classical
+  obtain ⟨t, ht_span, ht_std⟩ := Algebra.Smooth.exists_span_eq_top_isStandardSmooth k A
+  obtain ⟨t', ht'_sub, ht'_span⟩ := (Ideal.span_eq_top_iff_finite t).mp ht_span
+  set t'' : Finset A := t'.erase 0 with ht''_def
+  have ht''_span : Ideal.span (t'' : Set A) = ⊤ := by
+    rw [ht''_def, Finset.coe_erase, Ideal.span_sdiff_singleton_zero]
+    exact ht'_span
+  have ht''_sub : (t'' : Set A) ⊆ t := fun x hx => ht'_sub (Finset.mem_of_mem_erase hx)
+  set n := Fintype.card {x // x ∈ t''} with hn_def
+  let e : Fin n ≃ {x // x ∈ t''} := (Fintype.equivFin {x // x ∈ t''}).symm
+  refine ⟨n, fun i => (e i : A), ?_, ?_⟩
+  · have hrange : Set.range (fun i : Fin n => (e i : A)) = (t'' : Set A) := by
+      have : (fun i : Fin n => (e i : A)) = Subtype.val ∘ e := rfl
+      rw [this, Set.range_comp, Equiv.range_eq_univ, Set.image_univ, Subtype.range_coe]
+    rw [hrange]
+    exact ht''_span
+  · intro i
+    have hi0 : (e i : A) ≠ 0 := Finset.ne_of_mem_erase (e i).2
+    refine ⟨hi0, ?_⟩
+    have hstdi : Algebra.IsStandardSmooth k (Localization.Away (e i : A)) :=
+      ht_std _ (ht''_sub (e i).2)
+    have hmono : Submonoid.powers (e i : A) ≤ nonZeroDivisors A :=
+      Submonoid.powers_le.mpr (mem_nonZeroDivisors_iff_ne_zero.mpr hi0)
+    have hdom : IsDomain (Localization.Away (e i : A)) :=
+      IsLocalization.isDomain_localization hmono
+    exact exists_etaleCoordinateChart k (Localization.Away (e i : A))
+
 end
 
 end GlobalStafford.Chart
