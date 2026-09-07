@@ -148,6 +148,75 @@ noncomputable def termFun (r : ℕ) (P : Module.End k A) (a : A) (n : ℕ) : Af 
     (Ring.choose (-(n : ℤ)) j) •
       IsLocalization.mk' Af (((ad (k := k) (A := A) f)^[j] P) a) (fPow f (n + j))
 
+/-- Pascal's identity for `Ring.choose` at negative integer arguments, shifting the
+first argument by `1`, from `Ring.choose_succ_succ` (`ℤ` is a binomial ring). -/
+private theorem choose_neg_succ_pascal (n j : ℕ) :
+    Ring.choose (-(n : ℤ)) (j + 1) = Ring.choose (-((n : ℤ) + 1)) j + Ring.choose (-((n : ℤ) + 1)) (j + 1) := by
+  have h := Ring.choose_succ_succ (R := ℤ) (-((n : ℤ) + 1)) j
+  have heq : -((n : ℤ) + 1) + 1 = -(n : ℤ) := by ring
+  rwa [heq] at h
+
+/-- Same-denominator additivity of `mk'`, from `smul_mk'_one`. -/
+theorem mk'_add_same_denom (x₁ x₂ : A) (y : Submonoid.powers f) :
+    IsLocalization.mk' Af (x₁ + x₂) y = IsLocalization.mk' Af x₁ y + IsLocalization.mk' Af x₂ y := by
+  have e1 : IsLocalization.mk' Af x₁ y = x₁ • IsLocalization.mk' Af (1 : A) y :=
+    (IsLocalization.smul_mk'_one x₁ y).symm
+  have e2 : IsLocalization.mk' Af x₂ y = x₂ • IsLocalization.mk' Af (1 : A) y :=
+    (IsLocalization.smul_mk'_one x₂ y).symm
+  have e3 : IsLocalization.mk' Af (x₁ + x₂) y = (x₁ + x₂) • IsLocalization.mk' Af (1 : A) y :=
+    (IsLocalization.smul_mk'_one (x₁ + x₂) y).symm
+  rw [e3, e1, e2, add_smul]
+
+/-- The pure combinatorial identity underlying the shift step of the extension
+formula: a Pascal-triangle recursion for `Ring.choose` on negative integers,
+truncated using that `G` vanishes beyond `r` (mirroring `sum_pascal_shift` in
+`Operators/Commutator.lean`, with `G`-vanishing playing the role that
+`Nat.choose_eq_zero_of_lt` plays there). -/
+private theorem pascal_neg_shift_sum (n r : ℕ) (G : ℕ → Af) (hvanish : ∀ j, r < j → G j = 0) :
+    (∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G j) +
+        (∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G (j + 1)) =
+      ∑ j ∈ Finset.range (r + 1), (Ring.choose (-(n : ℤ)) j) • G j := by
+  have hpad1 :
+      (∑ j ∈ Finset.range (r + 1 + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G j) =
+        ∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G j := by
+    rw [Finset.sum_range_succ, hvanish (r + 1) (by omega)]
+    simp
+  have hpad3 :
+      (∑ j ∈ Finset.range (r + 1 + 1), (Ring.choose (-(n : ℤ)) j) • G j) =
+        ∑ j ∈ Finset.range (r + 1), (Ring.choose (-(n : ℤ)) j) • G j := by
+    rw [Finset.sum_range_succ, hvanish (r + 1) (by omega)]
+    simp
+  have hsplit :
+      (∑ j ∈ Finset.range (r + 1 + 1), (Ring.choose (-(n : ℤ)) j) • G j) =
+        (∑ j ∈ Finset.range (r + 1), (Ring.choose (-(n : ℤ)) (j + 1)) • G (j + 1)) + G 0 := by
+    rw [Finset.sum_range_succ' (fun j => (Ring.choose (-(n : ℤ)) j) • G j) (r + 1),
+      Ring.choose_zero_right, one_smul]
+  have hchoose :
+      (∑ j ∈ Finset.range (r + 1), (Ring.choose (-(n : ℤ)) (j + 1)) • G (j + 1)) =
+        (∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G (j + 1)) +
+          (∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) (j + 1)) • G (j + 1)) := by
+    rw [← Finset.sum_add_distrib]
+    refine Finset.sum_congr rfl fun j _ => ?_
+    rw [choose_neg_succ_pascal n j, add_smul]
+  have hkey :
+      (∑ j ∈ Finset.range (r + 1 + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G j) =
+        (∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) (j + 1)) • G (j + 1)) + G 0 := by
+    rw [Finset.sum_range_succ' (fun j => (Ring.choose (-((n : ℤ) + 1)) j) • G j) (r + 1),
+      Ring.choose_zero_right, one_smul]
+  calc (∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G j) +
+        (∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G (j + 1))
+      = (∑ j ∈ Finset.range (r + 1 + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G j) +
+          (∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G (j + 1)) := by rw [hpad1]
+    _ = ((∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) (j + 1)) • G (j + 1)) + G 0) +
+          (∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G (j + 1)) := by rw [hkey]
+    _ = ((∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) j) • G (j + 1)) +
+          (∑ j ∈ Finset.range (r + 1), (Ring.choose (-((n : ℤ) + 1)) (j + 1)) • G (j + 1))) + G 0 := by
+          abel
+    _ = (∑ j ∈ Finset.range (r + 1), (Ring.choose (-(n : ℤ)) (j + 1)) • G (j + 1)) + G 0 := by
+          rw [← hchoose]
+    _ = ∑ j ∈ Finset.range (r + 1 + 1), (Ring.choose (-(n : ℤ)) j) • G j := by rw [← hsplit]
+    _ = ∑ j ∈ Finset.range (r + 1), (Ring.choose (-(n : ℤ)) j) • G j := hpad3
+
 end GlobalStafford.Localization
 
 #print axioms GlobalStafford.Localization.ext_of_finite_order
