@@ -63,7 +63,7 @@ related_formalizations:
 
 verification:
   commit: "d76051ce227f41c0fb21f114ffd61890f3b6b99b"
-  report: ""
+  report: "cceb030147fac5e2d7e614ed879318595551aa5330c8e92d9bb5dfdf092d10f6"
   machine_readable_report: "docs/verification-results.json"
   statement_correspondence: "docs/paper-lean-specification.md"
   allowed_axioms: ["propext", "Classical.choice", "Quot.sound"]
