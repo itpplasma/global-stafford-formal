@@ -1,4 +1,5 @@
 import GlobalStafford.Chart.ScalarExtensionConstruction
+import GlobalStafford.Chart.GenericFibre
 
 /-!
 # Étale chart data over `K = RatFunc k` (WP-18b)
@@ -205,6 +206,136 @@ theorem liftDerivationK_comm (i j : Fin n) :
   rw [← baseChangeEnd_mul, ← baseChangeEnd_mul, liftDerivation_comm]
 
 end DerivationsComm
+
+/-! ## 5. `algebraMap_ne_zero` over `K` -/
+
+section AlgebraMapNeZero
+
+variable {k : Type u} [Field k] {n : ℕ} {C : Type u} [CommRing C] [IsDomain C] [Algebra k C]
+  [Algebra (B k n) C] [IsScalarTower k (B k n) C] [Algebra.Etale (B k n) C]
+
+/-- The `k`-linear map underlying `algebraMap (B k n) C`. -/
+def algebraMapBLinear : B k n →ₗ[k] C := (IsScalarTower.toAlgHom k (B k n) C).toLinearMap
+
+theorem algebraMapBLinear_apply (b : B k n) :
+    algebraMapBLinear (k := k) (n := n) (C := C) b = algebraMap (B k n) C b := rfl
+
+theorem algebraMapBLinear_injective :
+    Function.Injective (algebraMapBLinear (k := k) (n := n) (C := C)) :=
+  algebraMap_injective_of_etale
+
+/-- The image in `C` of the monomial `X^α`. -/
+def xpow (α : Fin n →₀ ℕ) : C := algebraMap (B k n) C (MvPolynomial.monomial α (1 : k))
+
+theorem algebraMap_B_eq_aeval_xC (b : B k n) :
+    algebraMap (B k n) C b = MvPolynomial.aeval (xC k n C) b := by
+  induction b using MvPolynomial.induction_on with
+  | C c =>
+      have hcB : algebraMap (B k n) C (MvPolynomial.C c) = algebraMap k C c := by
+        calc
+          algebraMap (B k n) C (MvPolynomial.C c)
+              = algebraMap (B k n) C (algebraMap k (B k n) c) := by
+                rw [MvPolynomial.algebraMap_eq]
+          _ = algebraMap k C c := (IsScalarTower.algebraMap_apply k (B k n) C c).symm
+      rw [hcB, show (MvPolynomial.C c : B k n) = algebraMap k (B k n) c by
+        rw [MvPolynomial.algebraMap_eq], AlgHom.commutes]
+  | add f g hf hg => rw [map_add, map_add, hf, hg]
+  | mul_X f i hf =>
+      have hL : algebraMap (B k n) C (f * MvPolynomial.X i) =
+          algebraMap (B k n) C f * xC k n C i := by rw [map_mul]; rfl
+      rw [hL, hf, map_mul, MvPolynomial.aeval_X]
+
+theorem xpow_eq_prod (α : Fin n →₀ ℕ) :
+    xpow (k := k) (n := n) (C := C) α = α.prod (fun i e => xC k n C i ^ e) := by
+  rw [xpow, algebraMap_B_eq_aeval_xC, MvPolynomial.aeval_monomial, map_one, one_mul]
+
+/-- `aeval xCK` sends the monomial `α ↦ κ` to `κ ⊗ xpow α`: expand `xCK i = includeRight (xC i)`,
+push `includeRight` through the finite product (`map_prod`), and collect the resulting scalar. -/
+theorem aeval_xCK_monomial (α : Fin n →₀ ℕ) (κ : RatFunc k) :
+    MvPolynomial.aeval (xCK k n C) (MvPolynomial.monomial α κ) =
+      κ ⊗ₜ[k] (xpow (k := k) (n := n) (C := C) α) := by
+  classical
+  rw [MvPolynomial.aeval_monomial]
+  have hxCKprod : α.prod (fun i e => xCK k n C i ^ e) =
+      Algebra.TensorProduct.includeRight (α.prod (fun i e => xC k n C i ^ e) : C) := by
+    have hstep : ∀ i ∈ α.support, xCK k n C i ^ α i =
+        Algebra.TensorProduct.includeRight (xC k n C i ^ α i : C) := by
+      intro i _
+      rw [map_pow, Algebra.TensorProduct.includeRight_apply]; rfl
+    rw [Finsupp.prod, Finsupp.prod, map_prod]
+    exact Finset.prod_congr rfl hstep
+  rw [hxCKprod, ← xpow_eq_prod]
+  show (algebraMap (RatFunc k) (CK k C)) κ * _ = _
+  rw [algebraMap_CK, Algebra.TensorProduct.includeRight_apply,
+    Algebra.TensorProduct.tmul_mul_tmul, mul_one, one_mul]
+
+/-- The monomial family `xpow` is `k`-linearly independent in `C`, because `MvPolynomial.basisMonomials`
+is a basis of `B k n` and `algebraMap (B k n) C` is injective (`algebraMap_injective_of_etale`). -/
+theorem xpow_linearIndependent :
+    LinearIndependent k (xpow (k := k) (n := n) (C := C)) := by
+  have hinj : Function.Injective (algebraMapBLinear (k := k) (n := n) (C := C)) :=
+    algebraMapBLinear_injective
+  have hbasis := (MvPolynomial.basisMonomials (Fin n) k).linearIndependent
+  have hmap := hbasis.map (f := algebraMapBLinear (k := k) (n := n) (C := C))
+    (show Disjoint _ (LinearMap.ker (algebraMapBLinear (k := k) (n := n) (C := C))) by
+      rw [LinearMap.ker_eq_bot.mpr hinj]; exact disjoint_bot_right)
+  have heq : (xpow (k := k) (n := n) (C := C)) =
+      algebraMapBLinear ∘ (MvPolynomial.basisMonomials (Fin n) k) := by
+    funext α
+    show xpow α = algebraMapBLinear (MvPolynomial.monomial α (1 : k))
+    rw [algebraMapBLinear_apply]; rfl
+  rw [heq]
+  exact hmap
+
+/-- **`eq_zero_of_sum_tmul_monomial_eq_zero`**: a finite `K`-combination of the monomials
+`xpow α` that vanishes in `C_K` has every coefficient zero. Analogue of
+`eq_zero_of_sum_tmul_pow_eq_zero` for the monomial family `xpow`, using the `k`-basis
+`(MvPolynomial.basisMonomials (Fin n) k).baseChange K` of `C_K` obtained by base change. -/
+theorem eq_zero_of_sum_tmul_monomial_eq_zero (s : Finset (Fin n →₀ ℕ)) (y : (Fin n →₀ ℕ) → RatFunc k)
+    (hy : ∑ α ∈ s, (y α) ⊗ₜ[k] (xpow (k := k) (n := n) (C := C) α) = (0 : CK k C)) :
+    ∀ α ∈ s, y α = 0 := by
+  classical
+  set f : B k n →ₗ[k] C := algebraMapBLinear (k := k) (n := n) (C := C) with hf
+  have hfinj : Function.Injective f := algebraMapBLinear_injective
+  have hrinj : Function.Injective (f.lTensor (RatFunc k)) :=
+    Module.Flat.lTensor_preserves_injective_linearMap f hfinj
+  set z : RatFunc k ⊗[k] (B k n) := ∑ α ∈ s, (y α) ⊗ₜ[k] (MvPolynomial.monomial α (1 : k))
+    with hzdef
+  have hmap : (f.lTensor (RatFunc k)) z = 0 := by
+    rw [hzdef, map_sum, ← hy]
+    refine Finset.sum_congr rfl fun α _ => ?_
+    rw [LinearMap.lTensor_tmul, hf, algebraMapBLinear_apply, ← xpow]
+  have hz0 : z = 0 := hrinj (by rw [hmap, map_zero])
+  set bB := MvPolynomial.basisMonomials (Fin n) k with hbB
+  set b := bB.baseChange (RatFunc k) with hb
+  have hzcoord : z = ∑ α ∈ s, (y α) • b α := by
+    rw [hzdef]
+    refine Finset.sum_congr rfl fun α _ => ?_
+    rw [hb, Module.Basis.baseChange_apply, TensorProduct.smul_tmul', smul_eq_mul, mul_one, hbB,
+      MvPolynomial.coe_basisMonomials]
+  intro α hα
+  have hsum0 : ∑ α ∈ s, (y α) • b α = 0 := by rw [← hzcoord, hz0]
+  exact linearIndependent_iff'.mp b.linearIndependent s y hsum0 α hα
+
+/-- **`algebraMap_ne_zero` over `K`**: `algebraMap (B K n) (C_K)` is injective on nonzero
+elements. Expand `q` as a sum of monomials (`MvPolynomial.as_sum`), rewrite each term via
+`aeval_xCK_monomial`, and apply `eq_zero_of_sum_tmul_monomial_eq_zero` to the leading
+coefficient. -/
+theorem algebraMap_ne_zero_K (q : B (RatFunc k) n) (hq : q ≠ 0) :
+    algebraMap (B (RatFunc k) n) (CK k C) q ≠ 0 := by
+  classical
+  intro h0
+  obtain ⟨j, hj⟩ : q.support.Nonempty := MvPolynomial.support_nonempty.mpr hq
+  rw [algebraMap_BK_apply] at h0
+  have hsum : ∑ α ∈ q.support, (q.coeff α) ⊗ₜ[k]
+      (xpow (k := k) (n := n) (C := C) α) = (0 : CK k C) := by
+    rw [← h0]
+    conv_lhs => rw [← Finset.sum_congr rfl (fun α (_ : α ∈ q.support) => aeval_xCK_monomial α (q.coeff α))]
+    rw [← map_sum, ← q.as_sum]
+  exact (MvPolynomial.mem_support_iff.mp hj)
+    (eq_zero_of_sum_tmul_monomial_eq_zero q.support (fun α => q.coeff α) hsum j hj)
+
+end AlgebraMapNeZero
 
 end
 end GlobalStafford.Chart
