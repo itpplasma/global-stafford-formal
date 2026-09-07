@@ -64,7 +64,7 @@ def splitEquiv : ι ≃ σ ⊕ Fin (freeRank P) :=
   unfold splitEquiv freeIndexEquiv
   simp only [Equiv.trans_apply, Equiv.Set.sumCompl_symm_apply_of_mem hmem,
     Equiv.sumCongr_apply, Sum.map_inl, Sum.map_inr, Equiv.ofInjective_symm_apply,
-    Equiv.refl_apply, Equiv.coe_refl]
+    Equiv.coe_refl]
   rfl
 
 lemma splitEquiv_symm_inl (j : σ) : (splitEquiv P).symm (Sum.inl j) = P.map j := by
@@ -252,6 +252,24 @@ structure EtaleCoordinateChart (k S : Type u) [Field k] [CommRing S] [Algebra k 
   tower : letI := alg; IsScalarTower k (MvPolynomial (Fin n) k) S
   /-- `S` is étale over `MvPolynomial (Fin n) k`. -/
   etale : letI := alg; Algebra.Etale (MvPolynomial (Fin n) k) S
+
+/-- **WP-17 (A)**: every standard-smooth `k`-algebra `S` admits an `EtaleCoordinateChart`,
+i.e. `S` is étale over a polynomial ring `MvPolynomial (Fin n) k` for some `n`. Route: a
+`SubmersivePresentation k S ι σ` reindexed to a `SubmersivePresentation Q S σ σ` (`map := id`)
+over `Q := MvPolynomial (Fin (freeRank P)) k`, of relative dimension `0`, hence étale by
+`Etale.iff_isStandardSmoothOfRelativeDimension_zero`. -/
+theorem exists_etaleCoordinateChart (k S : Type u) [Field k] [CommRing S] [Algebra k S]
+    [Algebra.IsStandardSmooth k S] : Nonempty (EtaleCoordinateChart k S) := by
+  classical
+  obtain ⟨ι, σ, hσ, hι, ⟨P⟩⟩ := ‹Algebra.IsStandardSmooth k S›.out
+  have := hσ
+  have := hι
+  have hstd : Algebra.IsStandardSmoothOfRelativeDimension 0 (Base P) S :=
+    (submersivePresentation P).isStandardSmoothOfRelativeDimension
+      (submersivePresentation_dimension P)
+  have hetale : Algebra.Etale (Base P) S :=
+    Algebra.Etale.iff_isStandardSmoothOfRelativeDimension_zero.mpr hstd
+  exact ⟨⟨freeRank P, inferInstance, inferInstance, hetale⟩⟩
 
 end
 
