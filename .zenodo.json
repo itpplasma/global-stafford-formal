@@ -1,7 +1,7 @@
 {
   "title": "Global Stafford for rings of differential operators: Lean 4 formalization",
   "upload_type": "software",
-  "description": "Lean 4 formalization, verified against Mathlib, of the same-divisor identity 1 = d R + F d S in the ring of k-linear finite-order differential operators of every smooth integral finitely generated algebra over a field k of characteristic zero, for every nonzero d. This extends the formalized Weyl-algebra case (Stafford's Conjecture 3.8) to smooth affine varieties by a source-changing local-to-global argument. The endpoints depend only on the axioms propext, Classical.choice and Quot.sound. The repository contains the Palomar Challenge/Solution pair, the Comparator configuration, the verification scripts and the machine-readable verification record. The companion dossier includes a clickable proof map, a TeX statement compared with the actual Mathlib-only Challenge, an explanation of the main proof mechanisms, and the Challenge/Solution listings. Release v1.0.0 updates the shared dependencies to AlgebraicAnalysis v0.3.0 and Stafford38 v1.1.0. The included verification report is historical at d76051ce; replay with these new pins is pending. Publication before that replay was explicitly requested by the author for Palomar submission.",
+  "description": "Lean 4 formalization, verified against Mathlib, of the same-divisor identity 1 = d R + F d S in the ring of k-linear finite-order differential operators of every smooth integral finitely generated algebra over a field k of characteristic zero, for every nonzero d. This extends the formalized Weyl-algebra case (Stafford's Conjecture 3.8) to smooth affine varieties by a source-changing local-to-global argument. The endpoints depend only on the axioms propext, Classical.choice and Quot.sound. The repository contains the Palomar Challenge/Solution pair, the Comparator configuration, the verification scripts and the machine-readable verification record. The companion dossier includes a clickable proof map, a TeX statement compared with the actual Mathlib-only Challenge, an explanation of the main proof mechanisms, and the Challenge/Solution listings. Release v1.0.0 updates the shared dependencies to AlgebraicAnalysis v0.3.0 and Stafford38 v1.1.0. The included verification report is historical at d76051ce; replay with these new pins is pending. Publication before that replay was explicitly requested by the author for Palomar submission. Patch v1.0.1 removes workflow detail from the Palomar project description; proof sources and dependency pins are unchanged from v1.0.0.",
   "creators": [
     {
       "name": "Albert, Christopher",
@@ -33,5 +33,5 @@
       "resource_type": "software"
     }
   ],
-  "version": "v1.0.0"
+  "version": "v1.0.1"
 }

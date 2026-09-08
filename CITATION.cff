@@ -9,7 +9,7 @@ authors:
     given-names: Christopher
     orcid: "https://orcid.org/0000-0003-4773-416X"
     affiliation: "Graz University of Technology"
-version: v1.0.0
+version: v1.0.1
 date-released: "2026-09-08"
 repository-code: "https://github.com/itpplasma/global-stafford-formal"
 license: Apache-2.0
@@ -34,4 +34,7 @@ references:
     doi: 10.5281/zenodo.22390721
     repository-code: "https://github.com/itpplasma/stafford38-formal"
 
-doi: 10.5281/zenodo.22667052
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.22667052
+    description: Historical release v1.0.0
