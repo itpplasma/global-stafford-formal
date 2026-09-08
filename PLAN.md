@@ -1254,3 +1254,5 @@ frozen, and the paper remains the source-changing candidate recorded above.
 On 2026-09-08 the author explicitly requested release tags now for Palomar submission, before the additional replay completes. This authorizes v1.0.0 with the new exact dependency pins. The historical Phase I/II verification remains at d76051ce; it does not certify the upgraded dependency snapshot. WP-20 replay stays open after publication.
 
 Patch v1.0.1 was authorized on 2026-09-08 to remove the work-package sentence from the Palomar project description. Only descriptive and release metadata change; WP-20 new-pin replay remains pending.
+
+Patch v1.0.2 (2026-09-09) adds the required related-formalization identifier after Palomar metadata rejection. The corrected metadata passes the upstream validator. Proof and dependency replay status are unchanged.
