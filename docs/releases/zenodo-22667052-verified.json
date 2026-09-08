@@ -1,0 +1,10 @@
+{
+  "record": 22667052,
+  "doi": "10.5281/zenodo.22667052",
+  "version": "v1.0.0",
+  "source_commit": "55e4563ac40e59f1fd73867d4e0178bc725f69d7",
+  "archive_checksum": "md5:fc249b6235a2e999ad80c37c002bf933",
+  "archive_sha256": "7cc20683fef4330be6205250938feeafafa6938bbc9b6a4d108255dd93a178e3",
+  "git_blob_count": 92,
+  "all_archive_files_match_exact_git_tree": true
+}
