@@ -15,6 +15,8 @@ mathlib: db584cd6d46c92f209a44c0f1c829460d327499d
 algebraic_analysis: faa64814d5a310dc925e330af58e000f129f1098
 stafford38_formal: 784b59925beb9a480519142336bd6434f6eeef16
 challenge_declaration: GlobalStaffordChallenge.universalStatement
+repository_visibility: public (authorized 2026-09-08); Apache-2.0
+release_status: prepared; awaiting author to enable Zenodo integration
 palomar_registration: not-submitted
 open_holes: []
 ```

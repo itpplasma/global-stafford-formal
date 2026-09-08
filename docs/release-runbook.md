@@ -74,11 +74,12 @@ citation update; do not invent a DOI or carry over a Stafford38 identifier.
 
 ## Repository visibility, signed tag, Zenodo
 
-The repository is private. Making it public, signing a release tag
-(`git tag -s v1.0.0-rc1 ...`), enabling the Zenodo GitHub integration and
-publishing a GitHub release are human decisions; follow the pattern of
-`stafford38-formal/docs/release-runbook.md`. Record only identifiers that
-Zenodo actually issues.
+The repository was made public under Apache-2.0 on 8 September 2026,
+with the author’s explicit authorization. The author is enabling the Zenodo
+GitHub integration; wait for that step before creating the release. No tag,
+GitHub release, Zenodo deposit or Palomar registration was created by the
+visibility change. Follow the Stafford38 release pattern and record only
+identifiers that Zenodo actually issues.
 
 ## Palomar
 

@@ -22,9 +22,10 @@ repository:
   url: "https://github.com/itpplasma/global-stafford-formal"
   registration_status: "not-registered"
   note: >-
-    Private repository, not registered with Palomar. The verification
-    snapshot is recorded in docs/verification-results.json; registration
-    and any visibility change are separate human decisions.
+    Public under Apache-2.0 since 2026-09-08, with explicit author authorization.
+    Not registered with Palomar. The verification snapshot is recorded in
+    docs/verification-results.json. The author is enabling the Zenodo GitHub
+    integration before the first release.
 
 classification:
   arxiv:
