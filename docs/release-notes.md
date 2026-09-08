@@ -17,15 +17,16 @@ a comparison with the actual Mathlib-only Challenge, the principal proof
 mechanisms, and the Challenge/Solution listings. Its authoritative paper source
 is the reviewed Markdown note at the revision recorded in `PLAN.md`.
 
-The independently verified proof snapshot is
+The historical independently verified proof snapshot is
 `d76051ce227f41c0fb21f114ffd61890f3b6b99b`; the machine-readable report and hashes
 are in `docs/verification-results.json`. Lean is `v4.33.0`, Mathlib is pinned at
 `db584cd6d46c92f209a44c0f1c829460d327499d`, AlgebraicAnalysis at
-`faa64814d5a310dc925e330af58e000f129f1098`, and Stafford38 formal at
-`784b59925beb9a480519142336bd6434f6eeef16`.
+`4aae47967f6ba02ffe2f639ab06564c9a9d1ecc8`, and Stafford38 formal at
+`e77e176c381ca2d6b20c030f9227f1b031415d2e`.
+
+The dependency pins above describe this release; the historical report used older pins. Replay with the new pins is pending. The author explicitly requested this release now for Palomar submission.
 
 The source archive is Apache-2.0 and records its exact dependencies without
 vendoring them. The attached PDF, build provenance and checksums identify the
 companion artifact. Human expert review of the mathematics and the statement
-correspondence remains open. This prepared description assigns no release tag,
-Zenodo DOI or Palomar registration.
+correspondence remains open. This is release v1.0.0; no Palomar acceptance is claimed.

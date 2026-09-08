@@ -8,19 +8,7 @@ statuses, endpoint axiom reports, loaded-module counts, and SHA-256 hashes
 of the evidence logs. Kernel checking and independent human mathematical
 review are separate assessments; the latter is open.
 
-A commit cannot state its own hash, so the verified snapshot is an ancestor
-of the current `main` rather than its tip. Every commit after it changes
-documentation, metadata, and the verification-record script only; their proof
-sources, build files, dependency pins and verifier scripts are byte-identical
-to the snapshot, which
-
-```sh
-git diff --exit-code d76051c HEAD -- . \
-  ':(exclude)README.md' ':(exclude)formalization.yaml' ':(exclude)docs/**' \
-  ':(exclude)PLAN.md' ':(exclude).zenodo.json' ':(exclude)scripts/record-verification.py'
-```
-
-confirms at any later commit.
+Release v1.0.0 updates the dependency pins to AlgebraicAnalysis v0.3.0 and Stafford38 v1.1.0. The author requested immediate publication for Palomar submission before replay with those pins. The historical report above certifies only its recorded snapshot. The new-pin build, Phase I/full verification and Comparator replay are pending. Project Lean sources and the frozen Challenge are unchanged.
 
 ## Logical scope
 
@@ -89,7 +77,7 @@ and Phase II), each ending in `#print axioms`, and finite computations on
 independently of the general theorems (binomial formulas, the extension of
 the derivative to `ℚ[X]_X`, chart data on the polynomial ring).
 
-## What is not established
+## Review scope
 
 Novelty, priority, journal acceptance, human expert review, and Palomar
 registration. The runbook in [release-runbook.md](release-runbook.md) lists

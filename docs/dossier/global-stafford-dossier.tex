@@ -90,7 +90,7 @@ The paper revision is \nolinkurl{9a096dc9f6c990bdfb3e8a24110989648c70b3f3}, with
 SHA-256 \nolinkurl{22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03}.
 It is unchanged at research revision \code{b5654dd}. The independently replayed
 formal proof is \nolinkurl{d76051ce227f41c0fb21f114ffd61890f3b6b99b}.
-The later formal revision \code{803fb2b} has identical proof and dependency bytes.
+Release \code{v1.0.0} retains the project proof sources and upgrades the dependency pins. Replay with the new pins is pending; the author requested publication for Palomar submission before that replay.
 Phase I and II are complete in that record. Human expert review of the paper and
 its statement correspondence remains open.
 
@@ -170,7 +170,7 @@ $1=ar+Fas$. The field quantifier is essential: the chart producer invokes it
 at $K=k(t)$, not only at the original $k$.
 
 The dependency is \code{itpplasma/stafford38-formal} at
-\nolinkurl{784b59925beb9a480519142336bd6434f6eeef16}, declaration
+\nolinkurl{e77e176c381ca2d6b20c030f9227f1b031415d2e}, declaration
 \code{Stafford38.universalStatement} in \code{Stafford38/FoundationClosure.lean}.
 It is a Lean theorem rebuilt against the root project's shared AlgebraicAnalysis
 pin, not a literature axiom. Its own proof architecture remains upstream.
@@ -395,14 +395,14 @@ clone replay on 7 September 2026: source builds, endpoint axiom reports,
 consumer checks, separate import-closure audits, Comparator, NanoDa, and the
 Lean kernel all passed. Its SHA-256 is
 \nolinkurl{cceb030147fac5e2d7e614ed879318595551aa5330c8e92d9bb5dfdf092d10f6}.
-This dossier reports that fixed evidence; it is not a new independent
+The dependencies listed below are the new release pins, not the historical report pins. Replay with these pins is pending. This dossier reports the historical evidence; it is not a new independent
 mathematical review or a new Palomar registration.
 
 \begin{description}
 \item[Lean] \code{leanprover/lean4:v4.33.0}
 \item[Mathlib] \nolinkurl{db584cd6d46c92f209a44c0f1c829460d327499d}
-\item[AlgebraicAnalysis] \nolinkurl{faa64814d5a310dc925e330af58e000f129f1098}
-\item[Stafford38 formal] \nolinkurl{784b59925beb9a480519142336bd6434f6eeef16}
+\item[AlgebraicAnalysis] \nolinkurl{4aae47967f6ba02ffe2f639ab06564c9a9d1ecc8}
+\item[Stafford38 formal] \nolinkurl{e77e176c381ca2d6b20c030f9227f1b031415d2e}
 \end{description}
 Lake uses the root manifest's AlgebraicAnalysis revision for both projects.
 The verifier builds \code{Stafford38.FoundationClosure} and
@@ -424,12 +424,8 @@ not replace universal Lean proofs or human review.
 
 \section{Release companion and Zenodo description}\label{sec:release}
 This companion follows the Stafford38 Challenge dossier and proof-map
-supplement. The Stafford38 GitHub release history lists \code{v1.0.2} as its
-latest release on inspection; its citation file records concept DOI
-\href{https://doi.org/10.5281/zenodo.22390721}{10.5281/zenodo.22390721} and the
-version DOI \href{https://doi.org/10.5281/zenodo.22391362}{10.5281/zenodo.22391362}
-for \code{v1.0.1}. The inspection does not assign a DOI to \code{v1.0.2}.
-These identify Stafford38, not Global Stafford.
+supplement. Stafford38 \code{v1.1.0} includes the stronger exact-source comparison and corrected proof architecture. Both its Comparator configurations passed NanoDa and Lean kernel checking on the controller host. Its concept DOI is
+\href{https://doi.org/10.5281/zenodo.22390721}{10.5281/zenodo.22390721}.
 
 For Global Stafford, a source release can include this dossier's TeX,
 clickable map, PDF and checksums, together with the verification report and
@@ -445,10 +441,9 @@ Stafford38 developments. The package includes the Challenge/Solution pair,
 verification evidence, and a companion document with a clickable proof map,
 the statement correspondence, and the main proof mechanisms.
 \end{quote}
-The formal repository is private at preparation time. A Global Stafford
-release tag, Zenodo DOI, and Palomar registration have not been issued in the
-record used here. The release runbook separates selecting and hashing the
-artifacts from the later visibility, signing, and deposit actions.
+The formal repository is public under Apache-2.0. Release \code{v1.0.0}
+is authorized for immediate publication and Palomar submission. The new-pin
+replay remains pending; no Palomar acceptance or human referee report is claimed.
 
 \appendix
 \clearpage

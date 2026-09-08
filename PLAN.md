@@ -8,15 +8,15 @@ phase_iii_status: done 2026-09-07 (independent-clone replay of d76051ce: verify.
 paper_source: itpplasma/global-stafford notes/source-changing-descent-2026-09-07.md
 paper_revision: 9a096dc9f6c990bdfb3e8a24110989648c70b3f3
 paper_sha256: 22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03
-active_task: maintain verified proof and paper correspondence; no open Phase I/II implementation packages
+active_task: WP-20 coordinated dependency releases and fresh verification; no open Phase I/II implementation packages
 paper_review: two independent-context model reviews passed 2026-09-07; human review open
 lean_toolchain: leanprover/lean4:v4.33.0
 mathlib: db584cd6d46c92f209a44c0f1c829460d327499d
-algebraic_analysis: faa64814d5a310dc925e330af58e000f129f1098
-stafford38_formal: 784b59925beb9a480519142336bd6434f6eeef16
+algebraic_analysis: 4aae47967f6ba02ffe2f639ab06564c9a9d1ecc8
+stafford38_formal: e77e176c381ca2d6b20c030f9227f1b031415d2e
 challenge_declaration: GlobalStaffordChallenge.universalStatement
 repository_visibility: public (authorized 2026-09-08); Apache-2.0
-release_status: prepared; awaiting author to enable Zenodo integration
+release_status: v1.0.0 authorized for immediate publication before new-pin replay (explicit author request 2026-09-08)
 palomar_registration: not-submitted
 open_holes: []
 ```
@@ -1138,7 +1138,6 @@ from the independent-clone replay. Remaining human-only actions are in
 
 | Id | Change | Consumer | Status |
 | --- | --- | --- | --- |
-| WP-20 | Shared released dependencies, corrected Stafford interface, publication replay | III | active | controller + Fable audit | Authorized 2026-09-08; upgrade AA and Stafford full pins, retain official Mathlib v4.33.0, rerun all gates before release |
 | AA-1 | Add `mem_submodule_of_coordinates'` and `mem_subalgebra_of_coordinates'` whose `hcoordinate` quantifies only over `P ∈ algebra`; derive the unprimed theorems from them. Backward compatible. | WP-8, WP-14, WP-16 | done (`faa64814`) |
 | AA-2 | `AlgebraicAnalysis/Module/FiniteRightSpanAscent.lean` (WP-7 generic content). | WP-8 | after Phase I |
 | AA-3 | `rightOre_of_rightNoetherian_domain`. | WP-15 | after Phase II |
@@ -1217,6 +1216,7 @@ All leaves were discharged on 2026-09-07 (WP-11..WP-18); `docs/paper-lean-specif
 | WP-17 | Smooth cover by étale charts | II | done | sonnet | merged 2026-09-07; presentation route (`EtaleCoordinateChart`, `exists_finite_etale_cover`) |
 | WP-18 | Closure and axiom audit | II | done | sonnet (18a, 18b, 18) | merged 2026-09-07; `GlobalStafford.universalStatement`, `challengeStatement` |
 | WP-19 | Solution, consumers, Palomar verification, metadata | III | done | sonnet+controller | Solution, verify.sh, verify-palomar.sh, independent replay record 2026-09-07 |
+| WP-20 | Shared released dependencies, corrected Stafford interface, publication replay | III | active | controller + Fable audit | Authorized 2026-09-08; upgrade AA and Stafford full pins, retain official Mathlib v4.33.0, new-pin replay pending; author requested release first |
 | AA-1 | Finite-order coordinate generation in AA | I | done; pin bumped to `faa64814` 2026-09-07 | sonnet | |
 
 ## 10. Build and verification commands
@@ -1250,3 +1250,5 @@ is the requested one-shot auditor and corrector; the controller independently
 verifies corrections and owns publication. No claim of human referee review
 or Palomar registration follows from these actions. The Challenge remains
 frozen, and the paper remains the source-changing candidate recorded above.
+
+On 2026-09-08 the author explicitly requested release tags now for Palomar submission, before the additional replay completes. This authorizes v1.0.0 with the new exact dependency pins. The historical Phase I/II verification remains at d76051ce; it does not certify the upgraded dependency snapshot. WP-20 replay stays open after publication.

@@ -23,9 +23,8 @@ repository:
   registration_status: "not-registered"
   note: >-
     Public under Apache-2.0 since 2026-09-08, with explicit author authorization.
-    Not registered with Palomar. The verification snapshot is recorded in
-    docs/verification-results.json. The author is enabling the Zenodo GitHub
-    integration before the first release.
+    No Palomar receipt is retained here. The historical verification snapshot
+    is recorded in docs/verification-results.json. Zenodo integration is enabled.
 
 classification:
   arxiv:
@@ -81,7 +80,9 @@ status:
     independent-clone replay, the endpoint axiom audits, the Challenge and
     Solution import-closure audits, and the Comparator, NanoDa and Lean-kernel
     checks. Human expert review of the paper proof and of the statement
-    correspondence is open.
+    correspondence is open. The report is historical at d76051ce; v1.0.0
+    upgrades the dependency pins and replay with those pins is pending.
+    The author explicitly requested release before that replay for submission.
   sorry_count: 1
   sorry_in_definitions: 0
   axioms:
@@ -179,3 +180,7 @@ acknowledgements: >-
   Builds on Lean, Mathlib, the AlgebraicAnalysis library and the Stafford38
   formal development. Comparator, lean4export, NanoDa and Landrun provide the
   independent submission-checking path.
+
+# Release v1.0.0 upgrades dependency pins. The verification section above is
+# historical evidence at d76051ce; new-pin replay is pending. Publication
+# before that replay was explicitly requested by the author on 2026-09-08.
