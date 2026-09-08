@@ -1,6 +1,6 @@
 name = "globalStaffordFormal"
 version = "1.0.2"
-defaultTargets = ["GlobalStafford", "Solution"]
+defaultTargets = ["GlobalStafford", "GlobalStaffordSolution"]
 
 [[require]]
 name = "mathlib"
@@ -28,3 +28,9 @@ name = "Solution"
 
 [[lean_lib]]
 name = "GlobalStaffordTest"
+
+[[lean_lib]]
+name = "GlobalStaffordChallenge"
+
+[[lean_lib]]
+name = "GlobalStaffordSolution"

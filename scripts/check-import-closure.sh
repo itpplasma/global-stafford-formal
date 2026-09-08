@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
-case "${1:-}" in Challenge|Solution) module=$1 ;; *) exit 2 ;; esac
+case "${1:-}" in GlobalStaffordChallenge|GlobalStaffordSolution) module=$1 ;; *) exit 2 ;; esac
 mkdir -p .lake/verification
 audit=".lake/verification/${module}Imports.lean"
 log=".lake/verification/${module}-imports.log"
@@ -24,8 +24,8 @@ target, log = sys.argv[1:]
 names = re.findall(r'^IMPORT (\S+)$', Path(log).read_text(), re.M)
 if target not in names:
     raise SystemExit('loaded-environment audit did not report its target')
-if target == 'Solution':
-    forbidden = [n for n in names if n == 'Challenge' or n.startswith('Challenge.')]
+if target == 'GlobalStaffordSolution':
+    forbidden = [n for n in names if n in {'Challenge', 'GlobalStaffordChallenge'} or n.startswith(('Challenge.', 'GlobalStaffordChallenge.'))]
 else:
     # Mathlib is Palomar's allowlisted root. Its committed dependency manifest
     # determines the allowed package closure; AlgebraicAnalysis is excluded.
@@ -39,7 +39,7 @@ else:
             relative = path.relative_to(root)
             if not any(part.startswith('.') for part in relative.parts):
                 allowed.add('.'.join(relative.with_suffix('').parts))
-    forbidden = [n for n in names if n != 'Challenge'
+    forbidden = [n for n in names if n != 'GlobalStaffordChallenge'
                  and n.split('.')[0] not in {'Init', 'Lean', 'Std'}
                  and n not in allowed]
 if forbidden:

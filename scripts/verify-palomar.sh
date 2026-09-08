@@ -9,6 +9,7 @@ tool_root=.lake/palomar-tools
 bin_root=$tool_root/bin
 log_dir=.lake/verification
 mkdir -p "$log_dir"
+python3 scripts/check-submission-modules.py >"$log_dir/module-resolution.log" 2>&1
 
 for tool in comparator lean4export nanoda landrun; do
   if [ ! -x "$bin_root/$tool" ]; then
@@ -36,8 +37,8 @@ from pathlib import Path
 
 config = json.loads(Path("comparator.json").read_text(encoding="utf-8"))
 expected = {
-    "challenge_module": "Challenge",
-    "solution_module": "Solution",
+    "challenge_module": "GlobalStaffordChallenge",
+    "solution_module": "GlobalStaffordSolution",
     "theorem_names": ["GlobalStaffordChallenge.universalStatement"],
     "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
     "enable_nanoda": True,
@@ -47,10 +48,10 @@ if config != expected:
 print("Palomar configuration: exact theorem, three permitted axioms, NanoDa enabled")
 PY
 
-lake build Challenge >"$log_dir/challenge-build.log" 2>&1
-lake build Solution >"$log_dir/solution-build.log" 2>&1
-bash scripts/check-import-closure.sh Challenge
-bash scripts/check-import-closure.sh Solution
+lake build GlobalStaffordChallenge >"$log_dir/challenge-build.log" 2>&1
+lake build GlobalStaffordSolution >"$log_dir/solution-build.log" 2>&1
+bash scripts/check-import-closure.sh GlobalStaffordChallenge
+bash scripts/check-import-closure.sh GlobalStaffordSolution
 
 PALOMAR_LANDRUN_BIN=$bin_root/landrun \
 COMPARATOR_LANDRUN=$repo_root/scripts/landrun-wrapper.sh \

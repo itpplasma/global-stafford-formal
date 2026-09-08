@@ -12,6 +12,7 @@ cd "$repo_root"
 mode=${1:-full}
 log_dir=.lake/verification
 mkdir -p "$log_dir"
+python3 scripts/check-submission-modules.py >"$log_dir/module-resolution.log" 2>&1
 
 python3 scripts/check-layout.py >"$log_dir/layout.log" 2>&1
 
@@ -109,14 +110,16 @@ def code_without_comments_or_strings(text: str) -> str:
     return "".join(out)
 
 excluded = {".git", ".lake"}
-challenge = Path("Challenge.lean")
+challenge = Path("GlobalStaffordChallenge.lean")
+if challenge.read_bytes() != Path("Challenge.lean").read_bytes():
+    raise SystemExit("unique submission Challenge differs from the frozen statement")
 code = code_without_comments_or_strings(challenge.read_text(encoding="utf-8"))
 if re.findall(r"\b(?:sorry|admit)\b", code) != ["sorry"]:
     raise SystemExit("Challenge.lean must contain exactly one deliberate sorry and no admit")
 imports = re.findall(r"(?m)^\s*import\s+([^\s]+)\s*$", code)
 if any(not (i.startswith("Mathlib.") or i == "Mathlib") for i in imports):
     raise SystemExit(f"Challenge imports must be Mathlib only: {imports}")
-solution = code_without_comments_or_strings(Path("Solution.lean").read_text(encoding="utf-8"))
+solution = code_without_comments_or_strings(Path("GlobalStaffordSolution.lean").read_text(encoding="utf-8"))
 if any(n == "Challenge" or n.startswith("Challenge.")
        for n in re.findall(r"(?m)^\s*import\s+([^\s]+)\s*$", solution)):
     raise SystemExit("Solution.lean must not import Challenge")
@@ -131,7 +134,7 @@ if holes_block and holes_block.group(1).strip() != "[]":
         if m:
             registered.add(m.group(1))
 for path in Path(".").rglob("*.lean"):
-    if path == challenge or any(part in excluded for part in path.parts):
+    if path in {challenge, Path("Challenge.lean")} or any(part in excluded for part in path.parts):
         continue
     text = code_without_comments_or_strings(path.read_text(encoding="utf-8"))
     hole = re.search(r"\b(?:sorry|admit)\b", text)
@@ -154,7 +157,7 @@ fi
 if [ -f "$endpoints_file" ]; then
   {
     echo "import GlobalStafford"
-    [ "$mode" = "full" ] && echo "import Solution"
+    [ "$mode" = "full" ] && echo "import GlobalStaffordSolution"
     sed 's/^/#print axioms /' "$endpoints_file"
   } >"$log_dir/AxiomAudit.lean"
   lake env lean --trust=0 "$log_dir/AxiomAudit.lean" >"$log_dir/axioms.log" 2>&1
@@ -186,10 +189,10 @@ else
 fi
 
 if [ "$mode" = "full" ]; then
-  lake build Challenge >"$log_dir/challenge-build.log" 2>&1
-  lake build Solution >"$log_dir/solution-build.log" 2>&1
-  bash scripts/check-import-closure.sh Challenge
-  bash scripts/check-import-closure.sh Solution
+  lake build GlobalStaffordChallenge >"$log_dir/challenge-build.log" 2>&1
+  lake build GlobalStaffordSolution >"$log_dir/solution-build.log" 2>&1
+  bash scripts/check-import-closure.sh GlobalStaffordChallenge
+  bash scripts/check-import-closure.sh GlobalStaffordSolution
   if [ -d tests ] && ls tests/*.lean >/dev/null 2>&1; then
     : > "$log_dir/consumers.log"
     for source in tests/*.lean; do

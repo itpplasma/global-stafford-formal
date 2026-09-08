@@ -1256,3 +1256,7 @@ On 2026-09-08 the author explicitly requested release tags now for Palomar submi
 Patch v1.0.1 was authorized on 2026-09-08 to remove the work-package sentence from the Palomar project description. Only descriptive and release metadata change; WP-20 new-pin replay remains pending.
 
 Patch v1.0.2 (2026-09-09) adds the required related-formalization identifier after Palomar metadata rejection. The corrected metadata passes the upstream validator. Proof and dependency replay status are unchanged.
+
+## WP-21: unique submission module names
+
+Palomar run 34287264858 resolved both generic module names from the Stafford38 dependency and failed before finding the Global theorem. Use GlobalStaffordChallenge and GlobalStaffordSolution as the unique submission modules. Retain frozen Challenge.lean and Solution.lean unchanged; the unique files initially copy their bytes exactly. The two Challenge files are alternative copies of the same compared template, each with its deliberate placeholder; neither is imported by the solution. This exception adds no mathematical proof obligation or axiom. Verifiers must check exact Challenge-copy equality and audit the unique modules. WP-21 and the pending WP-20 replay require successful source resolution, build and Comparator/NanoDa/Lean checks before the corrective release.

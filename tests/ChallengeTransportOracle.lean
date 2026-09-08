@@ -1,4 +1,4 @@
-import Challenge
+import GlobalStaffordChallenge
 import Mathlib.Algebra.Polynomial.Basic
 
 /-!

@@ -1,7 +1,13 @@
 {
-  "challenge_module": "Challenge",
-  "solution_module": "Solution",
-  "theorem_names": ["GlobalStaffordChallenge.universalStatement"],
-  "permitted_axioms": ["propext", "Quot.sound", "Classical.choice"],
+  "challenge_module": "GlobalStaffordChallenge",
+  "solution_module": "GlobalStaffordSolution",
+  "theorem_names": [
+    "GlobalStaffordChallenge.universalStatement"
+  ],
+  "permitted_axioms": [
+    "propext",
+    "Quot.sound",
+    "Classical.choice"
+  ],
   "enable_nanoda": true
 }
