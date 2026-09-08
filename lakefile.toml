@@ -1,5 +1,5 @@
 name = "globalStaffordFormal"
-version = "1.0.2"
+version = "1.0.3"
 defaultTargets = ["GlobalStafford", "GlobalStaffordSolution"]
 
 [[require]]

@@ -1,0 +1,18 @@
+{
+  "source_commit": "b21883a5b3d8f46922713049c3b060523ea3a771",
+  "palomar_validator_commit": "ef2fa1eadcb246c2346ddba39b52eaa53d4bb763",
+  "source_path_sha256": "43118bb58b00aa9f65a83068a70d8919c74d428839b2ad9faffdb67049fbc02b",
+  "original_resolution": {
+    "Challenge": ".lake/packages/stafford38Formal/Challenge.lean",
+    "Solution": ".lake/packages/stafford38Formal/Solution.lean"
+  },
+  "corrected_resolution": {
+    "GlobalStaffordChallenge": "GlobalStaffordChallenge.lean",
+    "GlobalStaffordSolution": "GlobalStaffordSolution.lean"
+  },
+  "resolver": "Palomar scripts.verify_submission.resolve_module_source, with actual lake env LEAN_SRC_PATH",
+  "frozen_challenge_sha256": "c725fff56d6a53a6e2b55b9db1c2d1f754a50ef797d99cb8d7145199411666d3",
+  "unique_challenge_sha256": "c725fff56d6a53a6e2b55b9db1c2d1f754a50ef797d99cb8d7145199411666d3",
+  "frozen_solution_sha256": "42e708c61d38eeb4ec161edc72111c1c043363fe8515b6c1302bd8ee6b265acd",
+  "unique_solution_sha256": "42e708c61d38eeb4ec161edc72111c1c043363fe8515b6c1302bd8ee6b265acd"
+}

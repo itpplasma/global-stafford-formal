@@ -12,7 +12,7 @@ work packages close.
 
 | Paper | Lean | Note |
 | --- | --- | --- |
-| `D_k(A)`, finite-order operators, composition product | `AlgebraicAnalysis.DifferentialOperators.algebra (k := k) (R := A)`; in `Challenge.lean` the predicate `IsDifferentialOperator` on `Module.End k A` | Same inductive definition; `Solution.lean` proves `IsOrderLE n P ↔ P ∈ order n` |
+| `D_k(A)`, finite-order operators, composition product | `AlgebraicAnalysis.DifferentialOperators.algebra (k := k) (R := A)`; in `GlobalStaffordChallenge.lean` the predicate `IsDifferentialOperator` on `Module.End k A` | Same inductive definition; `GlobalStaffordSolution.lean` proves `IsOrderLE n P ↔ P ∈ order n` |
 | smooth integral affine `A/k`, char 0 | `[Field k] [CharZero k] [CommRing A] [IsDomain A] [Algebra k A] [Algebra.Smooth k A]` | Mathlib smooth = formally smooth + finite presentation |
 | `1 = dR + FdS` | `(1 : _) = d * R + F * d * S` | order preserved; both `k`-linear compositions |
 | GS-DX (Theorem 6.3) | `GlobalStafford.universalStatement`; `GlobalStaffordChallenge.universalStatement` | proved; only `propext`, `Classical.choice`, `Quot.sound` |
@@ -47,7 +47,7 @@ work packages close.
 | Weyl algebra domain and right Ore (Section 8 input) | `GlobalStafford.Weyl.OreDomain` instances, `weyl_rightOre` | 15 | done |
 | Scalar extension to `k(t)` (Lemma 6.2) | `GlobalStafford.Chart.scalarExtensionInterface`, `etaleChartDataK`, `s38Poly_chart` | 16, 18b | done |
 | `T → S` injective (Lemma 6.2) | `GlobalStafford.Chart.weylAction_injective` | 18a | done |
-| GS-DX (Theorem 6.3) | `GlobalStafford.universalStatement`; `GlobalStaffordChallenge.universalStatement` (`Solution.lean`) | 18, 19 | done; independent replay recorded in `verification-results.json` |
+| GS-DX (Theorem 6.3) | `GlobalStafford.universalStatement`; `GlobalStaffordChallenge.universalStatement` (`GlobalStaffordSolution.lean`) | 18, 19 | done; independent replay recorded in `verification-results.json` |
 
 ## Literature inputs and their discharge
 

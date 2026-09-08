@@ -1,14 +1,10 @@
 # Verification
 
-The independent clone of commit `d76051ce` (full SHA in the
-[machine-readable report](verification-results.json), report SHA-256
-`cceb030147fac5e2d7e614ed879318595551aa5330c8e92d9bb5dfdf092d10f6`) passed every check recorded there. The report fixes the
-source commit, dependency pins, Palomar tool revisions, commands, exit
-statuses, endpoint axiom reports, loaded-module counts, and SHA-256 hashes
-of the evidence logs. Kernel checking and independent human mathematical
-review are separate assessments; the latter is open.
+Source `b21883a5b3d8f46922713049c3b060523ea3a771` passed Phase I and full verification in an isolated public clone, including 15 Phase I endpoint reports, both terminal endpoint reports, consumers, import audits and source resolution. Comparator accepted the solution with both NanoDa and Lean's kernel. The report SHA-256 is `08b8dcd152806c5033316100a624d8c61a67f9e069c18ac649f3c6612779db67`.
 
-Release v1.0.0 updates the dependency pins to AlgebraicAnalysis v0.3.0 and Stafford38 v1.1.0. The author requested immediate publication for Palomar submission before replay with those pins. The historical report above certifies only its recorded snapshot. The new-pin build, Phase I/full verification and Comparator replay are pending. Project Lean sources and the frozen Challenge are unchanged.
+A separate check used Palomar's canonical Challenge compiler, protected alias and search path, Landrun adapter and Comparator. It also passed both kernels. The local host lacks a usable systemd manager, so this second check omitted the outer systemd wrapper while retaining Landrun and the mathematical checks; it is not a hosted registry acceptance.
+
+The module-name collision and its reproduced paths are recorded in `verification/module-resolution-b21883a.json`. The frozen legacy Challenge and Solution are retained; the uniquely named submission files preserve their bytes. The source-resolution gate fails before proof checking if Lake selects dependency files. The historical d76051ce report remains under `verification/history/`.
 
 ## Logical scope
 
@@ -16,13 +12,13 @@ Release v1.0.0 updates the dependency pins to AlgebraicAnalysis v0.3.0 and Staff
 field `k` and every smooth integral finitely generated `k`-algebra `A`
 (`Algebra.Smooth k A`, `IsDomain A`), that every nonzero element `d` of the
 intrinsic algebra of finite-order `k`-linear differential operators on `A`
-admits `F, R, S` with `1 = d * R + F * d * S`. `Solution.lean` transports it
+admits `F, R, S` with `1 = d * R + F * d * S`. `GlobalStaffordSolution.lean` transports it
 to `GlobalStaffordChallenge.universalStatement`, the Mathlib-only statement
 of `Challenge.lean`, whose differential operators are defined by
 Grothendieck's inductive commutator condition without forming a subalgebra.
 Both endpoints depend only on `propext`, `Classical.choice`, and
 `Quot.sound`; there are no project or literature axioms, no proof
-placeholders outside the one deliberate `sorry` of `Challenge.lean`, and no
+placeholders outside the deliberate placeholder in each byte-identical Challenge template, and no
 `Lean.ofReduceBool` dependency. The statement correspondence with the paper
 proof is in [paper-lean-specification.md](paper-lean-specification.md).
 

@@ -63,28 +63,24 @@ related_formalizations:
     relationship: "depends-on"
 
 verification:
-  commit: "d76051ce227f41c0fb21f114ffd61890f3b6b99b"
-  report: "cceb030147fac5e2d7e614ed879318595551aa5330c8e92d9bb5dfdf092d10f6"
+  commit: "b21883a5b3d8f46922713049c3b060523ea3a771"
+  report: "08b8dcd152806c5033316100a624d8c61a67f9e069c18ac649f3c6612779db67"
   machine_readable_report: "docs/verification-results.json"
   statement_correspondence: "docs/paper-lean-specification.md"
   allowed_axioms: ["propext", "Classical.choice", "Quot.sound"]
 
 status:
   scope: >-
-    The substantive development proves the universal same-divisor
-    certificate 1 = d*R + F*d*S in the intrinsic algebra of finite-order
-    differential operators of every smooth integral finitely generated
-    algebra over every characteristic-zero field (GlobalStafford.universalStatement),
-    and Solution.lean transports it to the Mathlib-only Challenge statement.
-    Both depend only on propext, Classical.choice and Quot.sound. The
-    verification record in docs/verification-results.json lists the
-    independent-clone replay, the endpoint axiom audits, the Challenge and
-    Solution import-closure audits, and the Comparator, NanoDa and Lean-kernel
-    checks. Human expert review of the paper proof and of the statement
-    correspondence is open. The report is historical at d76051ce; v1.0.0
-    upgrades the dependency pins and replay with those pins is pending.
-    The author explicitly requested release before that replay for submission.
-  sorry_count: 1
+    The universal same-divisor theorem over every smooth integral affine algebra
+    in characteristic zero is proved and transported to the Mathlib-only Challenge.
+    The current dependency pins passed isolated Phase I/full verification,
+    endpoint and consumer audits, and Comparator with NanoDa and Lean acceptance.
+    Palomar's canonical-Challenge comparison also passed locally; its outer
+    systemd wrapper was unavailable, so hosted acceptance is not claimed.
+    The unique submission Challenge and retained legacy Challenge are byte-identical
+    alternative templates, each with one deliberately compared placeholder.
+    Mathematical proofs have no holes and use only the three ordinary foundations.
+  sorry_count: 2
   sorry_in_definitions: 0
   axioms:
     - "propext"
@@ -100,7 +96,7 @@ status:
         - "Classical.choice"
       literature_dependencies: []
     - declaration: "GlobalStaffordChallenge.universalStatement"
-      file: "Solution.lean"
+      file: "GlobalStaffordSolution.lean"
       sorry_count: 0
       axioms:
         - "propext"
@@ -171,17 +167,13 @@ alignment:
         the intrinsic differential-operator algebra.
     - source: "Original proof: GS-DX, Theorem 6.3 (Palomar statement)"
       lean: "GlobalStaffordChallenge.universalStatement"
-      module: "Solution"
+      module: "GlobalStaffordSolution"
       status: "proved"
       note: >-
-        Mathlib-only statement of Challenge.lean, proved in Solution.lean by
-        transport; Challenge.lean keeps its one deliberate sorry.
+        Mathlib-only statement of GlobalStaffordChallenge.lean, proved in GlobalStaffordSolution.lean by
+        transport; GlobalStaffordChallenge.lean keeps its one deliberate sorry.
 
 acknowledgements: >-
   Builds on Lean, Mathlib, the AlgebraicAnalysis library and the Stafford38
   formal development. Comparator, lean4export, NanoDa and Landrun provide the
   independent submission-checking path.
-
-# Release v1.0.0 upgrades dependency pins. The verification section above is
-# historical evidence at d76051ce; new-pin replay is pending. Publication
-# before that replay was explicitly requested by the author on 2026-09-08.

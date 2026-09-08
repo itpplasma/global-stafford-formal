@@ -4,11 +4,11 @@
 phase: verified-snapshot
 phase_i_status: done 2026-09-07 (scripts/verify.sh --phase-i: 15 endpoints, standard axioms only)
 phase_ii_status: done 2026-09-07 (GlobalStafford.universalStatement, GlobalStaffordChallenge.universalStatement: propext, Classical.choice, Quot.sound only)
-phase_iii_status: done 2026-09-07 (independent-clone replay of d76051ce: verify.sh, Comparator, NanoDa, Lean kernel all passed; record docs/verification-results.json)
+phase_iii_status: done 2026-09-09 (isolated replay of b21883a5; Phase I/full and Comparator passed)
 paper_source: itpplasma/global-stafford notes/source-changing-descent-2026-09-07.md
 paper_revision: 9a096dc9f6c990bdfb3e8a24110989648c70b3f3
 paper_sha256: 22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03
-active_task: WP-20 coordinated dependency releases and fresh verification; no open Phase I/II implementation packages
+active_task: WP-20 and WP-21 replay complete; corrective release v1.0.3
 paper_review: two independent-context model reviews passed 2026-09-07; human review open
 lean_toolchain: leanprover/lean4:v4.33.0
 mathlib: db584cd6d46c92f209a44c0f1c829460d327499d
@@ -16,8 +16,8 @@ algebraic_analysis: 4aae47967f6ba02ffe2f639ab06564c9a9d1ecc8
 stafford38_formal: e77e176c381ca2d6b20c030f9227f1b031415d2e
 challenge_declaration: GlobalStaffordChallenge.universalStatement
 repository_visibility: public (authorized 2026-09-08); Apache-2.0
-release_status: v1.0.0 authorized for immediate publication before new-pin replay (explicit author request 2026-09-08)
-palomar_registration: not-submitted
+release_status: v1.0.3 verified corrective release authorized
+palomar_registration: submitted; prior failures recorded, corrected release awaiting author resubmission
 open_holes: []
 ```
 
@@ -1216,7 +1216,7 @@ All leaves were discharged on 2026-09-07 (WP-11..WP-18); `docs/paper-lean-specif
 | WP-17 | Smooth cover by étale charts | II | done | sonnet | merged 2026-09-07; presentation route (`EtaleCoordinateChart`, `exists_finite_etale_cover`) |
 | WP-18 | Closure and axiom audit | II | done | sonnet (18a, 18b, 18) | merged 2026-09-07; `GlobalStafford.universalStatement`, `challengeStatement` |
 | WP-19 | Solution, consumers, Palomar verification, metadata | III | done | sonnet+controller | Solution, verify.sh, verify-palomar.sh, independent replay record 2026-09-07 |
-| WP-20 | Shared released dependencies, corrected Stafford interface, publication replay | III | active | controller + Fable audit | Authorized 2026-09-08; upgrade AA and Stafford full pins, retain official Mathlib v4.33.0, new-pin replay pending; author requested release first |
+| WP-20 | Shared released dependencies, corrected Stafford interface, publication replay | III | done | controller + Fable audit | New-pin isolated replay and Comparator passed 2026-09-09 at b21883a |
 | AA-1 | Finite-order coordinate generation in AA | I | done; pin bumped to `faa64814` 2026-09-07 | sonnet | |
 
 ## 10. Build and verification commands
@@ -1260,3 +1260,5 @@ Patch v1.0.2 (2026-09-09) adds the required related-formalization identifier aft
 ## WP-21: unique submission module names
 
 Palomar run 34287264858 resolved both generic module names from the Stafford38 dependency and failed before finding the Global theorem. Use GlobalStaffordChallenge and GlobalStaffordSolution as the unique submission modules. Retain frozen Challenge.lean and Solution.lean unchanged; the unique files initially copy their bytes exactly. The two Challenge files are alternative copies of the same compared template, each with its deliberate placeholder; neither is imported by the solution. This exception adds no mathematical proof obligation or axiom. Verifiers must check exact Challenge-copy equality and audit the unique modules. WP-21 and the pending WP-20 replay require successful source resolution, build and Comparator/NanoDa/Lean checks before the corrective release.
+
+WP-21 completed 2026-09-09: unique modules resolve to the project; both the standard and Palomar canonical-Challenge Comparator paths pass NanoDa and Lean. WP-20 new-pin replay also passes. The local canonical check omits the unavailable outer systemd wrapper, as recorded in the verification report; hosted acceptance remains separate.

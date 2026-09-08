@@ -22,7 +22,7 @@
 \newcommand{\D}{\mathcal D}
 \newcommand{\ord}{\operatorname{ord}}
 \newcommand{\backmap}{\hfill\hyperref[fig:map]{\small Return to proof map}}
-\newcommand{\leanref}[2]{\par\smallskip\noindent\textbf{Lean.} \href{https://github.com/itpplasma/global-stafford-formal/blob/d76051ce227f41c0fb21f114ffd61890f3b6b99b/#1}{\nolinkurl{#1}}.\par\noindent\small\code{#2}\par\normalsize\backmap}
+\newcommand{\leanref}[2]{\par\smallskip\noindent\textbf{Lean.} \href{https://github.com/itpplasma/global-stafford-formal/blob/b21883a5b3d8f46922713049c3b060523ea3a771/#1}{\nolinkurl{#1}}.\par\noindent\small\code{#2}\par\normalsize\backmap}
 \newtheorem*{theorem}{Theorem (Global Stafford)}
 \setlength{\emergencystretch}{2em}
 \setlength{\parskip}{.35em}
@@ -89,12 +89,12 @@ The proof does not prescribe a Bernstein-degree bound on $F$ in the global case.
 The paper revision is \nolinkurl{9a096dc9f6c990bdfb3e8a24110989648c70b3f3}, with
 SHA-256 \nolinkurl{22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03}.
 It is unchanged at research revision \code{b5654dd}. The independently replayed
-formal proof is \nolinkurl{d76051ce227f41c0fb21f114ffd61890f3b6b99b}.
-Release \code{v1.0.0} retains the project proof sources and upgrades the dependency pins. Replay with the new pins is pending; the author requested publication for Palomar submission before that replay.
+formal proof is \nolinkurl{b21883a5b3d8f46922713049c3b060523ea3a771}.
+Release \code{v1.0.3} uses unique submission module names. Phase I/full replay and both standard and canonical-Challenge comparisons passed with the dependency pins below.
 Phase I and II are complete in that record. Human expert review of the paper and
 its statement correspondence remains open.
 
-\section{TeX statement compared with Challenge.lean}\label{sec:comparison}
+\section{TeX statement compared with GlobalStaffordChallenge.lean}\label{sec:comparison}
 The Challenge states the theorem on endomorphisms and explicitly requires
 finite order for each witness. The substantive proof instead uses the
 subalgebra of finite-order operators. These are two presentations of the same
@@ -126,9 +126,9 @@ injectivity preserves the nonzero hypothesis. No extra mathematical hypothesis
 is introduced.
 
 The definitions are restated in
-\code{GlobalStafford/Assembly/ChallengeTransport.lean}; \code{Solution.lean}
+\code{GlobalStafford/Assembly/ChallengeTransport.lean}; \code{GlobalStaffordSolution.lean}
 imports the substantive closure and uses the transported theorem. It never
-imports \code{Challenge.lean}. Comparator checks the Challenge and Solution
+imports \code{GlobalStaffordChallenge.lean}. Comparator checks the Challenge and Solution
 statements in separate environments. Its equality check connects the two Lean
 statements; this TeX correspondence remains a mathematical reading task.
 
@@ -390,13 +390,14 @@ cofactor-lifting approaches are not dependencies of this proof.
 \leanref{GlobalStafford/Assembly/Closure.lean}{GlobalStafford.universalStatement}
 
 \section{Verification and reproducible dependencies}\label{sec:verification}
-The repository report \code{docs/verification-results.json} records a fresh
-clone replay on 7 September 2026: source builds, endpoint axiom reports,
-consumer checks, separate import-closure audits, Comparator, NanoDa, and the
-Lean kernel all passed. Its SHA-256 is
-\nolinkurl{cceb030147fac5e2d7e614ed879318595551aa5330c8e92d9bb5dfdf092d10f6}.
-The dependencies listed below are the new release pins, not the historical report pins. Replay with these pins is pending. This dossier reports the historical evidence; it is not a new independent
-mathematical review or a new Palomar registration.
+The repository report \code{docs/verification-results.json} records the
+isolated Phase I/full replay and Comparator acceptance on 9 September 2026.
+Both NanoDa and Lean accepted the solution. The report SHA-256 is
+\nolinkurl{08b8dcd152806c5033316100a624d8c61a67f9e069c18ac649f3c6612779db67}.
+A second comparison using Palomar's canonical Challenge compiler and protected
+alias also passed. Its outer systemd wrapper was unavailable locally;
+Landrun and the mathematical checks were retained. Hosted registry acceptance
+and human expert review are separate.
 
 \begin{description}
 \item[Lean] \code{leanprover/lean4:v4.33.0}
@@ -441,9 +442,7 @@ Stafford38 developments. The package includes the Challenge/Solution pair,
 verification evidence, and a companion document with a clickable proof map,
 the statement correspondence, and the main proof mechanisms.
 \end{quote}
-The formal repository is public under Apache-2.0. Release \code{v1.0.0}
-is authorized for immediate publication and Palomar submission. The new-pin
-replay remains pending; no Palomar acceptance or human referee report is claimed.
+The formal repository is public under Apache-2.0. Release \code{v1.0.3} fixes the submission module collision and records the completed replay. No hosted Palomar acceptance or human referee report is claimed.
 
 \appendix
 \clearpage
@@ -451,7 +450,7 @@ replay remains pending; no Palomar acceptance or human referee report is claimed
 This listing is read directly from the repository file at build time.
 Its deliberate final \code{sorry} is the statement placeholder for comparison.
 \VerbatimInput[fontsize=\scriptsize,breaklines=true,breakanywhere=true,
- frame=lines,numbers=left,numbersep=5pt]{../../Challenge.lean}
+ frame=lines,numbers=left,numbersep=5pt]{../../GlobalStaffordChallenge.lean}
 
 \clearpage
 \section{The actual Solution file and Comparator configuration}\label{sec:solution}
@@ -459,7 +458,7 @@ The Solution reaches the transported theorem through the substantive closure.
 The transport's recursive equivalences are explained in
 Section~\ref{sec:comparison}.
 \VerbatimInput[fontsize=\small,breaklines=true,breakanywhere=true,
- frame=lines,numbers=left,numbersep=5pt]{../../Solution.lean}
+ frame=lines,numbers=left,numbersep=5pt]{../../GlobalStaffordSolution.lean}
 \VerbatimInput[fontsize=\small,breaklines=true,breakanywhere=true,
  frame=lines]{../../comparator.json}
 \end{document}

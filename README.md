@@ -21,19 +21,12 @@ source-changing local-to-global argument.
 
 The formalization is complete through Phase II: `GlobalStafford.universalStatement`
 (`GlobalStafford/Assembly/Closure.lean`) proves the theorem for the intrinsic
-algebra of finite-order differential operators, and `Solution.lean` transports
+algebra of finite-order differential operators, and `GlobalStaffordSolution.lean` transports
 it to the Mathlib-only statement `GlobalStaffordChallenge.universalStatement`
-of [`Challenge.lean`](Challenge.lean). Both depend only on `propext`,
+of [`GlobalStaffordChallenge.lean`](GlobalStaffordChallenge.lean). Both depend only on `propext`,
 `Classical.choice`, and `Quot.sound`; `scripts/verify.sh` (build, pins,
 source audit, endpoint axioms, Challenge/Solution import closures) passes.
-Commit `d76051ce` was replayed from a fresh clone: `scripts/verify.sh`,
-Comparator, NanoDa and Lean's kernel all accept the solution; the
-[verification record](docs/verification-results.json) has SHA-256
-`cceb030147fac5e2d7e614ed879318595551aa5330c8e92d9bb5dfdf092d10f6`. See [`docs/verification.md`](docs/verification.md). No release, registration,
-or publication is claimed, and human expert review of the paper proof and of
-the statement correspondence remains open.
-
-Release `v1.0.0` pins AlgebraicAnalysis `v0.3.0` and Stafford38 `v1.1.0`. The author requested publication for Palomar submission before replay with these new pins. The historical verification below applies to `d76051ce`; verification of the new dependency combination is pending.
+Source `b21883a5b3d8f46922713049c3b060523ea3a771` passed an isolated-clone Phase I/full replay and Comparator with NanoDa and Lean kernel acceptance. A second comparison using Palomar's independently compiled canonical Challenge also passed. Release `v1.0.3` uses unique submission module names to prevent collisions with Stafford38. The [verification record](docs/verification-results.json) fixes the checked source and scope; hosted Palomar acceptance and human review are separate.
 
 | Dependency | Exact version |
 | --- | --- |
@@ -51,7 +44,7 @@ scripts/verify.sh
 ## Companion document
 
 The [TeX dossier](docs/dossier/global-stafford-dossier.tex) includes a clickable
-proof map, a comparison of the theorem with `Challenge.lean`, the main proof
+proof map, a comparison of the theorem with `GlobalStaffordChallenge.lean`, the main proof
 mechanisms, and the actual Challenge/Solution files. Build the PDF and its
 source-hash manifest with `docs/dossier/build.sh` (LuaLaTeX, latexmk, TikZ,
 DejaVu fonts). The output is `docs/dossier/global-stafford-dossier.pdf`.

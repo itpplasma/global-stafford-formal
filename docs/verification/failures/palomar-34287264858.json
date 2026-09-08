@@ -1,0 +1,528 @@
+{
+  "challenge": {
+    "bytes": 3321,
+    "canonical_olean_sha256": "c09a604e26523f824bd1fd6a1df8356b95acd4157c8027ade157d6360e76be69",
+    "dependencies": [
+      {
+        "provenance": "allowlisted",
+        "repository": "leanprover-community/mathlib4"
+      }
+    ],
+    "direct_imports": [
+      "Mathlib.Algebra.FreeAlgebra",
+      "Mathlib.Algebra.RingQuot",
+      "Mathlib.LinearAlgebra.SymplecticGroup"
+    ],
+    "lines": 71,
+    "module": "Challenge",
+    "path": ".lake/packages/stafford38Formal/Challenge.lean",
+    "sha256": "5a832e8a6f292e58a68dddd48e03541f5228c3f15cc9a1063e88c057439346f0",
+    "transitive_source_count": 4,
+    "trust_level": "high",
+    "untrusted_sources": []
+  },
+  "checked_at": "2026-09-08T22:43:11Z",
+  "classification": {
+    "arxiv": [
+      {
+        "code": "math.RA",
+        "name": "Rings and Algebras"
+      },
+      {
+        "code": "math.AG",
+        "name": "Algebraic Geometry"
+      }
+    ],
+    "msc2020": [
+      {
+        "code": "16S32",
+        "name": "Rings of differential operators (associative algebraic aspects)"
+      },
+      {
+        "code": "14F10",
+        "name": "Differentials and other special sheaves; D-modules; Bernstein-Sato ideals and polynomials"
+      }
+    ]
+  },
+  "comparator": {
+    "challenge_module": "Challenge",
+    "definition_names": [],
+    "path": "comparator.json",
+    "permitted_axioms": [
+      "propext",
+      "Quot.sound",
+      "Classical.choice"
+    ],
+    "sha256": "76d1030ae53c12974dfd63f18446956cefd9bd97de1cbda55fd17b8c34c56267",
+    "solution_module": "Solution",
+    "theorem_names": [
+      "GlobalStaffordChallenge.universalStatement"
+    ]
+  },
+  "comparator_commit": "575674928e239f5bc452aab72d1dd7b0f1326494",
+  "comparator_log_tail": "Building PalomarCanonical865666cac7d033919b16542a.Challenge\nExporting #[Nat, String, String.mk, Char, Quot, Quot.mk, Quot.lift, Quot.ind, GlobalStaffordChallenge.universalStatement, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight, String.ofList, Char.ofNat, List, eagerReduce] from PalomarCanonical865666cac7d033919b16542a.Challenge\n\nPANIC at dumpConstant Export:237:48: Constant GlobalStaffordChallenge.universalStatement not found in environment.\nbacktrace:\n/home/runner/work/_temp/lean4export/.lake/build/bin/lean4export(+0x95c2ff5) [0x55e58b5a8ff5]\n/home/runner/work/_temp/lean4export/.lake/build/bin/lean4export(+0x95ba707) [0x55e58b5a0707]\n/home/runner/work/_temp/lean4export/.lake/build/bin/lean4export(lean_panic_fn_borrowed+0x2b) [0x55e58b5a07eb]\n/home/runner/work/_temp/lean4export/.lake/build/bin/lean4export(panic spec at dumpConstant (lean4export)+0x2ae) [0x55e585386a5e]\n/home/runner/work/_temp/lean4export/.lake/build/bin/lean4export(List.forIn'.loop [arity\u2193] spec at main (lean4export)+0x2a1) [0x55e585378b21]\n/home/runner/work/_temp/lean4export/.lake/build/bin/lean4export(main [\u03bb] (lean4export)+0x167) [0x55e585378ff7]\n/home/runner/work/_temp/lean4export/.lake/build/bin/lean4export(main [boxed, \u03bb] (lean4export)+0x13) [0x55e585379273]\n/home/runner/work/_temp/lean4export/.lake/build/bin/lean4export(<apply/3>+0x970) [0x55e58b5b0220]\n/home/runner/work/_temp/lean4export/.lake/build/bin/lean4export(M.run [arity\u2193] (lean4export)+0x30) [0x55e58537b090]\n/home/runner/work/_temp/lean4export/.lake/build/bin/lean4export(+0x957b8b7) [0x55e58b5618b7]\n/home/runner/work/_temp/lean4export/.lake/build/bin/lean4export(+0x957bd85) [0x55e58b561d85]\n/lib/x86_64-linux-gnu/libc.so.6(+0x9cb84) [0x7f46a309cb84]\n/lib/x86_64-linux-gnu/libc.so.6(+0x129d6c) [0x7f46a3129d6c]\nuncaught exception: Child exited with 134",
+  "diagnostics": [
+    {
+      "code": "comparator.rejected",
+      "explanation": "Comparator rejected the project (exit 1)\n\nuncaught exception: Child exited with 134",
+      "next_action": "Correct the Lean or Comparator failure quoted above, commit it, and make a new submission.",
+      "owner": "submitter",
+      "repairable": false,
+      "retryable": false,
+      "stage": "comparator",
+      "summary": "Comparator rejected the project (exit 1)"
+    }
+  ],
+  "diagnostics_schema_version": 1,
+  "errors": [
+    "Comparator rejected the project (exit 1)"
+  ],
+  "existing_id": null,
+  "formalization": {
+    "automation_method_count": 2,
+    "path": "formalization.yaml",
+    "project_name": "Global Stafford",
+    "review_status": "agent-reviewed",
+    "sha256": "ecd16e76e56eca30176afc7cdff01f242dd54b2ffff0793804ad142f429ec6e1",
+    "source_count": 2
+  },
+  "formalization_profile_version": 4,
+  "lake_manifest": {
+    "path": "lake-manifest.json",
+    "sha256": "4e6a0c7d4590e873f5e5be80fa45fd06b688dfb6fc0074156c8ed2db96fb8a9b"
+  },
+  "lakefile": {
+    "format": "toml",
+    "path": "lakefile.toml",
+    "sha256": "5767a86d4ff03ca8481de59ebda2e472224dd8105d1327ab7f86c33311352aeb"
+  },
+  "landrun_commit": "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4",
+  "lean4export_commit": "15f6055e299ad5b89345e533cc2192f4cc00f659",
+  "lean_toolchain": "leanprover/lean4:v4.33.0",
+  "lean_toolchain_path": "lean-toolchain",
+  "license": {
+    "declared_identifier": "Apache-2.0",
+    "detected_identifier": "Apache-2.0",
+    "path": "LICENSE",
+    "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+  },
+  "mathlib_cache": {
+    "available": true,
+    "required": true
+  },
+  "nanoda_commit": "68d5ca9db226849b41a6fff59d796ff19d0a8840",
+  "orcid_validation": {
+    "checked_at": "2026-09-08T22:43:13Z",
+    "records": [
+      {
+        "orcid": "0000-0003-4773-416X",
+        "record_url": "https://orcid.org/0000-0003-4773-416X"
+      }
+    ],
+    "registry": "https://orcid.org",
+    "schema_version": 1
+  },
+  "phase": "verification",
+  "project_dependencies": [
+    {
+      "name": "stafford38Formal",
+      "repository": "itpplasma/stafford38-formal",
+      "revision": "e77e176c381ca2d6b20c030f9227f1b031415d2e",
+      "url": "https://github.com/itpplasma/stafford38-formal.git"
+    },
+    {
+      "name": "algebraicAnalysis",
+      "repository": "itpplasma/algebraic-analysis",
+      "revision": "4aae47967f6ba02ffe2f639ab06564c9a9d1ecc8",
+      "url": "https://github.com/itpplasma/algebraic-analysis.git"
+    },
+    {
+      "name": "mathlib",
+      "repository": "leanprover-community/mathlib4",
+      "revision": "db584cd6d46c92f209a44c0f1c829460d327499d",
+      "url": "https://github.com/leanprover-community/mathlib4"
+    },
+    {
+      "name": "plausible",
+      "repository": "leanprover-community/plausible",
+      "revision": "b7eb3304aeae834b12dda98993a37f6a41f6f0bb",
+      "url": "https://github.com/leanprover-community/plausible"
+    },
+    {
+      "name": "LeanSearchClient",
+      "repository": "leanprover-community/LeanSearchClient",
+      "revision": "5f4d51b81cbd3f6b32b156bfad9056621a040404",
+      "url": "https://github.com/leanprover-community/LeanSearchClient"
+    },
+    {
+      "name": "importGraph",
+      "repository": "leanprover-community/import-graph",
+      "revision": "16f02aa7642864af59f1ff0e384a015994db9118",
+      "url": "https://github.com/leanprover-community/import-graph"
+    },
+    {
+      "name": "proofwidgets",
+      "repository": "leanprover-community/ProofWidgets4",
+      "revision": "4be2e3d5087eeb272cf5a8853b8f9dd025ef5957",
+      "url": "https://github.com/leanprover-community/ProofWidgets4"
+    },
+    {
+      "name": "aesop",
+      "repository": "leanprover-community/aesop",
+      "revision": "3448c0bcc5ce01b2d1546e483ec3620e32df3d0e",
+      "url": "https://github.com/leanprover-community/aesop"
+    },
+    {
+      "name": "Qq",
+      "repository": "leanprover-community/quote4",
+      "revision": "92c15be17b7caf78c2ad767ec40f89052d908d81",
+      "url": "https://github.com/leanprover-community/quote4"
+    },
+    {
+      "name": "batteries",
+      "repository": "leanprover-community/batteries",
+      "revision": "4488d40d070b9700d4d5a6aa342f0d40c31b2a2d",
+      "url": "https://github.com/leanprover-community/batteries"
+    },
+    {
+      "name": "Cli",
+      "repository": "leanprover/lean4-cli",
+      "revision": "6130a47896ce867c6a4a55373441e59e565bad0f",
+      "url": "https://github.com/leanprover/lean4-cli"
+    }
+  ],
+  "provenance": {
+    "mathematical_sources": [
+      {
+        "author_endorsement": "participated",
+        "authors": [
+          {
+            "name": "Christopher Albert",
+            "orcid": "0000-0003-4773-416X"
+          }
+        ],
+        "license": "CC-BY-4.0",
+        "note": "The private paper proof formalized here. No public preprint exists.",
+        "relationship": "other",
+        "title": "Source-changing descent by central-parameter conjugation (private research note)",
+        "type": "original-proof"
+      },
+      {
+        "authors": [
+          {
+            "name": "J. T. Stafford"
+          }
+        ],
+        "location": "Journal of the London Mathematical Society (2) 18 (1978), 429-442, Conjecture 3.8",
+        "note": "States the Weyl-algebra case, which is the imported theorem.",
+        "relationship": "background",
+        "title": "Module structure of Weyl algebras",
+        "type": "paper"
+      }
+    ],
+    "related_formalizations": [
+      {
+        "identifier": "https://doi.org/10.5281/zenodo.22667041",
+        "relationship": "depends-on"
+      }
+    ],
+    "repository_role": "substantive-development",
+    "responsible_maintainers": [
+      {
+        "name": "Christopher Albert",
+        "orcid": "0000-0003-4773-416X"
+      }
+    ],
+    "result_origin": "original"
+  },
+  "resource_usage": [
+    {
+      "elapsed_seconds": 0.005,
+      "max_rss_kib": 13232,
+      "peak_tasks_observed": 1,
+      "phase": "touch",
+      "returncode": 0,
+      "system_cpu_seconds": 0.004,
+      "user_cpu_seconds": 0.001,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.007,
+      "max_rss_kib": 13312,
+      "peak_tasks_observed": 1,
+      "phase": "landrun",
+      "returncode": 0,
+      "system_cpu_seconds": 0.005,
+      "user_cpu_seconds": 0.003,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.004,
+      "max_rss_kib": 13204,
+      "peak_tasks_observed": 1,
+      "phase": "touch",
+      "returncode": 1,
+      "system_cpu_seconds": 0.003,
+      "user_cpu_seconds": 0.001,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.024,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 0,
+      "system_cpu_seconds": 0.006,
+      "user_cpu_seconds": 0.019,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.026,
+      "max_rss_kib": 13200,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.005,
+      "user_cpu_seconds": 0.021,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.025,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.006,
+      "user_cpu_seconds": 0.019,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.023,
+      "max_rss_kib": 13192,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.005,
+      "user_cpu_seconds": 0.018,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 2.325,
+      "max_rss_kib": 893772,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 0.479,
+      "user_cpu_seconds": 1.898,
+      "workspace_disk_peak_bytes": 700416
+    },
+    {
+      "elapsed_seconds": 0.065,
+      "max_rss_kib": 92044,
+      "peak_tasks_observed": 1,
+      "phase": "lean",
+      "returncode": 0,
+      "system_cpu_seconds": 0.039,
+      "user_cpu_seconds": 0.043,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 48.746,
+      "max_rss_kib": 1029056,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 43.952,
+      "user_cpu_seconds": 72.755,
+      "workspace_disk_peak_bytes": 7787700224
+    },
+    {
+      "elapsed_seconds": 7.21,
+      "max_rss_kib": 1014712,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 3.267,
+      "user_cpu_seconds": 7.74,
+      "workspace_disk_peak_bytes": 1646592
+    },
+    {
+      "elapsed_seconds": 2.685,
+      "max_rss_kib": 894528,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 0.631,
+      "user_cpu_seconds": 2.01,
+      "workspace_disk_peak_bytes": 700416
+    },
+    {
+      "elapsed_seconds": 2.902,
+      "max_rss_kib": 2608664,
+      "peak_tasks_observed": 1,
+      "phase": "lean",
+      "returncode": 0,
+      "system_cpu_seconds": 0.769,
+      "user_cpu_seconds": 1.096,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.067,
+      "max_rss_kib": 91968,
+      "peak_tasks_observed": 1,
+      "phase": "lean",
+      "returncode": 0,
+      "system_cpu_seconds": 0.043,
+      "user_cpu_seconds": 0.04,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.065,
+      "max_rss_kib": 92156,
+      "peak_tasks_observed": 1,
+      "phase": "lean",
+      "returncode": 0,
+      "system_cpu_seconds": 0.038,
+      "user_cpu_seconds": 0.045,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.005,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "touch",
+      "returncode": 0,
+      "system_cpu_seconds": 0.003,
+      "user_cpu_seconds": 0.002,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.007,
+      "max_rss_kib": 13180,
+      "peak_tasks_observed": 1,
+      "phase": "landrun",
+      "returncode": 0,
+      "system_cpu_seconds": 0.003,
+      "user_cpu_seconds": 0.005,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.004,
+      "max_rss_kib": 13240,
+      "peak_tasks_observed": 1,
+      "phase": "touch",
+      "returncode": 1,
+      "system_cpu_seconds": 0.003,
+      "user_cpu_seconds": 0.001,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.026,
+      "max_rss_kib": 13384,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 0,
+      "system_cpu_seconds": 0.01,
+      "user_cpu_seconds": 0.016,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.026,
+      "max_rss_kib": 13204,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 0,
+      "system_cpu_seconds": 0.012,
+      "user_cpu_seconds": 0.013,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.026,
+      "max_rss_kib": 13232,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.007,
+      "user_cpu_seconds": 0.019,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.025,
+      "max_rss_kib": 13368,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.007,
+      "user_cpu_seconds": 0.018,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 0.023,
+      "max_rss_kib": 13056,
+      "peak_tasks_observed": 1,
+      "phase": "python3.11",
+      "returncode": 1,
+      "system_cpu_seconds": 0.006,
+      "user_cpu_seconds": 0.017,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 1.281,
+      "max_rss_kib": 844540,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 0.665,
+      "user_cpu_seconds": 0.659,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 1.269,
+      "max_rss_kib": 845980,
+      "peak_tasks_observed": 1,
+      "phase": "lake",
+      "returncode": 0,
+      "system_cpu_seconds": 0.607,
+      "user_cpu_seconds": 0.7,
+      "workspace_disk_peak_bytes": 0
+    },
+    {
+      "elapsed_seconds": 19.544,
+      "max_rss_kib": 2562064,
+      "peak_tasks_observed": 1,
+      "phase": "comparator",
+      "returncode": 1,
+      "system_cpu_seconds": 6.67,
+      "user_cpu_seconds": 0.757,
+      "workspace_disk_peak_bytes": 6764900352
+    }
+  ],
+  "schema_version": 1,
+  "solution": {
+    "module": "Solution",
+    "path": ".lake/packages/stafford38Formal/Solution.lean",
+    "sha256": "a9ba322514e5c63ae4ba961a04c1a6e3d25f607412c2fd18eff9de15fff0a75e"
+  },
+  "source": {
+    "bytes": 919985,
+    "commit": "e8ee53b1093b06651ca48f4cd8ee4f0d547b1a91",
+    "repository": "itpplasma/global-stafford-formal",
+    "repository_url": "https://github.com/itpplasma/global-stafford-formal",
+    "tree_url": "https://github.com/itpplasma/global-stafford-formal/tree/e8ee53b1093b06651ca48f4cd8ee4f0d547b1a91"
+  },
+  "stage": "comparator",
+  "status": "fail",
+  "submission": {
+    "authorization": {
+      "relationship": "maintainer"
+    },
+    "requested_paths": {
+      "comparator_config_path": "comparator.json",
+      "formalization_metadata_path": "",
+      "project_path": ""
+    },
+    "submission_id": "c4jebkcy5esy"
+  },
+  "warnings": [],
+  "workflow_url": "https://github.com/PalomarRegistry/PalomarSubmission/actions/runs/34287264858"
+}

@@ -1,90 +1,263 @@
 {
-  "checks": {
-    "bootstrap": {
-      "exit": 0,
-      "log": "bootstrap.log",
-      "sha256": "9ba5bc17c82a41eabfa1cecf328010d02caeadc3d3646ebab1387c103f32b0a0"
+  "schema_version": 2,
+  "result": "passed",
+  "verified_utc": "2026-09-08T23:10:47.731969+00:00",
+  "verified_commit": {
+    "sha": "b21883a5b3d8f46922713049c3b060523ea3a771",
+    "tree_sha": "c4c44b9f5b8862be8f1bfe66cb710a207986364a"
+  },
+  "environment": {
+    "kind": "isolated-public-clone",
+    "git_status_porcelain": "",
+    "cache": "Official Mathlib v4.33.0 cache download verified in prior clean preparation; fixed-pin compiled dependencies and project artifacts copied before replay. Build is incremental; Comparator independently exports and checks the compared proof.",
+    "sandbox": "Landlock: clone writable; toolchains and system directories readable; no access to working checkouts, research repository or user Git credentials; no network"
+  },
+  "toolchain": "leanprover/lean4:v4.33.0",
+  "manifest_pins": [
+    {
+      "url": "https://github.com/itpplasma/stafford38-formal.git",
+      "type": "git",
+      "subDir": null,
+      "scope": "",
+      "rev": "e77e176c381ca2d6b20c030f9227f1b031415d2e",
+      "name": "stafford38Formal",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "e77e176c381ca2d6b20c030f9227f1b031415d2e",
+      "inherited": false,
+      "configFile": "lakefile.toml"
     },
-    "build": {
-      "exit": 0,
-      "log": "build.log",
-      "sha256": "8b415a00d05e93564379f8866c4c214221d7beba7ac48b4e749367e8e5b9ba43"
+    {
+      "url": "https://github.com/itpplasma/algebraic-analysis.git",
+      "type": "git",
+      "subDir": null,
+      "scope": "",
+      "rev": "4aae47967f6ba02ffe2f639ab06564c9a9d1ecc8",
+      "name": "algebraicAnalysis",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "4aae47967f6ba02ffe2f639ab06564c9a9d1ecc8",
+      "inherited": false,
+      "configFile": "lakefile.toml"
     },
-    "cache": {
-      "exit": 0,
-      "log": "cache.log",
-      "sha256": "d0afe87bca1fb8d2d2f3b1dda3c019e5d750c07f87a49bb6fa5991438ba01ecd"
+    {
+      "url": "https://github.com/leanprover-community/mathlib4",
+      "type": "git",
+      "subDir": null,
+      "scope": "",
+      "rev": "db584cd6d46c92f209a44c0f1c829460d327499d",
+      "name": "mathlib",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "db584cd6d46c92f209a44c0f1c829460d327499d",
+      "inherited": false,
+      "configFile": "lakefile.lean"
     },
-    "verify": {
-      "exit": 0,
-      "log": "verify.log",
-      "sha256": "d0fe2837908b704a2fa1f0a7fddcb7d1ef9eeee816c80c282748ead1af2e7d60"
+    {
+      "url": "https://github.com/leanprover-community/plausible",
+      "type": "git",
+      "subDir": null,
+      "scope": "leanprover-community",
+      "rev": "b7eb3304aeae834b12dda98993a37f6a41f6f0bb",
+      "name": "plausible",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "main",
+      "inherited": true,
+      "configFile": "lakefile.toml"
     },
-    "verify-palomar": {
+    {
+      "url": "https://github.com/leanprover-community/LeanSearchClient",
+      "type": "git",
+      "subDir": null,
+      "scope": "leanprover-community",
+      "rev": "5f4d51b81cbd3f6b32b156bfad9056621a040404",
+      "name": "LeanSearchClient",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "main",
+      "inherited": true,
+      "configFile": "lakefile.toml"
+    },
+    {
+      "url": "https://github.com/leanprover-community/import-graph",
+      "type": "git",
+      "subDir": null,
+      "scope": "leanprover-community",
+      "rev": "16f02aa7642864af59f1ff0e384a015994db9118",
+      "name": "importGraph",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "main",
+      "inherited": true,
+      "configFile": "lakefile.toml"
+    },
+    {
+      "url": "https://github.com/leanprover-community/ProofWidgets4",
+      "type": "git",
+      "subDir": null,
+      "scope": "leanprover-community",
+      "rev": "4be2e3d5087eeb272cf5a8853b8f9dd025ef5957",
+      "name": "proofwidgets",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "main",
+      "inherited": true,
+      "configFile": "lakefile.lean"
+    },
+    {
+      "url": "https://github.com/leanprover-community/aesop",
+      "type": "git",
+      "subDir": null,
+      "scope": "leanprover-community",
+      "rev": "3448c0bcc5ce01b2d1546e483ec3620e32df3d0e",
+      "name": "aesop",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "master",
+      "inherited": true,
+      "configFile": "lakefile.toml"
+    },
+    {
+      "url": "https://github.com/leanprover-community/quote4",
+      "type": "git",
+      "subDir": null,
+      "scope": "leanprover-community",
+      "rev": "92c15be17b7caf78c2ad767ec40f89052d908d81",
+      "name": "Qq",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "master",
+      "inherited": true,
+      "configFile": "lakefile.toml"
+    },
+    {
+      "url": "https://github.com/leanprover-community/batteries",
+      "type": "git",
+      "subDir": null,
+      "scope": "leanprover-community",
+      "rev": "4488d40d070b9700d4d5a6aa342f0d40c31b2a2d",
+      "name": "batteries",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "main",
+      "inherited": true,
+      "configFile": "lakefile.toml"
+    },
+    {
+      "url": "https://github.com/leanprover/lean4-cli",
+      "type": "git",
+      "subDir": null,
+      "scope": "leanprover",
+      "rev": "6130a47896ce867c6a4a55373441e59e565bad0f",
+      "name": "Cli",
+      "manifestFile": "lake-manifest.json",
+      "inputRev": "v4.33.0",
+      "inherited": true,
+      "configFile": "lakefile.toml"
+    }
+  ],
+  "allowed_axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "commands": [
+    {
+      "commit": "b21883a5b3d8f46922713049c3b060523ea3a771",
+      "command": [
+        "bash",
+        "scripts/verify.sh",
+        "--phase-i"
+      ],
       "exit": 0,
-      "log": "verify-palomar.log",
-      "sha256": "ddd1467f181ba427e1bc609fe41e1d7507e8677094dfb33013f82d0f2bfa5fa8"
+      "log": "gsf-phase-i.log",
+      "log_sha256": "bac14d6ddc3c9c1dc20637b011166b4460f1b01937474b3fe5d84c542e429232",
+      "sandbox": "Landlock: clone writable; toolchains and system directories readable; no access to working checkouts, research repository or user Git credentials; no network"
+    },
+    {
+      "commit": "b21883a5b3d8f46922713049c3b060523ea3a771",
+      "command": [
+        "bash",
+        "scripts/verify.sh"
+      ],
+      "exit": 0,
+      "log": "gsf-full.log",
+      "log_sha256": "bd9288650092ffd8f3e82f3cc42e10170f0f42f702283a936a8383619b4e9920",
+      "sandbox": "Landlock: clone writable; toolchains and system directories readable; no access to working checkouts, research repository or user Git credentials; no network"
+    },
+    {
+      "commit": "b21883a5b3d8f46922713049c3b060523ea3a771",
+      "command": [
+        "bash",
+        "scripts/verify-palomar.sh"
+      ],
+      "exit": 0,
+      "log": "gsf-comparator.log",
+      "log_sha256": "f59064b7c0866aac4c0a2fe158c60697afd90a5284bb920aad413037bc2b8d92",
+      "sandbox": "Landlock: clone writable; toolchains and system directories readable; no access to working checkouts, research repository or user Git credentials; no network"
+    }
+  ],
+  "palomar_tool_revisions": [
+    "Comparator 575674928e239f5bc452aab72d1dd7b0f1326494",
+    "ComparatorLean leanprover/lean4:v4.34.0-rc1",
+    "lean4export 15f6055e299ad5b89345e533cc2192f4cc00f659",
+    "NanoDa 68d5ca9db226849b41a6fff59d796ff19d0a8840",
+    "Landrun 811cfff51ceaf3d9843708aa6d22e9b84ccac8b4",
+    "Lean leanprover/lean4:v4.33.0"
+  ],
+  "evidence": {
+    "GlobalStaffordChallenge-imports.log": {
+      "sha256": "00988c2c83083292eb2d321d77d5f3406a2e6028eb9098b21c65723a9d39b23d",
+      "bytes": 129290
+    },
+    "GlobalStaffordSolution-imports.log": {
+      "sha256": "558f63c267f188bb735c09ad6be7cc5da3632e6c70a95835a8a92b7f5e326dd3",
+      "bytes": 489457
+    },
+    "axioms.log": {
+      "sha256": "708405b99782bff5dd46dfe8ce8f1439ebb995370aefac99eb44c6542017187f",
+      "bytes": 1202
+    },
+    "build.log": {
+      "sha256": "7e7ce847c0ce6bde5a646daebe12a5f0aab821039510b8ce225c56c6dac15ea9",
+      "bytes": 643639
+    },
+    "challenge-build.log": {
+      "sha256": "9e5e7b2f75de1b3a97b9f086a53a5e94c666b1acd2f288144eaff75d21a2deee",
+      "bytes": 1163
+    },
+    "comparator.log": {
+      "sha256": "c9b13dc4552755b2b2d9817d7baabffd53a64bc355d203ff4f2ccd53aeeaea41",
+      "bytes": 646987
+    },
+    "consumers.log": {
+      "sha256": "03e716703f91476c391afe6f9a7df60b14c40f3e902ddca62320f89d04e34458",
+      "bytes": 24498
+    },
+    "layout.log": {
+      "sha256": "378580faedff64c9cd528e96806485991c58e4efbffe041f692d7b48450b2cd6",
+      "bytes": 44
+    },
+    "module-resolution.log": {
+      "sha256": "8265f3fddb33ea380cb3bff5d1b26421dc277d880fdff66818e188d5dcec7fe5",
+      "bytes": 1109
+    },
+    "solution-build.log": {
+      "sha256": "1395b969846db7eb90017a7928c5a5d4ef1b9ce362bdaa48759874b33cfa7f12",
+      "bytes": 643831
+    },
+    "upstream-build.log": {
+      "sha256": "3a03c47cedd0ee8d40bd434e39ac97790f69fa0f7ff75e0b13e89c14e86abeac",
+      "bytes": 567160
     }
   },
-  "commands": [
-    "lake exe cache get",
-    "lake build",
-    "scripts/verify.sh",
-    "scripts/bootstrap-palomar-tools.sh",
-    "scripts/verify-palomar.sh"
-  ],
-  "commit": "d76051ce227f41c0fb21f114ffd61890f3b6b99b",
-  "comparator": {
-    "compared_declaration": "GlobalStaffordChallenge.universalStatement",
-    "config": "comparator.json",
-    "lean_kernel_accepts": true,
-    "log_sha256": "6779c0ccee9da10c39ede5fb6886be30a313057359db7f50ff64674c43c2b45e",
-    "nanoda_accepts": true,
-    "okay": true
+  "axiom_reports": "warning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.universalStatement' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStaffordChallenge.universalStatement' depends on axioms: [propext, Classical.choice, Quot.sound]\n",
+  "consumer_reports": "warning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.BoundedOrderSourceOracle.oracle' depends on axioms: [propext, Classical.choice, Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStaffordChallengeOracle.multiplication_isOrderLE_zero' depends on axioms: [propext, Classical.choice, Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.ChartDataOverKOracle.s38Poly_chart_rat_self' depends on axioms: [propext, Classical.choice, Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.ChartDomainOracle.algebraMap_injective_rat_self' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n'GlobalStafford.ChartDomainOracle.noZeroDivisors_rat_self' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.ChartDomainOracle.mul_ne_zero_rat_self' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.ChartDomainOracle.etaleChartData_rat_self' depends on axioms: [propext, Classical.choice, Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.ClosureOracle.instSmoothRatMvPolynomialFin2' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.ClosureOracle.closure_oracle' depends on axioms: [propext, Classical.choice, Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.EtaleChartDataOracle.twoGeneratorIdentity_chart_of_weyl_oracle' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.EtaleDerivationsOracle.liftDerivation_coord_oracle' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.FiniteCoverPatchingOracle.oracle' depends on axioms: [propext, Classical.choice, Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.Chart.exists_mul_eq_of_finiteRightSpan' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.Chart.twoGeneratorIdentity_of_finiteRightSpan' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n'GlobalStafford.Chart.rightOre_of_finiteRightSpan' depends on axioms: [propext, Classical.choice, Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.GenericFibreOracle.finiteGenericFibre_rat_self' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n'GlobalStafford.GenericFibreOracle.algebraMap_injective_rat_self' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.LocalizationConstructionOracle.L' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.LocalizationConstructionOracle.oracle_away' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.LocalizationConstructionOracle.oracle_derivative' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n'GlobalStafford.LocalizationConstructionOracle.oracle_derivative_sq' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n'GlobalStafford.LocalizationConstructionOracle.oracle_multiplicationD' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n'GlobalStafford.LocalizationConstructionOracle.oracle_order' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.LocalizationConstructionOracle.oracle_injective_and_clearance' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.OldChartProtectionOracle.oracle' depends on axioms: [propext, Classical.choice, Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.OperatorsOracle.derivative_mem_order_one' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.OperatorsOracle.derivative_mul_X_sq' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.OperatorsOracle.derivative_mul_X_sq_apply_oracle' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.PhaseIOracle.oracle' depends on axioms: [propext, Classical.choice, Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.RightMovedOracle.evalNat_squaredInput_oracle' depends on axioms: [propext, Classical.choice, Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.ScalarExtensionConstructionOracle.oracleInterface' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n'GlobalStafford.ScalarExtensionConstructionOracle.oracle_theta_scalar_X' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n'GlobalStafford.ScalarExtensionConstructionOracle.oracle_s38Poly' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.ScalarExtensionOracle.s38Poly_rat_ratFunc' depends on axioms: [propext, Classical.choice, Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.SmoothCoverOracle.oracle' depends on axioms: [propext, Classical.choice, Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.WeylActionInjectiveOracle.weylAction_injective_oracle' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\nwarning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.WeylOreDomainOracle.rightOre_A1Q' depends on axioms: [propext, Classical.choice, Quot.sound]\n",
+  "phase_i_axioms": "warning: mathlib: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/mathlib' has local changes\nwarning: plausible: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/plausible' has local changes\nwarning: LeanSearchClient: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/LeanSearchClient' has local changes\nwarning: importGraph: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/importGraph' has local changes\nwarning: proofwidgets: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/proofwidgets' has local changes\nwarning: aesop: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/aesop' has local changes\nwarning: Qq: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Qq' has local changes\nwarning: batteries: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/batteries' has local changes\nwarning: Cli: repository '/tmp/stafford-coordinated-replay/gsf/.lake/packages/Cli' has local changes\n'GlobalStafford.PhaseI.twoGeneratorIdentity_of_inputs' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.PhaseI.universalStatement_of_inputs' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.PhaseI.s38Poly_of_chartData' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.Descent.exists_bounded_order_sources' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.Descent.twoGeneratorIdentity_of_charts' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.Certificate.protect_old_chart' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.Chart.twoGeneratorIdentity_of_finiteRightSpan' depends on axioms: [propext,\n Classical.choice,\n Quot.sound]\n'GlobalStafford.Chart.twoGeneratorIdentity_chart' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.Chart.twoGeneratorIdentity_chart_of_weyl' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.Chart.s38Poly_of_scalarExtension' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.Certificate.certificate_of_square' depends on axioms: [propext]\n'GlobalStafford.Conjugation.evalNat_squaredInput' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.Operators.mul_multiplication_pow' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.Operators.multiplication_pow_mul' depends on axioms: [propext, Classical.choice, Quot.sound]\n'GlobalStafford.Operators.pow_eq_multiplication_pow_mul' depends on axioms: [propext, Classical.choice, Quot.sound]\n",
+  "comparators": {
+    "comparator.log": "obalStafford.Chart.liftDerivation_mul_multiplication`:\n  [CharZero k]\n  [IsDomain C]\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\n  omit [CharZero k] [IsDomain C] in theorem ...\n\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\nwarning: GlobalStafford/Chart/ChartDomain/Symbol.lean:133:4: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```\ninfo: GlobalStafford/Chart/ChartDomain/Symbol.lean:302:0: 'GlobalStafford.Chart.opOf_monomial' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Chart/ChartDomain/Symbol.lean:303:0: 'GlobalStafford.Chart.opOf_injective' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Chart/ChartDomain/Symbol.lean:304:0: 'GlobalStafford.Chart.exists_opOf' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Chart/ChartDomain/Symbol.lean:305:0: 'GlobalStafford.Chart.opOf_mul_partialMonomial' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Chart/ChartDomain/Symbol.lean:306:0: 'GlobalStafford.Chart.liftDerivation_mul_multiplication' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Chart/ChartDomain/Symbol.lean:307:0: 'GlobalStafford.Chart.partialMonomial_commutator_mem' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Chart/ChartDomain/Symbol.lean:308:0: 'GlobalStafford.Chart.opOf_monomial_mul_sub_mem' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Chart/ChartDomain/Symbol.lean:309:0: 'GlobalStafford.Chart.opOf_mul_sub_mem' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Chart/ChartDomain/Symbol.lean:310:0: 'GlobalStafford.Chart.opOf_mul_ne_zero' depends on axioms: [propext, Classical.choice, Quot.sound]\n\u26a0 [9028/9032] Replayed GlobalStafford.Chart.ChartDomain\nwarning: GlobalStafford/Chart/ChartDomain.lean:53:4: `push_neg` has been deprecated. Prefer using `push Not` instead.\nIf you'd rather continue using `push_neg` in your project, you can implement it as follows:\n```\nopen Lean.Parser.Tactic in\nmacro \"push_neg\" cfg:optConfig loc:(location)? : tactic =>\n  `(tactic| push $cfg:optConfig Not $[$loc]?)\n```\ninfo: GlobalStafford/Chart/ChartDomain.lean:74:0: 'GlobalStafford.Chart.noZeroDivisors_algebra_of_etale' depends on axioms: [propext, Classical.choice, Quot.sound]\n\u26a0 [9029/9032] Replayed GlobalStafford.Chart.WeylActionInjective\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:66:11: Variable name `x` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _x\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:66:16: Variable name `y` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _y\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:92:0: automatically included section variable(s) unused in theorem `GlobalStafford.Chart.J_val_zero_coord_coord`:\n  [CharZero k]\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\n  omit [CharZero k] in theorem ...\n\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:95:0: automatically included section variable(s) unused in theorem `GlobalStafford.Chart.J_val_zero_mom_mom`:\n  [CharZero k]\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\n  omit [CharZero k] in theorem ...\n\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:98:0: automatically included section variable(s) unused in theorem `GlobalStafford.Chart.J_val_zero_coord_mom`:\n  [CharZero k]\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\n  omit [CharZero k] in theorem ...\n\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:101:0: automatically included section variable(s) unused in theorem `GlobalStafford.Chart.J_val_zero_mom_coord`:\n  [CharZero k]\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\n  omit [CharZero k] in theorem ...\n\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:104:0: automatically included section variable(s) unused in theorem `GlobalStafford.Chart.commute_of_commutator_zero`:\n  [CharZero k]\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\n  omit [CharZero k] in theorem ...\n\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:141:9: Variable name `i` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _i\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:141:14: Variable name `j` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _j\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:147:9: Variable name `i` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _i\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:147:14: Variable name `j` is not explicitly referenced.\n\nHint: The binding can be removed (if unused) or named `_` (if used implicitly). Alternatively, prefix the name with `_` to silence this warning:\n  [apply] _j\n\nNote: This linter can be disabled with `set_option linter.unusedVariables false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:335:4: Unused tactic linter: `congr 1` does nothing\n\nNote: This linter can be disabled with `set_option linter.unusedTactic false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:366:0: automatically included section variable(s) unused in theorem `GlobalStafford.Chart.monomial_one_eq_prod_X`:\n  [CharZero k]\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\n  omit [CharZero k] in theorem ...\n\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\nwarning: GlobalStafford/Chart/WeylActionInjective.lean:373:0: automatically included section variable(s) unused in theorem `GlobalStafford.Chart.algebraMap_monomial_one`:\n  [IsDomain C]\n  [Algebra k C]\n  [IsScalarTower k (B k n) C]\n  [Algebra.FormallyEtale (B k n) C]\nconsider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:\n  omit [IsDomain C] [Algebra k C] [IsScalarTower k (B k n) C] [Algebra.FormallyEtale (B k n) C] in theorem ...\n\nNote: This linter can be disabled with `set_option linter.unusedSectionVars false`\ninfo: GlobalStafford/Chart/WeylActionInjective.lean:497:0: 'GlobalStafford.Chart.presentedOrderedMonomial_eq_ncp' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Chart/WeylActionInjective.lean:498:0: 'GlobalStafford.Chart.weylAction_orderedMonomial' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Chart/WeylActionInjective.lean:499:0: 'GlobalStafford.Chart.weylAction_injective' depends on axioms: [propext, Classical.choice, Quot.sound]\n\u26a0 [9030/9032] Replayed GlobalStafford.Assembly.Closure\nwarning: GlobalStafford/Assembly/Closure.lean:167:2: Try this: \n  haveI\u0335\n\nThe goal is a proposition, so `have` is preferred over `haveI`.\nThe difference between `have` and `haveI` is that `haveI` inlines the value.\nBut this is not relevant for proofs because of proof irrelevance.\n\nNote: This linter can be disabled with `set_option linter.style.haveILetI false`\nwarning: GlobalStafford/Assembly/Closure.lean:180:2: Try this: \n  haveI\u0335\n\nThe goal is a proposition, so `have` is preferred over `haveI`.\nThe difference between `have` and `haveI` is that `haveI` inlines the value.\nBut this is not relevant for proofs because of proof irrelevance.\n\nNote: This linter can be disabled with `set_option linter.style.haveILetI false`\nwarning: GlobalStafford/Assembly/Closure.lean:185:2: Try this: \n  haveI\u0335\n\nThe goal is a proposition, so `have` is preferred over `haveI`.\nThe difference between `have` and `haveI` is that `haveI` inlines the value.\nBut this is not relevant for proofs because of proof irrelevance.\n\nNote: This linter can be disabled with `set_option linter.style.haveILetI false`\ninfo: GlobalStafford/Assembly/Closure.lean:224:0: 'GlobalStafford.chartDomain' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Assembly/Closure.lean:225:0: 'GlobalStafford.chartS38Poly' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Assembly/Closure.lean:226:0: 'GlobalStafford.chartData' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Assembly/Closure.lean:227:0: 'GlobalStafford.chartRightOre' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Assembly/Closure.lean:228:0: 'GlobalStafford.noZeroDivisors_of_chart' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Assembly/Closure.lean:229:0: 'GlobalStafford.rightOre_of_chart' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Assembly/Closure.lean:230:0: 'GlobalStafford.exists_inputs' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Assembly/Closure.lean:231:0: 'GlobalStafford.inputs' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Assembly/Closure.lean:232:0: 'GlobalStafford.universalStatement' depends on axioms: [propext, Classical.choice, Quot.sound]\ninfo: GlobalStafford/Assembly/Closure.lean:233:0: 'GlobalStafford.challengeStatement' depends on axioms: [propext, Classical.choice, Quot.sound]\n\u2139 [9031/9032] Replayed GlobalStaffordSolution\ninfo: GlobalStaffordSolution.lean:23:0: 'GlobalStaffordChallenge.universalStatement' depends on axioms: [propext, Classical.choice, Quot.sound]\nBuild completed successfully (9032 jobs).\nExporting #[Nat, String, String.mk, Char, Quot, Quot.mk, Quot.lift, Quot.ind, GlobalStaffordChallenge.universalStatement, propext, Quot.sound, Classical.choice, Nat.add, Nat.sub, Nat.mul, Nat.pow, Nat.gcd, Nat.div, Nat.mod, Nat.beq, Nat.ble, Nat.land, Nat.lor, Nat.xor, Nat.shiftLeft, Nat.shiftRight, String.ofList, Char.ofNat, List, eagerReduce] from GlobalStaffordSolution\nRunning nanoda kernel on solution\nnanoda kernel accepts the solution\nRunning Lean default kernel on solution.\nLean default kernel accepts the solution\nYour solution is okay!\n"
   },
-  "dependency_pins": {
-    "Cli": "6130a47896ce867c6a4a55373441e59e565bad0f",
-    "LeanSearchClient": "5f4d51b81cbd3f6b32b156bfad9056621a040404",
-    "Qq": "92c15be17b7caf78c2ad767ec40f89052d908d81",
-    "aesop": "3448c0bcc5ce01b2d1546e483ec3620e32df3d0e",
-    "algebraicAnalysis": "faa64814d5a310dc925e330af58e000f129f1098",
-    "batteries": "4488d40d070b9700d4d5a6aa342f0d40c31b2a2d",
-    "importGraph": "16f02aa7642864af59f1ff0e384a015994db9118",
-    "mathlib": "db584cd6d46c92f209a44c0f1c829460d327499d",
-    "plausible": "b7eb3304aeae834b12dda98993a37f6a41f6f0bb",
-    "proofwidgets": "4be2e3d5087eeb272cf5a8853b8f9dd025ef5957",
-    "stafford38Formal": "784b59925beb9a480519142336bd6434f6eeef16"
-  },
-  "endpoint_axioms": {
-    "GlobalStafford.universalStatement": [
-      "Classical.choice",
-      "Quot.sound",
-      "propext"
+  "scope": "Automated kernel and submission-interface verification. No human referee review or Palomar registry acceptance is claimed.",
+  "canonical_challenge_check": {
+    "status": "passed",
+    "palomar_source_commit": "ef2fa1eadcb246c2346ddba39b52eaa53d4bb763",
+    "log_sha256": "cf52b46cb87f2455b90f8e29ff1d66442a2782fb55bfcc9cd1ff946c6804dc4c",
+    "acceptance": [
+      "nanoda kernel accepts the solution",
+      "Lean default kernel accepts the solution",
+      "Your solution is okay!"
     ],
-    "GlobalStaffordChallenge.universalStatement": [
-      "Classical.choice",
-      "Quot.sound",
-      "propext"
-    ]
-  },
-  "evidence_sha256": {
-    "Challenge-imports.log": "cae28fc582ee76d0c4ffe96c840b0abb383b109df48ab96dc193cb157fcd6f4f",
-    "Solution-imports.log": "00e9a2793f50f09e42af332ca68e85a92803e7d5194a13939dc86ced501fd3a3",
-    "axioms.log": "fd2075fa1cb3d17f5a8322ac96dd915e3d40b667933a1121e6776ff9510b66a7"
-  },
-  "lean_toolchain": "leanprover/lean4:v4.33.0",
-  "loaded_modules": {
-    "Challenge": 3491,
-    "Solution": 10822
-  },
-  "palomar_tools": {
-    "Comparator": "575674928e239f5bc452aab72d1dd7b0f1326494",
-    "ComparatorLean": "leanprover/lean4:v4.34.0-rc1",
-    "Landrun": "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4",
-    "Lean": "leanprover/lean4:v4.33.0",
-    "NanoDa": "68d5ca9db226849b41a6fff59d796ff19d0a8840",
-    "lean4export": "15f6055e299ad5b89345e533cc2192f4cc00f659"
-  },
-  "replay": "fresh clone from origin, isolated from every working checkout and from the research repository",
-  "repository": "itpplasma/global-stafford-formal"
+    "scope": "Upstream canonical Challenge compiler, protected module alias, protected LEAN_PATH, Landrun adapter and Comparator. Local compatibility adapter omits only the outer systemd wrapper because no usable systemd manager is available; Landrun confinement and all mathematical checks remain. This is not a hosted Palomar acceptance."
+  }
 }
