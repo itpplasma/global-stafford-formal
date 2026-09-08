@@ -2,7 +2,9 @@
 
 Maps the paper proof (`itpplasma/global-stafford`,
 `notes/source-changing-descent-2026-09-07.md`, revision of 7 September
-2026 with Remark 4.2) to the Lean declarations of this repository. Names
+2026 with Remark 4.2, commit `9a096dc9f6c990bdfb3e8a24110989648c70b3f3`,
+SHA-256 `22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03`)
+to the Lean declarations of this repository. Names
 in the Lean column are the required names; the status column is updated as
 work packages close.
 
@@ -45,7 +47,7 @@ work packages close.
 | Weyl algebra domain and right Ore (Section 8 input) | `GlobalStafford.Weyl.OreDomain` instances, `weyl_rightOre` | 15 | done |
 | Scalar extension to `k(t)` (Lemma 6.2) | `GlobalStafford.Chart.scalarExtensionInterface`, `etaleChartDataK`, `s38Poly_chart` | 16, 18b | done |
 | `T → S` injective (Lemma 6.2) | `GlobalStafford.Chart.weylAction_injective` | 18a | done |
-| GS-DX (Theorem 6.3) | `GlobalStafford.universalStatement`; `GlobalStaffordChallenge.universalStatement` (`Solution.lean`) | 18, 19 | done; Palomar replay pending |
+| GS-DX (Theorem 6.3) | `GlobalStafford.universalStatement`; `GlobalStaffordChallenge.universalStatement` (`Solution.lean`) | 18, 19 | done; independent replay recorded in `verification-results.json` |
 
 ## Literature inputs and their discharge
 

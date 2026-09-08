@@ -1,0 +1,470 @@
+% Build: latexmk -lualatex -interaction=nonstopmode -halt-on-error global-stafford-dossier.tex
+% Standalone companion, not a replacement manuscript. Source graph:
+% global-stafford/docs/proof-graph.yaml at b5654dd; paper pin in PLAN.md.
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=2.2cm]{geometry}
+\usepackage{fontspec}
+\setmainfont{DejaVu Serif}
+\setsansfont{DejaVu Sans}
+\setmonofont{DejaVu Sans Mono}[Scale=.80]
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage{microtype,booktabs,array,longtable,fvextra}
+\usepackage{tikz,pdflscape,xcolor}
+\usetikzlibrary{arrows.meta,calc}
+\definecolor{ink}{HTML}{203B55}
+\definecolor{bluewash}{HTML}{E8F0F7}
+\definecolor{amberwash}{HTML}{FFF0D1}
+\PassOptionsToPackage{obeyspaces}{url}
+\usepackage[colorlinks=true,linkcolor=ink,urlcolor=ink,bookmarksnumbered=true]{hyperref}
+\hypersetup{pdftitle={Global Stafford: proof architecture and Challenge dossier},pdfauthor={Christopher Albert}}
+\usepackage{xurl}
+\newcommand{\code}[1]{\nolinkurl{#1}}
+\newcommand{\D}{\mathcal D}
+\newcommand{\ord}{\operatorname{ord}}
+\newcommand{\backmap}{\hfill\hyperref[fig:map]{\small Return to proof map}}
+\newcommand{\leanref}[2]{\par\smallskip\noindent\textbf{Lean.} \href{https://github.com/itpplasma/global-stafford-formal/blob/d76051ce227f41c0fb21f114ffd61890f3b6b99b/#1}{\nolinkurl{#1}}.\par\noindent\small\code{#2}\par\normalsize\backmap}
+\newtheorem*{theorem}{Theorem (Global Stafford)}
+\setlength{\emergencystretch}{2em}
+\setlength{\parskip}{.35em}
+\begin{document}
+\begin{landscape}
+\thispagestyle{empty}
+\phantomsection\label{fig:map}
+{\LARGE\bfseries Global Stafford: the proof map}\hfill 8 September 2026
+\par\smallskip
+\noindent Christopher Albert\quad\textcolor{ink}{\textbullet}\quad Proof architecture and Challenge dossier
+\par\smallskip
+\noindent\small Every box links to its statement and Lean evidence below. Solid arrows show the main dependencies;
+ the dashed arrow supplies a theorem hypothesis. Transitive infrastructure edges are omitted.
+\begin{center}
+\input{../proof-map/map.tex}
+\end{center}
+\noindent\small Blue solid boxes: project Lean proofs. Amber double box: imported Lean theorem.
+These tags refer to the recorded kernel verification, not human mathematical review.
+The map follows the research graph at \code{b5654dd}, using its Remark 4.2 formal variant.
+\end{landscape}
+
+\section{The theorem and the meaning of its statement}\label{sec:statement}
+This companion explains the finished formalization of the source-changing descent
+proof. It states the mathematical claim in TeX, compares every part with the
+Mathlib-only Challenge, and identifies the mechanisms that produce the global
+certificate. The canonical paper source is the Markdown note
+\code{notes/source-changing-descent-2026-09-07.md} in the research repository;
+this document is a TeX exposition and correspondence dossier, not a separate
+manuscript authority.
+
+\begin{theorem}
+Let $k$ be any field of characteristic zero and let $A$ be a smooth integral
+finitely generated commutative $k$-algebra. For every nonzero
+$d\in\D_k(A)$ there exist $F,R,S\in\D_k(A)$ such that
+\[
+                       1=dR+FdS.
+\]
+Here $\D_k(A)$ is the algebra of finite-order $k$-linear differential operators
+on $A$, and multiplication is composition in the written order.
+\end{theorem}
+
+Write $m_a(x)=ax$ for multiplication by $a\in A$. For $P\in\operatorname{End}_k(A)$,
+put $[P,a]=P\circ m_a-m_a\circ P$. Define
+\[
+\begin{aligned}
+\D^{\le0}_k(A)&=\{P:[P,a]=0\text{ for every }a\in A\},\\
+\D^{\le r+1}_k(A)&=\{P:[P,a]\in\D^{\le r}_k(A)\text{ for every }a\in A\},\\
+\D_k(A)&=\bigcup_{r\ge0}\D^{\le r}_k(A).
+\end{aligned}
+\]
+An order-zero operator is multiplication by $P(1)$, since commuting with
+$m_a$ gives $P(a)=aP(1)$. This is Grothendieck's finite-order definition.
+All operator ideals and modules in the argument are right-sided. Thus
+$d\D+Fd\D=\D$ means precisely the displayed certificate; $R$ and $S$ are
+right cofactors. The first generator remains the original $d$, and the
+second generator is the left multiple $Fd$ of that same $d$.
+
+There is no assumption that $k$ is algebraically closed, no positive-dimensional
+restriction, and no global coordinate system on $\operatorname{Spec} A$.
+For a polynomial algebra the statement specializes to the imported Weyl result.
+The proof does not prescribe a Bernstein-degree bound on $F$ in the global case.
+
+\paragraph{Exact source and verification scope.}
+The paper revision is \nolinkurl{9a096dc9f6c990bdfb3e8a24110989648c70b3f3}, with
+SHA-256 \nolinkurl{22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03}.
+It is unchanged at research revision \code{b5654dd}. The independently replayed
+formal proof is \nolinkurl{d76051ce227f41c0fb21f114ffd61890f3b6b99b}.
+The later formal revision \code{803fb2b} has identical proof and dependency bytes.
+Phase I and II are complete in that record. Human expert review of the paper and
+its statement correspondence remains open.
+
+\section{TeX statement compared with Challenge.lean}\label{sec:comparison}
+The Challenge states the theorem on endomorphisms and explicitly requires
+finite order for each witness. The substantive proof instead uses the
+subalgebra of finite-order operators. These are two presentations of the same
+objects, connected by proved equivalences.
+
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{.25\textwidth}>{\raggedright\arraybackslash}p{.38\textwidth}>{\raggedright\arraybackslash}p{.31\textwidth}@{}}
+\toprule
+Mathematical statement & Challenge expression & Correspondence \\ \addlinespace[.4em]
+\midrule\endhead
+Every characteristic-zero field $k$ & \code{(k : Type u)}\newline \code{[Field k]} \code{[CharZero k]} & Arbitrary field in an arbitrary common universe; no closure assumption. \\ \addlinespace[.4em]
+Smooth integral affine $A/k$ & \code{[CommRing A]} \code{[IsDomain A]}\newline \code{[Algebra k A]}\newline \code{[Algebra.Smooth k A]} & Smooth means formally smooth and finitely presented in the pinned Mathlib. Over a field this supplies finite type. \\ \addlinespace[.4em]
+$P\in\operatorname{End}_k(A)$ & \code{P : Module.End k A} & $k$-linear maps $A\to A$; multiplication is composition. \\ \addlinespace[.4em]
+$[P,a]=Pm_a-m_aP$ & \code{commutator P a} & Exactly the difference of those two ordered products. \\ \addlinespace[.4em]
+$\ord P\le n$ & \code{IsOrderLE n P} & The recursive commutator definition above, including its order-zero clause. \\ \addlinespace[.4em]
+$d\in\D_k(A)$, $d\ne0$ & \code{IsDifferentialOperator d → d ≠ 0 →} & Both hypotheses are explicit; $d=0$ is excluded. \\ \addlinespace[.4em]
+$F,R,S\in\D_k(A)$ & \code{∃ F R S : Module.End k A,} followed by three \code{IsDifferentialOperator} predicates & No witness is allowed to be an infinite-order endomorphism. \\ \addlinespace[.4em]
+$1=dR+FdS$ & \code{(1 : Module.End k A)}\newline \code{= d * R + F * d * S} & $1$ is the identity map. Associativity changes parentheses only, not factor order. \\ \addlinespace[.4em]
+\bottomrule
+\end{longtable}
+
+\paragraph{The transport proof.}
+\code{GlobalStafford.Assembly.isOrderLE_iff_mem_order} proves by induction on $n$
+that the Challenge predicate is membership in the library's order filtration.
+\code{isDifferentialOperator_iff_mem_algebra} then quantifies over $n$.
+The theorem \code{challenge_of_twoGeneratorIdentity} places $d$ in the intrinsic
+subalgebra, applies the substantive theorem, and coerces its witnesses back to
+endomorphisms. Coercion preserves $1$, addition, and composition, and its
+injectivity preserves the nonzero hypothesis. No extra mathematical hypothesis
+is introduced.
+
+The definitions are restated in
+\code{GlobalStafford/Assembly/ChallengeTransport.lean}; \code{Solution.lean}
+imports the substantive closure and uses the transported theorem. It never
+imports \code{Challenge.lean}. Comparator checks the Challenge and Solution
+statements in separate environments. Its equality check connects the two Lean
+statements; this TeX correspondence remains a mathematical reading task.
+
+\section{The two formal phases}\label{sec:phases}
+Phase I proves every project-owned implication on concrete carriers. Its endpoint
+is \code{GlobalStafford.PhaseI.twoGeneratorIdentity_of_inputs}, taking a value
+of \code{GlobalStafford.Assembly.Inputs k A}. The fields specify a finite
+principal cover, operator localization and clearance, the whole-chart polynomial
+S38 property, chart and global domain structure, and right Ore data.
+These are explicit hypotheses, not undeclared axioms.
+
+Phase II constructs every field from Mathlib, AlgebraicAnalysis, and the imported
+Stafford38 theorem. The constructor \code{GlobalStafford.inputs} is fed to the
+Phase I endpoint by \code{GlobalStafford.universalStatement}. The unconditional
+statement therefore has only the field, characteristic, algebra, domain, and
+smoothness hypotheses of the theorem above.
+
+\begin{center}
+\begin{tabular}{@{}lll@{}}
+\toprule
+Phase & Packages & Deliverable \\
+\midrule
+I & WP-1--WP-10 & Conditional descent and chart implications \\
+II & WP-11--WP-18 & Concrete producers and universal closure \\
+III & WP-19 & Challenge transport and independent replay \\
+\bottomrule
+\end{tabular}
+\end{center}
+The record allows only \code{propext}, \code{Classical.choice}, and
+\code{Quot.sound} at both terminal endpoints. The single deliberate
+\code{sorry} is in the frozen Challenge template; it is absent from the
+Solution's import closure. Optional AA-2--AA-4 library extractions concern proofs
+already present here and do not reopen Phase I or II.
+
+\section{Weyl S38 over the central parameter field}\label{sec:weyl}
+For every characteristic-zero field $K$, every $n\ge0$, and every nonzero
+$a\in A_n(K)$, the imported theorem supplies $F,r,s\in A_n(K)$ with
+$1=ar+Fas$. The field quantifier is essential: the chart producer invokes it
+at $K=k(t)$, not only at the original $k$.
+
+The dependency is \code{itpplasma/stafford38-formal} at
+\nolinkurl{784b59925beb9a480519142336bd6434f6eeef16}, declaration
+\code{Stafford38.universalStatement} in \code{Stafford38/FoundationClosure.lean}.
+It is a Lean theorem rebuilt against the root project's shared AlgebraicAnalysis
+pin, not a literature axiom. Its own proof architecture remains upstream.
+The Global Stafford argument uses its universal certificate, not the upstream
+fixed-source strengthening.\backmap
+
+\section{Smooth operator structure}\label{sec:structure}
+The Phase II producers establish the structural inputs on the actual
+algebra $\D_k(A)$. Finite-order operators extend to $A_f$, preserving order;
+the extension is injective for nonzero $f$ in the domain $A$, and every
+localized operator has a left coefficient denominator. Commutator estimates
+then give right denominator clearance.
+
+On an integral affine \'etale chart, coordinate derivations lift uniquely and
+commute, finite-order coordinate generation gives normal forms, and the
+leading-symbol calculation proves that the operator algebra has no zero
+divisors. Weyl right Ore and finite-rank transfer supply chart right Ore;
+injective localization and right clearance transfer it back to $\D_k(A)$.
+Smoothness supplies a finite principal cover carrying \'etale coordinate maps.
+These are the paper's standard structural inputs, discharged in Lean rather
+than retained as literature assumptions.
+
+\leanref{GlobalStafford/Assembly/Closure.lean}{GlobalStafford.exists_inputs}
+
+\section{Finite-right-rank ascent}\label{sec:rank}
+Let $T\subseteq S$ be domains, with $T$ right Ore, and let $S$ have finite
+positive right rank over $T$. If $T$ satisfies S38, then $S$ satisfies S38.
+For $0\ne d\in S$, left multiplication by $d$ induces an injective map of the
+finite-dimensional right $Q(T)$-space $S\otimes_T Q(T)$. It is surjective,
+so clearing a right denominator gives $dy=a$ with $y\in S$, $0\ne a\in T$.
+Then
+\[
+1=ar+Fas=d(yr)+Fd(ys).
+\]
+No finite generation of $S$ as a $T$-module is required.
+
+Lean expresses finite rank as \code{FiniteRightSpan}: finitely many $s_i\in S$
+span every $x\in S$ after multiplying $x$ on the right by some nonzero
+denominator from $T$. This is precisely the form produced by chart normal
+forms and a finite generic fibre. The localized tensor object is used as a
+module; it is not assigned an unjustified ring structure.
+\leanref{GlobalStafford/Chart/FiniteRankAscent.lean}{GlobalStafford.Chart.twoGeneratorIdentity_of_finiteRightSpan}
+
+\section{The whole-ring hypothesis on one fixed chart}\label{sec:chart}
+Let $C$ be an integral affine algebra \'etale over $B=k[x_1,\ldots,x_n]$.
+The coordinate map is injective by flatness and nontriviality. The lifted
+coordinate derivations define an injective Weyl action $T=A_n(k)\to S=\D_k(C)$.
+Normal forms identify $S$ with $C\otimes_B T$ as a right $T$-module.
+Writing $L=\operatorname{Frac}(B)$, the generic fibre $C\otimes_B L$ is a
+finite-dimensional field over $L$. Hence $S$ has finite right rank over $T$,
+and Section~\ref{sec:rank} proves S38 for $S$.
+
+The same construction works over $k(t)$ on the \emph{same} chart. The formal
+scalar extension is
+\[
+ C_K=k(t)\otimes_k C,\qquad D_K=\D_{k(t)}(C_K).
+\]
+An injective map $\Theta:S[t]\to D_K$ sends $P$ to its base change and the
+central polynomial variable to multiplication by $t$. Every element of $D_K$
+is in its image after multiplication by a nonzero scalar polynomial.
+Clearing the three witness denominators in a certificate yields
+\[
+\mathrm{S38}_{\rm poly}(S):\quad
+\forall,0\ne E\in S[t],\quad
+\exists,0\ne h\in k[t],\ u,w,v\in S[t],\quad h=Eu+wEv.
+\]
+This is a whole-ring statement, needed for the subsequently constructed
+squared input. A certificate for one previously chosen $d$ would not suffice.
+The ring permits scalar $t$-denominators only; $t$ is not differentiated.
+It is not $\D_k(\operatorname{Frac}(C)(t))$. The \'etale morphism need not be finite.
+\leanref{GlobalStafford/Chart/ChartDataOverK.lean}{GlobalStafford.Chart.s38Poly_chart}
+
+\section{Ordered power clearance and contractive powers}\label{sec:order}
+Put $R=\D_k(A)$ and $C_f(P)=[P,f]$. If $\ord P\le r$, then
+$C_f^{r+1}(P)=0$ and, for $n\ge r$,
+\[
+Pf^n=\sum_{j=0}^{r}\binom nj f^{n-j}C_f^j(P)
+     \in f^{n-r}R_{\le r}.
+\]
+The identity follows by induction from $Qf=fQ+[Q,f]$.
+Thus $f^{-a}P$ has a right denominator cleared by any $f^m$ with $m\ge a+r$.
+For $E=f^LP$, $L>r$, induction gives
+\[
+ E^j\in f^{jL-(j-1)r}R_{\le jr}\qquad(j\ge1).
+\]
+In the induction step move the fixed-order $P$ past the existing left
+coefficient power. Its order is $r$, not the increasing order of $E^j$.
+The subsets $f^mR$ are right ideals, not generally two-sided ideals.
+\leanref{GlobalStafford/Operators/ContractivePowers.lean}{GlobalStafford.Operators.pow_eq_multiplication_pow_mul}
+
+\section{Squared-annihilator extraction}\label{sec:square}
+Fix the current global source $B$ and $0\ne d\in R$. Right Ore supplies
+\[
+ c=da\ne0,\qquad (Bd)c=db_0.
+\]
+For $e=chd$, suppose $1=e^2U+We^2V$ in the chart ring. Set
+\[
+ F=B+Wch,\qquad \alpha=ahd,\qquad\beta=b_0hd.
+\]
+The required certificate is the exact associative identity
+\[
+ 1=d(\alpha eU-\beta V)+Fd(eV).
+\]
+Indeed $d\alpha=e$, $d\beta=Bde$, and $Fd=Bd+We$; expansion cancels
+$-BdeV+BdeV$ and leaves $e^2U+We^2V$. The square provides the additional
+$e$ in the second right cofactor. Every occurrence of $d$ remains in its
+specified position.
+\leanref{GlobalStafford/Certificate/SquaredAnnihilator.lean}{GlobalStafford.Certificate.certificate_of_square}
+
+\section{Right-moved polynomial conjugation}\label{sec:rho}
+The formalization follows paper Remark 4.2. The right binomial identity is
+\[
+ f^nP=\sum_{j=0}^{r}\binom nj(-1)^j C_f^j(P)f^{n-j},
+\]
+with terms $j>n$ omitted. In $R_f[t]$ define the finite polynomial
+\[
+ \rho_t(P)=\sum_j\binom tj(-1)^jC_f^j(P)f^{-j}.
+\]
+It satisfies $\rho_N(P)=f^NPf^{-N}$ for $N\in\mathbb N$. For the already fixed
+Ore data $c,d$, put
+\[
+ E'(t)=c\rho_t(dc)\rho_{2t}(d),\qquad e_N=cf^Nd.
+\]
+Then $E'(0)=(cd)^2\ne0$ and $e_N^2=E'(N)f^{2N}$.
+A polynomial certificate for $E'$ specializes away from the finitely many
+roots of its scalar denominator to a certificate for $e_N^2$.
+The source witness is not conjugated in this variant, which simplifies its
+uniform order estimate. The full inverse-$\tau_t$ automorphism route in the
+paper is not an additional formal endpoint.
+\leanref{GlobalStafford/Conjugation/RightMoved.lean}{GlobalStafford.Conjugation.evalNat_squaredInput}
+
+\section{Bounded-order source families}\label{sec:bounded}
+Apply $\mathrm{S38}_{\rm poly}(R_f)$ to the fixed nonzero $E'(t)$, obtaining
+\[
+ h(t)=E'(t)u'(t)+w'(t)E'(t)v'(t),\qquad 0\ne h\in k[t].
+\]
+At an admissible $N$, take
+\[
+ U=f^{-2N}u'(N)/h(N),\quad W=w'(N)/h(N),\quad V=f^{-2N}v'(N).
+\]
+Since the scalar $h(N)$ is central, $1=e_N^2U+We_N^2V$.
+Section~\ref{sec:square} gives the successful local source $B+Wcf^N$.
+Clear the finitely many coefficients of $w'(t)c$ on the left:
+\[
+ w'(t)c=f^{-\ell}P(t),\qquad P(t)\in R[t],\qquad \ord P_i\le M.
+\]
+Both $\ell$ and $M$ are fixed before $N$. The binomial formula makes the source
+global for $N\ge\ell+M$:
+\[
+ F_N=B+f^{N-\ell-M}T_N,\qquad
+ T_N=h(N)^{-1}\sum_{j=0}^{M}\binom Nj f^{M-j}C_f^j(P(N)),
+ \quad \ord T_N\le M.
+\]
+Each $P_i$ has order at most $M$, so evaluating the central polynomial does
+not increase this bound. Increasing $N$ increases coefficient precision while
+the correction order remains bounded. The local cofactors may have growing
+orders and pole sizes.
+\leanref{GlobalStafford/Descent/BoundedOrderSource.lean}{GlobalStafford.Descent.exists_bounded_order_sources}
+
+\section{Preserving every previously solved chart}\label{sec:protect}
+Suppose an old chart $R_g$ has $1=dU_g+BdV_g$. Let the new successful global
+source be $F=B+f^LT$, where
+\[
+ L>M+\ord d+\ord V_g,\qquad \ord T\le M.
+\]
+Right-clear its new-chart certificate to $f^m=dA_0+FdB_0$ in $R$.
+Put $P=TdV_g$, $E=f^LP$, and $r=M+\ord d+\ord V_g$. Then
+$dU_g+FdV_g=1+E$. Choose $j$ with $jL-(j-1)r\ge m$; the contractive-powers
+lemma gives $(-E)^j=f^mW$ in $R_g$. With the finite sum
+$Z=\sum_{i<j}(-E)^i$,
+\[
+ (1+E)Z=1-(-E)^j,\qquad
+ 1=d(U_gZ+A_0W)+Fd(V_gZ+B_0W).
+\]
+This is an identity in the chart ring itself. It uses neither completion nor
+an assumption that coefficient ideals are two-sided. At the next chart step,
+the actual finite orders of these new cofactors are read before choosing the
+next exponent.
+\leanref{GlobalStafford/Certificate/OldChartProtection.lean}{GlobalStafford.Certificate.protect_old_chart}
+
+\section{Finite-cover patching}\label{sec:patch}
+Take a fixed finite principal cover $f_1,\ldots,f_s$ supplied by smoothness,
+with $\mathrm{S38}_{\rm poly}$ on each chart. Start with $B=0$ and no
+certificates. At step $i$, retain one global $B$ that works on every earlier
+chart. The new chart supplies $M,\ell,H$ from Section~\ref{sec:bounded}.
+Only then choose $N$ outside the zeros of $H$ and so large that
+\[
+ N-\ell-M>M+\ord d+\max_{j<i}\ord V_j.
+\]
+The new $F_N$ solves chart $i$, and Section~\ref{sec:protect} supplies fresh
+certificates on every earlier chart for that same $F_N$.
+
+After exactly $s$ additions, one global $F$ works everywhere on the cover.
+Right-clear the local cofactors to
+$f_i^{m_i}=dA_i+FdB_i$. These coefficient powers generate the unit ideal in $A$;
+choose $a_i\in A$ with $\sum_i f_i^{m_i}a_i=1$. Multiplication on the right and
+summation give
+\[
+ 1=d\Bigl(\sum_i A_i a_i\Bigr)+Fd\Bigl(\sum_i B_i a_i\Bigr).
+\]
+This final B\'ezout argument uses the commutative coefficient algebra only at
+the stated point; it does not commute a coefficient through an operator.
+\leanref{GlobalStafford/Descent/FiniteCoverPatching.lean}{GlobalStafford.Descent.twoGeneratorIdentity_of_charts}
+
+\section{The terminal assembly}\label{sec:terminal}
+Smoothness supplies the finite \'etale principal cover, Section~\ref{sec:chart}
+supplies its whole-ring polynomial S38 hypotheses, and
+Section~\ref{sec:patch} gives the same-divisor certificate in the original
+$\D_k(A)$. These are exactly the ingredients assembled in
+\code{GlobalStafford.exists_inputs}. The Phase II theorem then applies the
+Phase I implication to those constructed inputs.
+
+The paper also derives torsion-module cyclicity and two-generation of right
+ideals. Those consequences are outside this repository's terminal formal
+scope. Historical G0--G14 routes, Bjork compression, and the failed uniform
+cofactor-lifting approaches are not dependencies of this proof.
+\leanref{GlobalStafford/Assembly/Closure.lean}{GlobalStafford.universalStatement}
+
+\section{Verification and reproducible dependencies}\label{sec:verification}
+The repository report \code{docs/verification-results.json} records a fresh
+clone replay on 7 September 2026: source builds, endpoint axiom reports,
+consumer checks, separate import-closure audits, Comparator, NanoDa, and the
+Lean kernel all passed. Its SHA-256 is
+\nolinkurl{cceb030147fac5e2d7e614ed879318595551aa5330c8e92d9bb5dfdf092d10f6}.
+This dossier reports that fixed evidence; it is not a new independent
+mathematical review or a new Palomar registration.
+
+\begin{description}
+\item[Lean] \code{leanprover/lean4:v4.33.0}
+\item[Mathlib] \nolinkurl{db584cd6d46c92f209a44c0f1c829460d327499d}
+\item[AlgebraicAnalysis] \nolinkurl{faa64814d5a310dc925e330af58e000f129f1098}
+\item[Stafford38 formal] \nolinkurl{784b59925beb9a480519142336bd6434f6eeef16}
+\end{description}
+Lake uses the root manifest's AlgebraicAnalysis revision for both projects.
+The verifier builds \code{Stafford38.FoundationClosure} and
+\code{Stafford38.LocalizedDifferentialCorollaries} against that shared pin.
+A newer upstream release is not substituted without a dependency work package.
+
+\begin{Verbatim}[fontsize=\small,frame=single]
+lake exe cache get
+lake build
+scripts/verify.sh --phase-i
+scripts/verify.sh
+scripts/bootstrap-palomar-tools.sh
+scripts/verify-palomar.sh
+\end{Verbatim}
+Run the verifier modes sequentially and retain their logs before the next
+mode overwrites \code{.lake/verification}. The paper's 984 exact rational
+regression assertions check ordered identities on finite examples; they do
+not replace universal Lean proofs or human review.
+
+\section{Release companion and Zenodo description}\label{sec:release}
+This companion follows the Stafford38 Challenge dossier and proof-map
+supplement. The Stafford38 GitHub release history lists \code{v1.0.2} as its
+latest release on inspection; its citation file records concept DOI
+\href{https://doi.org/10.5281/zenodo.22390721}{10.5281/zenodo.22390721} and the
+version DOI \href{https://doi.org/10.5281/zenodo.22391362}{10.5281/zenodo.22391362}
+for \code{v1.0.1}. The inspection does not assign a DOI to \code{v1.0.2}.
+These identify Stafford38, not Global Stafford.
+
+For Global Stafford, a source release can include this dossier's TeX,
+clickable map, PDF and checksums, together with the verification report and
+pinned software source. The prepared Zenodo description is:
+\begin{quote}
+Lean 4 formalization of the identity $1=dR+FdS$ for every nonzero finite-order
+$k$-linear differential operator $d$ on a smooth integral affine algebra over
+any characteristic-zero field. The proof extends the formalized Weyl case by
+fixed \'etale charts, bounded-order source corrections, preservation of earlier
+chart certificates, and finite-cover descent. Phase II constructs all
+structural inputs from Mathlib and the pinned AlgebraicAnalysis and
+Stafford38 developments. The package includes the Challenge/Solution pair,
+verification evidence, and a companion document with a clickable proof map,
+the statement correspondence, and the main proof mechanisms.
+\end{quote}
+The formal repository is private at preparation time. A Global Stafford
+release tag, Zenodo DOI, and Palomar registration have not been issued in the
+record used here. The release runbook separates selecting and hashing the
+artifacts from the later visibility, signing, and deposit actions.
+
+\appendix
+\clearpage
+\section{The actual Challenge file}\label{sec:challenge}
+This listing is read directly from the repository file at build time.
+Its deliberate final \code{sorry} is the statement placeholder for comparison.
+\VerbatimInput[fontsize=\scriptsize,breaklines=true,breakanywhere=true,
+ frame=lines,numbers=left,numbersep=5pt]{../../Challenge.lean}
+
+\clearpage
+\section{The actual Solution file and Comparator configuration}\label{sec:solution}
+The Solution reaches the transported theorem through the substantive closure.
+The transport's recursive equivalences are explained in
+Section~\ref{sec:comparison}.
+\VerbatimInput[fontsize=\small,breaklines=true,breakanywhere=true,
+ frame=lines,numbers=left,numbersep=5pt]{../../Solution.lean}
+\VerbatimInput[fontsize=\small,breaklines=true,breakanywhere=true,
+ frame=lines]{../../comparator.json}
+\end{document}

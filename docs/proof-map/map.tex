@@ -1,0 +1,37 @@
+% Projection of global-stafford/docs/proof-graph.yaml at b5654dd.
+% Node claims and dependencies follow source_descent_candidate and the
+% gs-* nodes. Conjugation uses the recorded Remark 4.2 formal_variant.
+% Transitive infrastructure edges are omitted; dashed edge supplies the
+% whole-chart hypothesis of the bounded-order source theorem.
+\begin{tikzpicture}[x=1cm,y=1cm,
+  claim/.style={draw=ink,fill=bluewash,line width=.9pt,rounded corners=2pt,
+    text width=5.1cm,minimum height=1.1cm,align=center,font=\small},
+  imported/.style={claim,fill=amberwash,double,double distance=.6pt},
+  flow/.style={-{Stealth[length=2mm]},draw=ink,line width=.7pt},
+  edgeword/.style={font=\scriptsize,fill=white,inner sep=2pt,align=center}]
+\node[imported] (weyl) at (0,0) {\hyperref[sec:weyl]{\textbf{Weyl S38 over every field}\\IMPORTED / LEAN}};
+\node[claim] (structure) at (8,0) {\hyperref[sec:structure]{\textbf{Smooth\\operator structure}\\LEAN · Phase II producers}};
+\node[claim] (rank) at (16,0) {\hyperref[sec:rank]{\textbf{Finite-right-rank ascent}\\LEAN · Lemma 6.1}};
+\node[claim] (order) at (0,-2.5) {\hyperref[sec:order]{\textbf{Ordered power clearance}\\LEAN · (1.1), (1.2), Lemma 1.1}};
+\node[claim] (square) at (8,-2.5) {\hyperref[sec:square]{\textbf{Squared-annihilator extraction}\\LEAN · Section 3}};
+\node[claim] (chart) at (16,-2.5) {\hyperref[sec:chart]{\textbf{Fixed chart over central $k(t)$}\\LEAN · Lemma 6.2}};
+\node[claim] (rho) at (0,-5.0) {\hyperref[sec:rho]{\textbf{Right-moved\\conjugation}\\LEAN · Remark 4.2}};
+\node[claim] (bounded) at (8,-5.0) {\hyperref[sec:bounded]{\textbf{Bounded-order source family}\\LEAN · Theorem 4.1}};
+\node[claim] (protect) at (0,-7.5) {\hyperref[sec:protect]{\textbf{Preservation\\of old charts}\\LEAN · Lemma 1.2}};
+\node[claim] (patch) at (8,-7.5) {\hyperref[sec:patch]{\textbf{Finite-cover source patching}\\LEAN · Theorem 5.1}};
+\node[claim,line width=1.4pt] (terminal) at (8,-10.0) {\hyperref[sec:terminal]{\textbf{Global Stafford: $1=dR+FdS$}\\LEAN · Theorem 6.3}};
+\draw[flow] (structure) -- node[edgeword,sloped,above]{order filtration} (order);
+\draw[flow] (structure) -- node[edgeword,right]{right Ore} (square);
+\draw[flow] (structure) -- node[edgeword,sloped,above]{\'{e}tale coordinates} (chart);
+\draw[flow] (rank) -- node[edgeword,right]{finite rank} (chart);
+\draw[flow] (weyl.north) -- ++(0,.65) -| node[edgeword,pos=.25,above]{arbitrary field, including $k(t)$} (chart.north west);
+\draw[flow] (order) -- node[edgeword,left]{binomial formulas} (rho);
+\draw[flow] (square) -- node[edgeword,right]{written cofactors} (bounded);
+\draw[flow] (rho) -- node[edgeword,above]{fixed polynomial\\$E'(t)$} (bounded);
+\draw[flow,dashed] (chart) |- node[edgeword,pos=.72,above]{whole-ring $\mathrm{S38}_{\rm poly}$} (bounded);
+\draw[flow] (order.west) -- ++(-.7,0) |- node[edgeword,pos=.65,left]{contractive\\error powers} (protect.west);
+\draw[flow] (bounded) -- node[edgeword,right]{choose $N$ after $M,\ell,H$} (patch);
+\draw[flow] (protect) -- node[edgeword,above]{preserve\\certificates} (patch);
+\draw[flow] (patch) -- node[edgeword,right]{right clearance, B\'ezout} (terminal);
+\draw[flow] (chart.east) -- ++(.65,0) |- node[edgeword,pos=.8,below]{fixed principal cover} (terminal.east);
+\end{tikzpicture}

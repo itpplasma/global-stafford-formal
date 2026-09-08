@@ -19,7 +19,7 @@ the author's release decision are separate from the machine checks.
 ## Select the verified snapshot
 
 ```bash
-proof_commit='<verified snapshot SHA>'
+proof_commit='d76051ce227f41c0fb21f114ffd61890f3b6b99b'
 formal_commit=$(git rev-parse HEAD)
 git fetch origin
 git verify-commit "$formal_commit"
@@ -28,8 +28,49 @@ git merge-base --is-ancestor "$formal_commit" origin/main
 test -z "$(git status --porcelain)"
 git diff --exit-code "$proof_commit" "$formal_commit" -- . \
   ':(exclude)README.md' ':(exclude)CITATION.cff' ':(exclude)NOTICE' \
-  ':(exclude)formalization.yaml' ':(exclude)docs/**' ':(exclude).zenodo.json'
+  ':(exclude)formalization.yaml' ':(exclude)docs/**' ':(exclude).zenodo.json' \
+  ':(exclude)PLAN.md' ':(exclude)scripts/record-verification.py'
 ```
+
+## Companion PDF and source artifacts
+
+The Stafford38 pattern uses separate source archives and checksums, a Challenge
+dossier reading the actual Lean files, and a proof-map supplement. Its latest
+GitHub release on inspection (8 September 2026) is `v1.0.2`; its citation file
+records concept DOI `10.5281/zenodo.22390721` and version DOI
+`10.5281/zenodo.22391362` for `v1.0.1`. Those identifiers belong to Stafford38.
+Global Stafford has no DOI in the current record.
+
+After selecting a clean metadata-bearing commit with the unchanged proof bytes
+above, build and inspect the companion, including its map links:
+
+```bash
+docs/dossier/build.sh
+release_dir=$(mktemp -d /tmp/global-stafford-release.XXXXXX)
+git archive --format=tar.gz --prefix=global-stafford-formal/ \
+  --output="$release_dir/global-stafford-formal.tar.gz" "$formal_commit"
+cp docs/dossier/global-stafford-dossier.pdf "$release_dir/"
+cp docs/dossier/build-manifest.json "$release_dir/"
+cp docs/verification-results.json "$release_dir/"
+(cd "$release_dir" && sha256sum global-stafford-formal.tar.gz \
+  global-stafford-dossier.pdf build-manifest.json verification-results.json \
+  > SHA256SUMS)
+printf '%s\n' "$release_dir"
+```
+
+The source archive contains the TeX and map sources and the build script. The
+PDF and its manifest are generated artifacts attached separately. Inspect the
+archive with `tar -tzf`; dependencies remain pinned external packages. The
+canonical paper stays in the research repository; this companion does not
+publish a separate paper repository or replace its manuscript authority.
+
+Use `docs/release-notes.md` as the reviewed release description and
+`.zenodo.json` as the deposit metadata. After the separately authorized
+visibility change and signed tag, the final GitHub release command can use
+`--notes-file docs/release-notes.md` and attach the four artifacts plus
+`SHA256SUMS`. Enable the Zenodo GitHub integration before publishing that
+release. Record only the issued concept and version DOIs in a follow-up
+citation update; do not invent a DOI or carry over a Stafford38 identifier.
 
 ## Repository visibility, signed tag, Zenodo
 

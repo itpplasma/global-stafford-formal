@@ -29,7 +29,7 @@ source audit, endpoint axioms, Challenge/Solution import closures) passes.
 Commit `d76051ce` was replayed from a fresh clone: `scripts/verify.sh`,
 Comparator, NanoDa and Lean's kernel all accept the solution; the
 [verification record](docs/verification-results.json) has SHA-256
-``. See [`docs/verification.md`](docs/verification.md). No release, registration,
+`cceb030147fac5e2d7e614ed879318595551aa5330c8e92d9bb5dfdf092d10f6`. See [`docs/verification.md`](docs/verification.md). No release, registration,
 or publication is claimed, and human expert review of the paper proof and of
 the statement correspondence remains open.
 
@@ -45,6 +45,39 @@ lake exe cache get
 lake build
 scripts/verify.sh
 ```
+
+## Companion document
+
+The [TeX dossier](docs/dossier/global-stafford-dossier.tex) includes a clickable
+proof map, a comparison of the theorem with `Challenge.lean`, the main proof
+mechanisms, and the actual Challenge/Solution files. Build the PDF and its
+source-hash manifest with `docs/dossier/build.sh` (LuaLaTeX, latexmk, TikZ,
+DejaVu fonts). The output is `docs/dossier/global-stafford-dossier.pdf`.
+[Release notes](docs/release-notes.md) and the
+[release runbook](docs/release-runbook.md) describe the prepared artifacts.
+
+## Continuing work
+
+Read [`PLAN.md`](PLAN.md) for live status, then the
+[paper correspondence](docs/paper-lean-specification.md) and
+[verifier](scripts/verify.sh). Phase I and II are complete for the current
+paper revision recorded in the plan. Run the commands above to prepare a
+fresh checkout; Lake fetches both mathematics dependencies at their exact
+pins into `.lake/packages/algebraicAnalysis` and
+`.lake/packages/stafford38Formal`. Separate sibling clones are unnecessary.
+
+For a paper correction, identify its mapped Lean declarations and downstream
+consumers, make the smallest correction, and rerun `scripts/verify.sh`.
+For Phase I endpoint reports, use `scripts/verify.sh --phase-i` as well;
+both modes write logs under `.lake/verification`, so run them sequentially
+and retain logs before the next run. A changed proof requires a new
+independent replay before extending the Phase III verification claim.
+
+Keep the current dependency pins while maintaining this proof. Optional
+AA-2–AA-4 extractions have proofs here already; moving them upstream requires
+an explicit work package, axiom-clean library proofs, downstream rewiring,
+and a shared-pin compatibility build of the Stafford38 endpoints. Never run
+`lake update` as routine setup.
 
 ## Ownership
 

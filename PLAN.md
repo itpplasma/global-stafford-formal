@@ -6,6 +6,9 @@ phase_i_status: done 2026-09-07 (scripts/verify.sh --phase-i: 15 endpoints, stan
 phase_ii_status: done 2026-09-07 (GlobalStafford.universalStatement, GlobalStaffordChallenge.universalStatement: propext, Classical.choice, Quot.sound only)
 phase_iii_status: done 2026-09-07 (independent-clone replay of d76051ce: verify.sh, Comparator, NanoDa, Lean kernel all passed; record docs/verification-results.json)
 paper_source: itpplasma/global-stafford notes/source-changing-descent-2026-09-07.md
+paper_revision: 9a096dc9f6c990bdfb3e8a24110989648c70b3f3
+paper_sha256: 22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03
+active_task: maintain verified proof and paper correspondence; no open Phase I/II implementation packages
 paper_review: two independent-context model reviews passed 2026-09-07; human review open
 lean_toolchain: leanprover/lean4:v4.33.0
 mathlib: db584cd6d46c92f209a44c0f1c829460d327499d
@@ -26,6 +29,18 @@ Status vocabulary for the work-package tables: `todo`, `wip` (has a
 `sorry` registered in `open_holes`), `done` (builds, no `sorry`,
 `#print axioms` shows only `propext`, `Classical.choice`, `Quot.sound`
 or the declared conditional hypotheses), `blocked` (reason recorded).
+
+The paper revision above is the last commit changing the current proof note;
+the note is unchanged at research main `b5654dd`. The formal implementation
+already covers that revision through Remark 4.2. Start continuation work with
+this plan, the declaration map in `docs/paper-lean-specification.md`, and
+`scripts/verify.sh`. Sections 3–5 retain the implementation specification for
+maintenance; their completed packages are not a fresh implementation queue.
+AA-2–AA-4 are optional library extractions, not missing Phase I/II proofs.
+The companion dossier is `docs/dossier/global-stafford-dossier.tex`, built by
+`docs/dossier/build.sh`; its map derives from the research graph and its
+Challenge/Solution listings read the actual repository files. Release notes
+and Zenodo metadata are prepared; publication remains a separate action.
 
 ## 0. Target theorem
 

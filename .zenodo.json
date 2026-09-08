@@ -1,7 +1,7 @@
 {
   "title": "Global Stafford for rings of differential operators: Lean 4 formalization",
   "upload_type": "software",
-  "description": "Lean 4 formalization, verified against Mathlib, of the same-divisor identity 1 = d R + F d S in the ring of k-linear finite-order differential operators of every smooth integral finitely generated algebra over a field k of characteristic zero, for every nonzero d. This extends the formalized Weyl-algebra case (Stafford's Conjecture 3.8) to smooth affine varieties by a source-changing local-to-global argument. The endpoints depend only on the axioms propext, Classical.choice and Quot.sound. The repository contains the Palomar Challenge/Solution pair, the Comparator configuration, the verification scripts and the machine-readable verification record.",
+  "description": "Lean 4 formalization, verified against Mathlib, of the same-divisor identity 1 = d R + F d S in the ring of k-linear finite-order differential operators of every smooth integral finitely generated algebra over a field k of characteristic zero, for every nonzero d. This extends the formalized Weyl-algebra case (Stafford's Conjecture 3.8) to smooth affine varieties by a source-changing local-to-global argument. The endpoints depend only on the axioms propext, Classical.choice and Quot.sound. The repository contains the Palomar Challenge/Solution pair, the Comparator configuration, the verification scripts and the machine-readable verification record. The companion dossier includes a clickable proof map, a TeX statement compared with the actual Mathlib-only Challenge, an explanation of the main proof mechanisms, and the Challenge/Solution listings.",
   "creators": [
     {
       "name": "Albert, Christopher",
