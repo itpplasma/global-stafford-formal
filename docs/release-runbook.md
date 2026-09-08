@@ -1,9 +1,9 @@
-# Human release runbook
+# Release and submission runbook
 
-These are instructions for later human-authorized actions. Nothing here
-grants authorization to change visibility, publish tags or deposits,
-register with Palomar, or submit a manuscript. Independent expert review and
-the author's release decision are separate from the machine checks.
+The author explicitly authorized the three coordinated software releases and
+confirmed the Zenodo integrations on 2026-09-08. WP-20 owns the dependency
+upgrade and fresh verification required for this release. Human expert review
+and Palomar registration remain separate from machine checking and publication.
 
 ## Preconditions
 
@@ -75,8 +75,8 @@ citation update; do not invent a DOI or carry over a Stafford38 identifier.
 ## Repository visibility, signed tag, Zenodo
 
 The repository was made public under Apache-2.0 on 8 September 2026,
-with the author’s explicit authorization. The author is enabling the Zenodo
-GitHub integration; wait for that step before creating the release. No tag,
+with the author’s explicit authorization. The author confirmed the Zenodo
+GitHub integration on 8 September 2026. No tag,
 GitHub release, Zenodo deposit or Palomar registration was created by the
 visibility change. Follow the Stafford38 release pattern and record only
 identifiers that Zenodo actually issues.

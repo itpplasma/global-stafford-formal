@@ -1138,6 +1138,7 @@ from the independent-clone replay. Remaining human-only actions are in
 
 | Id | Change | Consumer | Status |
 | --- | --- | --- | --- |
+| WP-20 | Shared released dependencies, corrected Stafford interface, publication replay | III | active | controller + Fable audit | Authorized 2026-09-08; upgrade AA and Stafford full pins, retain official Mathlib v4.33.0, rerun all gates before release |
 | AA-1 | Add `mem_submodule_of_coordinates'` and `mem_subalgebra_of_coordinates'` whose `hcoordinate` quantifies only over `P ∈ algebra`; derive the unprimed theorems from them. Backward compatible. | WP-8, WP-14, WP-16 | done (`faa64814`) |
 | AA-2 | `AlgebraicAnalysis/Module/FiniteRightSpanAscent.lean` (WP-7 generic content). | WP-8 | after Phase I |
 | AA-3 | `rightOre_of_rightNoetherian_domain`. | WP-15 | after Phase II |
@@ -1230,3 +1231,22 @@ scripts/bootstrap-palomar-tools.sh && scripts/verify-palomar.sh
 
 The dependency packages `stafford38Formal` and `algebraicAnalysis` are
 built from source on first use; expect a long first build.
+
+## WP-20 — Shared dependency releases and publication replay
+
+The author authorized publication of algebraic-analysis, stafford38-formal,
+and global-stafford-formal and confirmed their Zenodo integrations on
+2026-09-08. This package authorizes exact dependency changes in
+`lakefile.toml`, `lake-manifest.json`, the verifier's expected pins, and the
+corresponding metadata: use a new AA release containing source `44921f5`
+and the corrected Stafford release. Retain Lean v4.33.0 and official Mathlib
+v4.33.0 (`db584cd6d46c92f209a44c0f1c829460d327499d`). Do not run `lake update`.
+
+Preserve the historical independent verification record. New pins require a
+new full build, Phase I/II and consumer/axiom checks, import-closure audits,
+and Comparator with NanoDa and Lean verification. Update the proof dossier
+and release artifacts only to the scope established by those checks. Fable
+is the requested one-shot auditor and corrector; the controller independently
+verifies corrections and owns publication. No claim of human referee review
+or Palomar registration follows from these actions. The Challenge remains
+frozen, and the paper remains the source-changing candidate recorded above.

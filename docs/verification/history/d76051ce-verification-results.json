@@ -1,0 +1,90 @@
+{
+  "checks": {
+    "bootstrap": {
+      "exit": 0,
+      "log": "bootstrap.log",
+      "sha256": "9ba5bc17c82a41eabfa1cecf328010d02caeadc3d3646ebab1387c103f32b0a0"
+    },
+    "build": {
+      "exit": 0,
+      "log": "build.log",
+      "sha256": "8b415a00d05e93564379f8866c4c214221d7beba7ac48b4e749367e8e5b9ba43"
+    },
+    "cache": {
+      "exit": 0,
+      "log": "cache.log",
+      "sha256": "d0afe87bca1fb8d2d2f3b1dda3c019e5d750c07f87a49bb6fa5991438ba01ecd"
+    },
+    "verify": {
+      "exit": 0,
+      "log": "verify.log",
+      "sha256": "d0fe2837908b704a2fa1f0a7fddcb7d1ef9eeee816c80c282748ead1af2e7d60"
+    },
+    "verify-palomar": {
+      "exit": 0,
+      "log": "verify-palomar.log",
+      "sha256": "ddd1467f181ba427e1bc609fe41e1d7507e8677094dfb33013f82d0f2bfa5fa8"
+    }
+  },
+  "commands": [
+    "lake exe cache get",
+    "lake build",
+    "scripts/verify.sh",
+    "scripts/bootstrap-palomar-tools.sh",
+    "scripts/verify-palomar.sh"
+  ],
+  "commit": "d76051ce227f41c0fb21f114ffd61890f3b6b99b",
+  "comparator": {
+    "compared_declaration": "GlobalStaffordChallenge.universalStatement",
+    "config": "comparator.json",
+    "lean_kernel_accepts": true,
+    "log_sha256": "6779c0ccee9da10c39ede5fb6886be30a313057359db7f50ff64674c43c2b45e",
+    "nanoda_accepts": true,
+    "okay": true
+  },
+  "dependency_pins": {
+    "Cli": "6130a47896ce867c6a4a55373441e59e565bad0f",
+    "LeanSearchClient": "5f4d51b81cbd3f6b32b156bfad9056621a040404",
+    "Qq": "92c15be17b7caf78c2ad767ec40f89052d908d81",
+    "aesop": "3448c0bcc5ce01b2d1546e483ec3620e32df3d0e",
+    "algebraicAnalysis": "faa64814d5a310dc925e330af58e000f129f1098",
+    "batteries": "4488d40d070b9700d4d5a6aa342f0d40c31b2a2d",
+    "importGraph": "16f02aa7642864af59f1ff0e384a015994db9118",
+    "mathlib": "db584cd6d46c92f209a44c0f1c829460d327499d",
+    "plausible": "b7eb3304aeae834b12dda98993a37f6a41f6f0bb",
+    "proofwidgets": "4be2e3d5087eeb272cf5a8853b8f9dd025ef5957",
+    "stafford38Formal": "784b59925beb9a480519142336bd6434f6eeef16"
+  },
+  "endpoint_axioms": {
+    "GlobalStafford.universalStatement": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "GlobalStaffordChallenge.universalStatement": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "evidence_sha256": {
+    "Challenge-imports.log": "cae28fc582ee76d0c4ffe96c840b0abb383b109df48ab96dc193cb157fcd6f4f",
+    "Solution-imports.log": "00e9a2793f50f09e42af332ca68e85a92803e7d5194a13939dc86ced501fd3a3",
+    "axioms.log": "fd2075fa1cb3d17f5a8322ac96dd915e3d40b667933a1121e6776ff9510b66a7"
+  },
+  "lean_toolchain": "leanprover/lean4:v4.33.0",
+  "loaded_modules": {
+    "Challenge": 3491,
+    "Solution": 10822
+  },
+  "palomar_tools": {
+    "Comparator": "575674928e239f5bc452aab72d1dd7b0f1326494",
+    "ComparatorLean": "leanprover/lean4:v4.34.0-rc1",
+    "Landrun": "811cfff51ceaf3d9843708aa6d22e9b84ccac8b4",
+    "Lean": "leanprover/lean4:v4.33.0",
+    "NanoDa": "68d5ca9db226849b41a6fff59d796ff19d0a8840",
+    "lean4export": "15f6055e299ad5b89345e533cc2192f4cc00f659"
+  },
+  "replay": "fresh clone from origin, isolated from every working checkout and from the research repository",
+  "repository": "itpplasma/global-stafford-formal"
+}

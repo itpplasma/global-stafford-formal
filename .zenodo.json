@@ -32,5 +32,6 @@
       "relation": "requires",
       "resource_type": "software"
     }
-  ]
+  ],
+  "version": "v1.0.0"
 }

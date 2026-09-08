@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: >-
-  Work in progress; no release or DOI exists. Cite the repository URL and
-  commit if needed.
+  Cite this formalization by its version DOI once assigned, or by the
+  immutable release commit.
 title: "Global Stafford for rings of differential operators: Lean 4 formalization"
 type: software
 authors:
@@ -9,10 +9,12 @@ authors:
     given-names: Christopher
     orcid: "https://orcid.org/0000-0003-4773-416X"
     affiliation: "Graz University of Technology"
+version: v1.0.0
+date-released: "2026-09-08"
 repository-code: "https://github.com/itpplasma/global-stafford-formal"
 license: Apache-2.0
 abstract: >-
-  A Lean 4 and Mathlib formalization, in progress, of the same-divisor
+  A Lean 4 and Mathlib formalization of the same-divisor
   identity 1 = dR + FdS in the ring of finite-order differential operators
   of every smooth integral affine variety over a characteristic-zero field,
   extending the formalized Weyl-algebra case (Stafford's Conjecture 3.8).
