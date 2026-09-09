@@ -4,9 +4,11 @@ This repository owns the Lean 4 formalization of the Global Stafford theorem
 (same-divisor identity `1 = dR + FdS` in `D_k(A)` for every smooth integral
 affine `A` over a characteristic-zero field) and its Palomar interface.
 `PLAN.md` is the sole live plan and status; read it completely before any
-edit. The paper proof, its history, and the superseded research routes live
-in the private research repository `itpplasma/global-stafford`; do not
-import from it and do not need it.
+edit. The internal informal exposition, working notes, research history, and
+superseded routes live in the private research repository
+`itpplasma/global-stafford`; they are records of the same research development,
+not a separately published or presented prior source. Do not import from that
+repository and do not need it to build or verify this formalization.
 
 ## Non-negotiable rules
 
