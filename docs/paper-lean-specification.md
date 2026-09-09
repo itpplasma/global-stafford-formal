@@ -1,19 +1,36 @@
 # Paper and Lean specification
 
-This formalization is the first presentation of the original Global Stafford
-result developed in this research project. The informal exposition and internal
-working notes are records of the same research development, not a separately
-published or presented source. References to the "paper" in this correspondence
-and the Lean module comments mean that internal exposition.
+This document maps the Global Stafford proof developed in this project to the
+Lean declarations. The informal exposition and internal working notes are
+records of the same project development. Their dated chronology establishes
+project provenance; it does **not** establish external first-presentation or
+publication priority. The 2026-09-09 literature assessment is recorded in
+[`provenance-literature-novelty.md`](provenance-literature-novelty.md).
 
 The informal argument preceded parts of the Lean implementation. Its dated
 record is retained: `itpplasma/global-stafford`,
 `notes/source-changing-descent-2026-09-07.md`, revision of 7 September 2026
 with Remark 4.2, commit `9a096dc9f6c990bdfb3e8a24110989648c70b3f3`,
 SHA-256 `22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03`.
-The tables map that internal exposition to the Lean declarations and preserve
-the development history. The Stafford38 dependency supplies the earlier Weyl
-result; the original result presented here is its global extension.
+The tables below preserve that internal paper-to-Lean correspondence.
+
+The Stafford38 dependency supplies the Weyl-algebra theorem. Two revisions
+must be distinguished precisely:
+
+- `784b59925beb9a480519142336bd6434f6eeef16` is the **historical inspection
+  pin** cited by the 7 September informal proof development;
+- `e77e176c381ca2d6b20c030f9227f1b031415d2e` is the Stafford38 revision
+  actually consumed by the mechanically reviewed Global Stafford build and is
+  the pin in `lake-manifest.json` and `docs/verification-results.json`.
+
+`Stafford38/FoundationClosure.lean`, including
+`Stafford38.universalStatement`, has the same source text at those two
+Stafford38 revisions, but current reproduction and provenance use the consumed
+`e77e176...` revision. This distinction resolves the stale-revision ambiguity
+without rewriting the historical research record.
+
+Palomar registry provenance: entry `PALOMAR-2026-09-05-000007`, version `2`,
+<https://palomar-registry.org/entry?id=PALOMAR-2026-09-05-000007&version=2>.
 
 ## Statement
 
@@ -45,7 +62,7 @@ result; the original result presented here is its global extension.
 | Lemma 6.2 (rank) | `GlobalStafford.Chart.twoGeneratorIdentity_chart`, `twoGeneratorIdentity_chart_of_weyl` | 8 | done |
 | Lemma 6.2 over `k(t)` | `GlobalStafford.Chart.s38Poly_of_scalarExtension`, `GlobalStafford.PhaseI.s38Poly_of_chartData` | 9, 10 | done |
 | Theorem 6.3 cover | `GlobalStafford.Chart.exists_finite_etale_cover`, `EtaleCoordinateChart` | 17 | done |
-| Weyl S38 import | `Stafford38.universalStatement` at pin `784b5992` | — | imported, axiom-clean |
+| Weyl S38 import | `Stafford38.universalStatement` at consumed pin `e77e176c381ca2d6b20c030f9227f1b031415d2e` | — | imported, axiom-clean; `784b5992...` is historical inspection pin only |
 | Phase I assembly | `GlobalStafford.PhaseI.twoGeneratorIdentity_of_inputs`, `universalStatement_of_inputs` | 10 | done |
 | Operator localization and clearance (Section 1, Section 8 inputs) | `GlobalStafford.Localization.localizationInterface` | 11 | done |
 | Étale lifting, Weyl relations, coordinate rigidity (Lemma 6.2) | `GlobalStafford.Chart.liftDerivation`, `liftDerivation_comm`, `coordinateRigidity` | 12 | done |
@@ -56,10 +73,20 @@ result; the original result presented here is its global extension.
 | `T → S` injective (Lemma 6.2) | `GlobalStafford.Chart.weylAction_injective` | 18a | done |
 | GS-DX (Theorem 6.3) | `GlobalStafford.universalStatement`; `GlobalStaffordChallenge.universalStatement` (`GlobalStaffordSolution.lean`) | 18, 19 | done; independent replay recorded in `verification-results.json` |
 
-## Literature inputs and their discharge
+## Literature inputs, prior art, and their discharge
 
-See `PLAN.md` Section 7. Each Phase I structure field corresponds to one
-standard fact; each Phase II work package proves exactly that field.
+See `PLAN.md` Section 7 for the standard facts used as Phase I interfaces and
+proved/discharged in Phase II. For external novelty context, see
+[`provenance-literature-novelty.md`](provenance-literature-novelty.md).
+That audit covers Stafford 1978, Björk 1981, Coutinho--Holland 1988,
+Smith--Stafford 1988, Cannings--Holland 1994, Berest--Chalykh 2012,
+Quadrat--Robertz 2014, Caro-Tuesta--Levcovitz 2020, and Bellamy 2026.
+
+The literature conclusion is deliberately evidence-graded: no prior proof of
+the exact universal same-divisor theorem was located, and Bellamy 2026 still
+records the weaker two-generator question for smooth-affine `D(X)` as open;
+this is strong novelty evidence, not a claim that a search can certify absolute
+historical priority.
 
 ## Fidelity notes
 
