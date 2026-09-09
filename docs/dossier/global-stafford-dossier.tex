@@ -45,11 +45,13 @@ The map follows the research graph at \code{b5654dd}, using its Remark 4.2 forma
 \end{landscape}
 
 \section{The theorem and the meaning of its statement}\label{sec:statement}
-This formalization first presents the original Global Stafford result developed
-in this research project. The informal exposition and internal working notes
-record the same development; they have not been separately published or
-presented. References to the ``paper'' in this dossier and the Lean module
-comments identify that internal exposition.
+This formalization presents the Global Stafford proof developed in this
+research project. Its informal exposition and internal working notes record
+project chronology, including informal development before parts of the Lean
+implementation. That chronology does not establish external historical priority.
+The dated literature assessment is recorded in
+\code{docs/provenance-literature-novelty.md}; references to the ``paper'' mean
+the internal exposition.
 
 This companion states the mathematical claim in TeX, compares it with the
 Mathlib-only Challenge, and explains the mechanisms producing the global
@@ -97,6 +99,17 @@ formal proof is \nolinkurl{b21883a5b3d8f46922713049c3b060523ea3a771}.
 Release \code{v1.0.3} uses unique submission module names. Phase I/full replay and both standard and canonical-Challenge comparisons passed with the dependency pins below.
 Phase I and II are complete in that record. Human expert review of the paper and
 its statement correspondence remains open.
+
+\paragraph{Literature assessment and registry record.}
+The project's 9 September 2026 literature audit located no prior proof of the
+exact same-divisor theorem. It records Bellamy's 2026 survey as still listing
+the weaker smooth-affine two-generator question as open, and distinguishes
+the three-generator result of Coutinho--Holland from the present statement.
+These findings provide evidence of novelty; they do not certify absolute
+historical priority. The audit gives the sources, search scope and limitations.
+The repository links Palomar record
+\href{https://palomar-registry.org/entry?id=PALOMAR-2026-09-05-000007&version=2}{\code{PALOMAR-2026-09-05-000007}, version 2}.
+Registry status, machine checking and literature priority are distinct records.
 
 \section{TeX statement compared with GlobalStaffordChallenge.lean}\label{sec:comparison}
 The Challenge states the theorem on endomorphisms and explicitly requires
@@ -446,7 +459,7 @@ Stafford38 developments. The package includes the Challenge/Solution pair,
 verification evidence, and a companion document with a clickable proof map,
 the statement correspondence, and the main proof mechanisms.
 \end{quote}
-The formal repository is public under Apache-2.0. Release \code{v1.0.3} fixes the submission module collision and records the completed replay. No hosted Palomar acceptance or human referee report is claimed.
+The formal repository is public under Apache-2.0. Release \code{v1.0.5} packages the corrected provenance, dated literature audit and registry citation metadata. The mathematical replay is unchanged. Human expert review is separate.
 
 \appendix
 \clearpage

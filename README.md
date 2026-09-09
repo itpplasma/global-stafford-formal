@@ -53,10 +53,10 @@ Palomar registry record:
 - version: `2`
 - <https://palomar-registry.org/entry?id=PALOMAR-2026-09-05-000007&version=2>
 
-The latest published GitHub release at the time of this provenance correction
-is `v1.0.4`. This `main`-branch correction supersedes the unqualified
-"first presentation" wording in that release's historical notes; it changes
-provenance/literature documentation, not Lean proof bytes.
+Release `v1.0.5` packages the provenance and literature corrections together
+with the Palomar citation metadata. It supersedes the unqualified
+"first presentation" wording of `v1.0.4`; Lean proof bytes and dependency
+pins are unchanged.
 
 | Dependency | Exact consumed version |
 | --- | --- |

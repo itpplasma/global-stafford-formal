@@ -8,7 +8,7 @@ phase_iii_status: done 2026-09-09 (isolated replay of b21883a5; Phase I/full and
 paper_source: itpplasma/global-stafford notes/source-changing-descent-2026-09-07.md
 paper_revision: 9a096dc9f6c990bdfb3e8a24110989648c70b3f3
 paper_sha256: 22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03
-active_task: provenance clarification release v1.0.4; mathematical replay remains complete
+active_task: release v1.0.5 packages pulled provenance, literature and registry metadata; mathematical replay remains complete
 paper_review: two independent-context model reviews passed 2026-09-07; human review open
 lean_toolchain: leanprover/lean4:v4.33.0
 mathlib: db584cd6d46c92f209a44c0f1c829460d327499d
@@ -16,17 +16,16 @@ algebraic_analysis: 4aae47967f6ba02ffe2f639ab06564c9a9d1ecc8
 stafford38_formal: e77e176c381ca2d6b20c030f9227f1b031415d2e
 challenge_declaration: GlobalStaffordChallenge.universalStatement
 repository_visibility: public (authorized 2026-09-08); Apache-2.0
-release_status: v1.0.4 provenance clarification authorized
-palomar_registration: submitted; prior failures recorded, corrected release awaiting author resubmission
+release_status: v1.0.5 documentation and citation release authorized
+palomar_registration: registered (PALOMAR-2026-09-05-000007 version 2, as recorded in formalization.yaml)
 open_holes: []
 ```
 
-The formalization first presents the original result developed in this project.
 The terms "paper" and `paper_source` below identify the project's internal
-informal exposition and working notes, which have not been separately published
-or presented. Their chronology is retained, including informal development
-before parts of the Lean implementation; they are not a distinct prior
-presentation of the result.
+informal exposition and working notes. Their chronology records project
+provenance rather than external historical priority. The current literature
+assessment and its limits are recorded in `docs/provenance-literature-novelty.md`;
+it supersedes earlier unqualified first-presentation wording.
 
 This file is the live plan and status of the Lean formalization of the
 Global Stafford theorem. It is written so that an agent with no prior
@@ -1271,3 +1270,5 @@ Palomar run 34287264858 resolved both generic module names from the Stafford38 d
 WP-21 completed 2026-09-09: unique modules resolve to the project; both the standard and Palomar canonical-Challenge Comparator paths pass NanoDa and Lean. WP-20 new-pin replay also passes. The local canonical check omits the unavailable outer systemd wrapper, as recorded in the verification report; hosted acceptance remains separate.
 
 Release v1.0.4 (2026-09-09) records the author’s clarification that the informal exposition and notes are internal records of the same original research development. Keep original-proof/other, retain the dated history and mathematical correspondence, and clarify the current narrative consistently. Mathematical sources, dependencies and verification scope are unchanged.
+
+Release v1.0.5 (2026-09-09) packages main through 231ac29: the literature audit, qualified novelty account, exact consumed dependency provenance, and Palomar citation metadata. The dossier and Zenodo description use the same account. Mathematical sources, pins and verification evidence are unchanged.
