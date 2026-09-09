@@ -8,7 +8,7 @@ phase_iii_status: done 2026-09-09 (isolated replay of b21883a5; Phase I/full and
 paper_source: itpplasma/global-stafford notes/source-changing-descent-2026-09-07.md
 paper_revision: 9a096dc9f6c990bdfb3e8a24110989648c70b3f3
 paper_sha256: 22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03
-active_task: WP-20 and WP-21 replay complete; corrective release v1.0.3
+active_task: provenance clarification release v1.0.4; mathematical replay remains complete
 paper_review: two independent-context model reviews passed 2026-09-07; human review open
 lean_toolchain: leanprover/lean4:v4.33.0
 mathlib: db584cd6d46c92f209a44c0f1c829460d327499d
@@ -16,10 +16,17 @@ algebraic_analysis: 4aae47967f6ba02ffe2f639ab06564c9a9d1ecc8
 stafford38_formal: e77e176c381ca2d6b20c030f9227f1b031415d2e
 challenge_declaration: GlobalStaffordChallenge.universalStatement
 repository_visibility: public (authorized 2026-09-08); Apache-2.0
-release_status: v1.0.3 verified corrective release authorized
+release_status: v1.0.4 provenance clarification authorized
 palomar_registration: submitted; prior failures recorded, corrected release awaiting author resubmission
 open_holes: []
 ```
+
+The formalization first presents the original result developed in this project.
+The terms "paper" and `paper_source` below identify the project's internal
+informal exposition and working notes, which have not been separately published
+or presented. Their chronology is retained, including informal development
+before parts of the Lean implementation; they are not a distinct prior
+presentation of the result.
 
 This file is the live plan and status of the Lean formalization of the
 Global Stafford theorem. It is written so that an agent with no prior
@@ -1262,3 +1269,5 @@ Patch v1.0.2 (2026-09-09) adds the required related-formalization identifier aft
 Palomar run 34287264858 resolved both generic module names from the Stafford38 dependency and failed before finding the Global theorem. Use GlobalStaffordChallenge and GlobalStaffordSolution as the unique submission modules. Retain frozen Challenge.lean and Solution.lean unchanged; the unique files initially copy their bytes exactly. The two Challenge files are alternative copies of the same compared template, each with its deliberate placeholder; neither is imported by the solution. This exception adds no mathematical proof obligation or axiom. Verifiers must check exact Challenge-copy equality and audit the unique modules. WP-21 and the pending WP-20 replay require successful source resolution, build and Comparator/NanoDa/Lean checks before the corrective release.
 
 WP-21 completed 2026-09-09: unique modules resolve to the project; both the standard and Palomar canonical-Challenge Comparator paths pass NanoDa and Lean. WP-20 new-pin replay also passes. The local canonical check omits the unavailable outer systemd wrapper, as recorded in the verification report; hosted acceptance remains separate.
+
+Release v1.0.4 (2026-09-09) records the author’s clarification that the informal exposition and notes are internal records of the same original research development. Keep original-proof/other, retain the dated history and mathematical correspondence, and clarify the current narrative consistently. Mathematical sources, dependencies and verification scope are unchanged.

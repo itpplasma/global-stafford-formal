@@ -45,13 +45,17 @@ The map follows the research graph at \code{b5654dd}, using its Remark 4.2 forma
 \end{landscape}
 
 \section{The theorem and the meaning of its statement}\label{sec:statement}
-This companion explains the finished formalization of the source-changing descent
-proof. It states the mathematical claim in TeX, compares every part with the
-Mathlib-only Challenge, and identifies the mechanisms that produce the global
-certificate. The canonical paper source is the Markdown note
-\code{notes/source-changing-descent-2026-09-07.md} in the research repository;
-this document is a TeX exposition and correspondence dossier, not a separate
-manuscript authority.
+This formalization first presents the original Global Stafford result developed
+in this research project. The informal exposition and internal working notes
+record the same development; they have not been separately published or
+presented. References to the ``paper'' in this dossier and the Lean module
+comments identify that internal exposition.
+
+This companion states the mathematical claim in TeX, compares it with the
+Mathlib-only Challenge, and explains the mechanisms producing the global
+certificate. Its correspondence uses the internal note
+\code{notes/source-changing-descent-2026-09-07.md}. The informal argument
+preceded parts of the Lean implementation; the dated record is retained below.
 
 \begin{theorem}
 Let $k$ be any field of characteristic zero and let $A$ be a smooth integral
@@ -86,7 +90,7 @@ For a polynomial algebra the statement specializes to the imported Weyl result.
 The proof does not prescribe a Bernstein-degree bound on $F$ in the global case.
 
 \paragraph{Exact source and verification scope.}
-The paper revision is \nolinkurl{9a096dc9f6c990bdfb3e8a24110989648c70b3f3}, with
+The internal-note revision is \nolinkurl{9a096dc9f6c990bdfb3e8a24110989648c70b3f3}, with
 SHA-256 \nolinkurl{22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03}.
 It is unchanged at research revision \code{b5654dd}. The independently replayed
 formal proof is \nolinkurl{b21883a5b3d8f46922713049c3b060523ea3a771}.

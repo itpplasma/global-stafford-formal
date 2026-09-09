@@ -1,7 +1,7 @@
 {
   "title": "Global Stafford for rings of differential operators: Lean 4 formalization",
   "upload_type": "software",
-  "description": "Lean 4 formalization, verified against Mathlib, of the same-divisor identity 1 = d R + F d S in the ring of k-linear finite-order differential operators of every smooth integral finitely generated algebra over a field k of characteristic zero, for every nonzero d. This extends the formalized Weyl-algebra case (Stafford's Conjecture 3.8) to smooth affine varieties by a source-changing local-to-global argument. The endpoints depend only on the axioms propext, Classical.choice and Quot.sound. The repository contains the Palomar Challenge/Solution pair, the Comparator configuration, the verification scripts and the machine-readable verification record. The companion dossier includes a clickable proof map, a TeX statement compared with the actual Mathlib-only Challenge, an explanation of the main proof mechanisms, and the Challenge/Solution listings. Release v1.0.3 uses unique Global submission module names to avoid a collision with the Stafford38 dependency. The current dependency pins passed Phase I/full verification and Comparator with NanoDa and Lean kernel acceptance in an isolated local clone. A local Palomar canonical-Challenge comparison also passed; hosted Palomar acceptance and human review are not claimed.",
+  "description": "Lean 4 formalization, verified against Mathlib, of the same-divisor identity 1 = d R + F d S in the ring of k-linear finite-order differential operators of every smooth integral finitely generated algebra over a field k of characteristic zero, for every nonzero d. This extends the formalized Weyl-algebra case (Stafford's Conjecture 3.8) to smooth affine varieties by a source-changing local-to-global argument. The endpoints depend only on the axioms propext, Classical.choice and Quot.sound. The repository contains the Palomar Challenge/Solution pair, the Comparator configuration, the verification scripts and the machine-readable verification record. The companion dossier includes a clickable proof map, a TeX statement compared with the actual Mathlib-only Challenge, an explanation of the main proof mechanisms, and the Challenge/Solution listings. Release v1.0.3 uses unique Global submission module names to avoid a collision with the Stafford38 dependency. The current dependency pins passed Phase I/full verification and Comparator with NanoDa and Lean kernel acceptance in an isolated local clone. A local Palomar canonical-Challenge comparison also passed; hosted Palomar acceptance and human review are not claimed. This formalization first presents the original Global Stafford result developed in this research project. The accompanying informal exposition and internal working notes record the same research development and have not been separately published or presented.",
   "creators": [
     {
       "name": "Albert, Christopher",
@@ -33,5 +33,5 @@
       "resource_type": "software"
     }
   ],
-  "version": "v1.0.3"
+  "version": "v1.0.4"
 }

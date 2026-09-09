@@ -17,6 +17,13 @@ the separate public repository
 repository extends it to every smooth integral affine variety by a
 source-changing local-to-global argument.
 
+This formalization first presents the original Global Stafford result developed
+in this research project. The accompanying informal exposition and internal
+working notes record the same development. They have not been separately
+published or presented. References to the "paper" in the proof correspondence
+and module comments identify that internal exposition; its dated history is
+preserved in the [correspondence document](docs/paper-lean-specification.md).
+
 ## Status
 
 The formalization is complete through Phase II: `GlobalStafford.universalStatement`
@@ -81,7 +88,7 @@ and a shared-pin compatibility build of the Stafford38 endpoints. Never run
 | Reusable mathematics | [algebraic-analysis](https://github.com/itpplasma/algebraic-analysis) |
 | Weyl-algebra theorem | [stafford38-formal](https://github.com/itpplasma/stafford38-formal) |
 | This formalization and its Palomar interface | this repository |
-| Paper proof, research history, superseded routes | private research repository |
+| Internal informal exposition, research history, superseded routes | internal research repository |
 
 Christopher Albert is the human author and maintainer; AI systems assist
 under human direction, as recorded in `formalization.yaml`. Code and

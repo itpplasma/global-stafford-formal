@@ -35,14 +35,17 @@ classification:
     - "14F10"
 
 sources:
-  - title: "Source-changing descent by central-parameter conjugation (private research note)"
+  - title: "Original proof of the Global Stafford theorem"
     authors:
       - name: "Christopher Albert"
         orcid: "0000-0003-4773-416X"
     type: "original-proof"
     relationship: "other"
     note: >-
-      The private paper proof formalized here. No public preprint exists.
+      This formalization is the first presentation of the original result
+      developed in this research project. The accompanying informal exposition
+      and internal working notes document the same research development; they
+      are not a separately published or presented source.
     license: "CC-BY-4.0"
     author_endorsement: "participated"
   - title: "Module structure of Weyl algebras"
@@ -149,7 +152,7 @@ review:
   status: "agent-reviewed"
   reviewers: []
   notes: >-
-    The paper proof passed two independent-context model reviews and the
+    The internal informal argument passed two independent-context model reviews and the
     formal development has kernel checking, scoped agent audits, and the
     statement correspondence in docs/paper-lean-specification.md. Human
     expert review of the paper and of the formal statement is open.

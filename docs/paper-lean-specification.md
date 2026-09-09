@@ -1,12 +1,19 @@
 # Paper and Lean specification
 
-Maps the paper proof (`itpplasma/global-stafford`,
-`notes/source-changing-descent-2026-09-07.md`, revision of 7 September
-2026 with Remark 4.2, commit `9a096dc9f6c990bdfb3e8a24110989648c70b3f3`,
-SHA-256 `22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03`)
-to the Lean declarations of this repository. Names
-in the Lean column are the required names; the status column is updated as
-work packages close.
+This formalization is the first presentation of the original Global Stafford
+result developed in this research project. The informal exposition and internal
+working notes are records of the same research development, not a separately
+published or presented source. References to the "paper" in this correspondence
+and the Lean module comments mean that internal exposition.
+
+The informal argument preceded parts of the Lean implementation. Its dated
+record is retained: `itpplasma/global-stafford`,
+`notes/source-changing-descent-2026-09-07.md`, revision of 7 September 2026
+with Remark 4.2, commit `9a096dc9f6c990bdfb3e8a24110989648c70b3f3`,
+SHA-256 `22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03`.
+The tables map that internal exposition to the Lean declarations and preserve
+the development history. The Stafford38 dependency supplies the earlier Weyl
+result; the original result presented here is its global extension.
 
 ## Statement
 
