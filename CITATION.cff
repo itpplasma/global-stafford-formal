@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: >-
   Cite this formalization by its version DOI once assigned, or by the
-  immutable release commit.
+  immutable release commit. The Palomar registry record is also listed below.
 title: "Global Stafford for rings of differential operators: Lean 4 formalization"
 type: software
 authors:
@@ -38,3 +38,6 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.22667052
     description: Historical release v1.0.0
+  - type: url
+    value: "https://palomar-registry.org/entry?id=PALOMAR-2026-09-05-000007&version=2"
+    description: "Palomar Registry PALOMAR-2026-09-05-000007, version 2"
