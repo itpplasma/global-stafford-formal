@@ -15,6 +15,14 @@ remaining `Inputs.chartS38Poly` leaf.
 
 It also proves a generic domain-transfer lemma for `ScalarExtensionInterface`:
 if `D` has no zero divisors, neither does the scalar-extended ring `DK`.
+
+
+## References and proof context
+
+[Sta78] J. T. Stafford, *Module Structure of Weyl Algebras*, Journal of the London Mathematical Society (2) 18 (1978), 429–442.
+https://doi.org/10.1112/jlms/s2-18.3.429
+
+The cited article states the conjecture; the proved theorem used here is Stafford38.universalStatement at the manifest pin. The parameter field is RatFunc k. See docs/literature.md.
 -/
 
 namespace GlobalStafford.Chart

@@ -1,7 +1,7 @@
 {
   "title": "Global Stafford for rings of differential operators: Lean 4 formalization",
   "upload_type": "software",
-  "description": "Lean 4 formalization, verified against Mathlib, of the same-divisor identity 1 = d R + F d S in the ring of k-linear finite-order differential operators of every smooth integral finitely generated algebra over a field k of characteristic zero, for every nonzero d. This extends the formalized Weyl-algebra case (Stafford's Conjecture 3.8) to smooth affine varieties by a source-changing local-to-global argument. The endpoints depend only on the axioms propext, Classical.choice and Quot.sound. The repository contains the Palomar Challenge/Solution pair, the Comparator configuration, the verification scripts and the machine-readable verification record. The companion dossier includes a clickable proof map, a TeX statement compared with the actual Mathlib-only Challenge, an explanation of the main proof mechanisms, and the Challenge/Solution listings. Release v1.0.3 uses unique Global submission module names to avoid a collision with the Stafford38 dependency. The current dependency pins passed Phase I/full verification and Comparator with NanoDa and Lean kernel acceptance in an isolated local clone. A local Palomar canonical-Challenge comparison also passed. Release v1.0.5 packages the project provenance, dated literature audit, exact consumed dependency account and Palomar citation metadata. The proof was developed in this research project; the dated audit found no prior proof of the exact theorem, while absolute historical priority remains unasserted. Human expert review remains separate. The repository links Palomar record PALOMAR-2026-09-05-000007, version 2.",
+  "description": "Lean 4 formalization, verified against Mathlib, of the same-divisor identity 1 = d R + F d S in the ring of k-linear finite-order differential operators of every smooth integral finitely generated algebra over a field k of characteristic zero, for every nonzero d. This extends the formalized Weyl-algebra case (Stafford's Conjecture 3.8) to smooth affine varieties by a source-changing local-to-global argument. The endpoints depend only on the axioms propext, Classical.choice and Quot.sound. The repository contains the Palomar Challenge/Solution pair, the Comparator configuration, the verification scripts and the machine-readable verification record. The companion dossier includes a clickable proof map, a TeX statement compared with the actual Mathlib-only Challenge, an explanation of the main proof mechanisms, and the Challenge/Solution listings. Release v1.0.3 uses unique Global submission module names to avoid a collision with the Stafford38 dependency. The current dependency pins passed Phase I/full verification and Comparator with NanoDa and Lean kernel acceptance in an isolated local clone. A local Palomar canonical-Challenge comparison also passed. Release v1.0.5 packages the project provenance, dated literature audit, exact consumed dependency account and Palomar citation metadata. The proof was developed in this research project; the dated audit found no prior proof of the exact theorem, while absolute historical priority remains unasserted. Human expert review remains separate. The repository links Palomar record PALOMAR-2026-09-05-000007, version 2. This documentation patch adds a prominent bibliography, source-to-Lean index and module references; mathematical declarations and dependency pins are unchanged.",
   "creators": [
     {
       "name": "Albert, Christopher",
@@ -31,7 +31,31 @@
       "identifier": "https://github.com/itpplasma/algebraic-analysis/tree/4aae47967f6ba02ffe2f639ab06564c9a9d1ecc8",
       "relation": "requires",
       "resource_type": "software"
+    },
+    {
+      "identifier": "https://doi.org/10.1112/jlms/s2-18.3.429",
+      "relation": "cites"
+    },
+    {
+      "identifier": "https://doi.org/10.1112/jlms.70373",
+      "relation": "cites"
+    },
+    {
+      "identifier": "https://doi.org/10.1112/plms/s3-57.3.417",
+      "relation": "cites"
+    },
+    {
+      "identifier": "https://stacks.math.columbia.edu/tag/09CH",
+      "relation": "cites"
+    },
+    {
+      "identifier": "https://stacks.math.columbia.edu/tag/00T1",
+      "relation": "cites"
+    },
+    {
+      "identifier": "https://doi.org/10.1007/s10468-008-9112-7",
+      "relation": "cites"
     }
   ],
-  "version": "v1.0.5"
+  "version": "v1.0.6"
 }

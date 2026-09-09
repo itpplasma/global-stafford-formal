@@ -8,7 +8,7 @@ phase_iii_status: done 2026-09-09 (isolated replay of b21883a5; Phase I/full and
 paper_source: itpplasma/global-stafford notes/source-changing-descent-2026-09-07.md
 paper_revision: 9a096dc9f6c990bdfb3e8a24110989648c70b3f3
 paper_sha256: 22f047887464d268c1def305e697232826799bc112cec812e31e2cb8f8172d03
-active_task: release v1.0.5 packages pulled provenance, literature and registry metadata; mathematical replay remains complete
+active_task: literature/source indices and documentation patch release; mathematical replay remains at its recorded source
 paper_review: two independent-context model reviews passed 2026-09-07; human review open
 lean_toolchain: leanprover/lean4:v4.33.0
 mathlib: db584cd6d46c92f209a44c0f1c829460d327499d
@@ -1272,3 +1272,11 @@ WP-21 completed 2026-09-09: unique modules resolve to the project; both the stan
 Release v1.0.4 (2026-09-09) records the author’s clarification that the informal exposition and notes are internal records of the same original research development. Keep original-proof/other, retain the dated history and mathematical correspondence, and clarify the current narrative consistently. Mathematical sources, dependencies and verification scope are unchanged.
 
 Release v1.0.5 (2026-09-09) packages main through 231ac29: the literature audit, qualified novelty account, exact consumed dependency provenance, and Palomar citation metadata. The dossier and Zenodo description use the same account. Mathematical sources, pins and verification evidence are unchanged.
+
+## Documentation: literature and source index (2026-09-09)
+
+The author requested prominent README bibliographies, source-to-Lean indices,
+proof-map source roles and module references, followed by commit, push and
+patch releases. This changes documentation and Lean comments only; the
+mathematical declarations, frozen Challenges, dependency pins and recorded
+verification evidence remain unchanged.

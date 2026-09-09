@@ -24,6 +24,14 @@ import Mathlib.RingTheory.Localization.Away.Basic
 The Kähler-differential route sketched in `PLAN.md` needs
 `Algebra.FormallySmooth.iff_subsingleton_and_projective`, which is not present in the
 pinned Mathlib; this file uses the presentation route flagged as the alternative there.
+
+
+## References and proof context
+
+[StacksS] The Stacks Project Authors, *Smooth ring maps*, The Stacks Project, Section 10.137, tag 00T1 (accessed 2026-09-09).
+https://stacks.math.columbia.edu/tag/00T1
+
+Structural background for local smooth presentations. This module constructs the required cover from Mathlib; see docs/literature.md for the chart-to-descent index.
 -/
 
 namespace GlobalStafford.Chart

@@ -1,5 +1,8 @@
 # Paper and Lean specification
 
+The [literature and source index](literature.md) maps published sources and
+project constructions to the proof modules described here.
+
 This document maps the Global Stafford proof developed in this project to the
 Lean declarations. The informal exposition and internal working notes are
 records of the same project development. Their dated chronology establishes

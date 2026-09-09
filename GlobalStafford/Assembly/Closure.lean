@@ -24,6 +24,14 @@ remaining Phase I leaves recorded in `PLAN.md` §7 (`Inputs.globalDomain`,
 `weylAction` is discharged by WP-18a's `Chart.weylAction_injective`, applied to
 `chartData X`, which is built directly (not through `Chart.etaleChartData_of_fields`'s
 `Classical.choice`) so that its `«∂»` field is *definitionally* `liftDerivation`.
+
+
+## References and proof context
+
+[Sta78] J. T. Stafford, *Module Structure of Weyl Algebras*, Journal of the London Mathematical Society (2) 18 (1978), 429–442.
+https://doi.org/10.1112/jlms/s2-18.3.429
+
+The source-changing assembly is the project proof; the Weyl theorem is imported from Stafford38. See docs/literature.md for every proof block and source role.
 -/
 
 namespace GlobalStafford

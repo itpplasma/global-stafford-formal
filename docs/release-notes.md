@@ -1,5 +1,7 @@
 # Global Stafford formalization — current release record
 
+Latest documentation release: [v1.0.6](releases/v1.0.6.md).
+
 Current release: **v1.0.5** (9 September 2026).
 
 The formalization proves that for every characteristic-zero field `k`, every

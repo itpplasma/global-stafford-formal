@@ -1,8 +1,8 @@
 # Release procedure
 
-Current published software release: **v1.0.5**.
+Current published software release: **v1.0.6**.
 
-The author has already published v1.0.5. Do not create a further release merely
+The author explicitly authorized the v1.0.6 literature documentation release. Do not create a further release merely
 because documentation is edited on `main`. A new release is warranted only for
 an explicitly authorized release event or a substantive correction that should
 be frozen as a new immutable software snapshot.

@@ -29,6 +29,23 @@ is therefore left unasserted. See the
 [provenance, prior-art and novelty assessment](docs/provenance-literature-novelty.md)
 and the [paper/Lean correspondence](docs/paper-lean-specification.md).
 
+Current documentation release: **v1.0.6**. Adds the literature/source index and
+module references; mathematical declarations and dependency pins are unchanged.
+
+## Literature and source index
+
+**[Literature → proof ingredients → Lean modules](docs/literature.md)** is the
+starting point for tracing the mathematical foundations. It gives full
+citations, source roles, module links, and the distinction between proved
+imports, project constructions, background, and prior art.
+
+**[Sta78]** J. T. Stafford, *[Module Structure of Weyl Algebras](https://doi.org/10.1112/jlms/s2-18.3.429)*, Journal of the London Mathematical Society (2) 18 (1978), 429–442. Source of Conjecture 3.8 (p. 438). The 1978 conjecture is the target, not a proof of its general case.
+
+**[CH88]** S. C. Coutinho and M. P. Holland, *[Module Structure of Rings of Differential Operators](https://doi.org/10.1112/plms/s3-57.3.417)*, Proceedings of the London Mathematical Society (3) 57 (1988), 417–432. Prior art: three-generation for smooth-affine differential-operator rings. Not the same-divisor theorem and not an input to the source-changing descent.
+
+**[Bel26]** Gwyn Bellamy, *[Module structure of Weyl algebras](https://doi.org/10.1112/jlms.70373)*, Journal of the London Mathematical Society 113 (2026), no. 1, e70373. Historical status and adjacent results, especially Sections 3 and 6; not an imported proof theorem.
+
+
 ## Status and provenance
 
 The formalization is complete through Phase II: `GlobalStafford.universalStatement`

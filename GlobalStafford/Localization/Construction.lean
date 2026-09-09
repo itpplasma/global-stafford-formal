@@ -21,6 +21,14 @@ The construction follows the eight-step plan in `PLAN.md`:
 3. Its basic properties (restriction to the image, order bound,
    multiplicativity) and the packaged algebra map `ι`.
 4. `clearance`.
+
+
+## References and proof context
+
+[StacksD] The Stacks Project Authors, *Finite order differential operators*, The Stacks Project, Section 10.133, tag 09CH (accessed 2026-09-09).
+https://stacks.math.columbia.edu/tag/09CH
+
+Definition and localization background. The exact localization interface is proved here. See docs/literature.md for source roles and downstream use.
 -/
 
 namespace GlobalStafford.Localization

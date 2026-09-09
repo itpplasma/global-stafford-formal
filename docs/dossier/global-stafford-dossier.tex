@@ -38,6 +38,7 @@
  the dashed arrow supplies a theorem hypothesis. Transitive infrastructure edges are omitted.
 \begin{center}
 \input{../proof-map/map.tex}
+\par\smallskip\hyperref[sec:literature]{Literature and source roles for this map}\par
 \end{center}
 \noindent\small Blue solid boxes: project Lean proofs. Amber double box: imported Lean theorem.
 These tags refer to the recorded kernel verification, not human mathematical review.
@@ -478,4 +479,25 @@ Section~\ref{sec:comparison}.
  frame=lines,numbers=left,numbersep=5pt]{../../GlobalStaffordSolution.lean}
 \VerbatimInput[fontsize=\small,breaklines=true,breakanywhere=true,
  frame=lines]{../../comparator.json}
+
+\section{Literature and proof sources}\label{sec:literature}
+Documentation release v1.0.6, 9 September 2026. Mathematical declarations and dependency pins are unchanged.
+
+The Weyl node uses the proved Stafford38 theorem at the manifest pin;
+\cite{Sta78} supplies the conjecture. Smooth operator structure has the
+background \cite{StacksD,StacksS,Bav10}. Finite-rank ascent, squared-annihilator
+extraction, bounded-order sources and chart protection are project proofs.
+The three-generator result \cite{CH88} and survey \cite{Bel26} supply prior-art
+context, not assumptions of the descent.
+
+Full source roles and clickable Lean entry points are indexed at \url{https://github.com/itpplasma/global-stafford-formal/blob/main/docs/literature.md}.
+
+\begin{thebibliography}{StacksS}
+\bibitem[Sta78]{Sta78} J. T. Stafford, \emph{Module Structure of Weyl Algebras}, Journal of the London Mathematical Society (2) 18 (1978), 429–442. \url{https://doi.org/10.1112/jlms/s2-18.3.429}.
+\bibitem[CH88]{CH88} S. C. Coutinho and M. P. Holland, \emph{Module Structure of Rings of Differential Operators}, Proceedings of the London Mathematical Society (3) 57 (1988), 417–432. \url{https://doi.org/10.1112/plms/s3-57.3.417}.
+\bibitem[Bel26]{Bel26} Gwyn Bellamy, \emph{Module structure of Weyl algebras}, Journal of the London Mathematical Society 113 (2026), no. 1, e70373. \url{https://doi.org/10.1112/jlms.70373}.
+\bibitem[StacksD]{StacksD} The Stacks Project Authors, \emph{Finite order differential operators}, The Stacks Project, Section 10.133, tag 09CH (accessed 2026-09-09). \url{https://stacks.math.columbia.edu/tag/09CH}.
+\bibitem[StacksS]{StacksS} The Stacks Project Authors, \emph{Smooth ring maps}, The Stacks Project, Section 10.137, tag 00T1 (accessed 2026-09-09). \url{https://stacks.math.columbia.edu/tag/00T1}.
+\bibitem[Bav10]{Bav10} V. V. Bavula, \emph{Generators and Defining Relations for the Ring of Differential Operators on a Smooth Affine Algebraic Variety}, Algebras and Representation Theory 13 (2010), 159–187. \url{https://doi.org/10.1007/s10468-008-9112-7}.
+\end{thebibliography}
 \end{document}
