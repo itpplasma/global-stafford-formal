@@ -59,3 +59,13 @@ No visibility change, tag, release, DOI, Palomar registration, or
 manuscript submission without explicit human authorization. The
 `docs/release-runbook.md` lists those human actions; agents prepare, humans
 execute.
+
+## Proof-source provenance
+
+Read `docs/proof-source-provenance.md` before changing proof or provenance
+status. The complete source-changing-descent proof candidate and its review
+record live in `itpplasma/global-stafford`; the exact proof note, adversarial
+review, proof graph, and consumed dependency pins are listed there. There is no
+separate paper repository. This formal repository is already Phase I/II/III
+complete; upstream proof files are for correspondence and maintenance, not a
+new theorem queue.
