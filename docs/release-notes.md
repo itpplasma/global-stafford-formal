@@ -2,7 +2,10 @@
 
 Latest documentation release: [v1.0.6](releases/v1.0.6.md).
 
-Current release: **v1.0.5** (9 September 2026).
+Current release: **v1.0.6** (documentation release; 9 September 2026).
+
+The v1.0.5 entry below is the preceding mathematical/provenance release; v1.0.6
+updates the documentation index without changing declarations or dependency pins.
 
 The formalization proves that for every characteristic-zero field `k`, every
 smooth integral finitely generated `k`-algebra `A`, and every nonzero
