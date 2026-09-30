@@ -21,12 +21,12 @@ repository:
   role: "substantive-development"
   url: "https://github.com/itpplasma/global-stafford-formal"
   registration_status: "registered"
-  palomar_id: "PALOMAR-2026-09-05-000007"
+  palomar_id: "PALOMAR-2026-09-09-000001"
   palomar_version: 2
-  palomar_url: "https://palomar-registry.org/entry?id=PALOMAR-2026-09-05-000007&version=2"
+  palomar_url: "https://palomar-registry.org/entry?id=PALOMAR-2026-09-09-000001&version=2"
   note: >-
     Public under Apache-2.0 since 2026-09-08, with explicit author authorization.
-    Palomar registry record PALOMAR-2026-09-05-000007 version 2 is linked above.
+    Palomar registry record PALOMAR-2026-09-09-000001 version 2 is linked above.
     The mechanically reviewed snapshot and exact dependency pins are recorded
     in docs/verification-results.json. Zenodo integration is enabled.
 
@@ -129,7 +129,7 @@ status:
     endpoint and consumer audits, and Comparator with NanoDa and Lean acceptance.
     Palomar's canonical-Challenge comparison also passed locally; its outer
     systemd wrapper was unavailable in that local replay. The registry record is
-    PALOMAR-2026-09-05-000007 version 2. The unique submission Challenge and
+    PALOMAR-2026-09-09-000001 version 2. The unique submission Challenge and
     retained legacy Challenge are byte-identical alternative templates, each
     with one deliberately compared placeholder. Mathematical proofs have no
     holes and use only the three ordinary foundations. Novelty/priority is a

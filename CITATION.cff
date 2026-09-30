@@ -36,8 +36,14 @@ references:
 
 identifiers:
   - type: doi
+    value: 10.5281/zenodo.22669444
+    description: Exact archived release v1.0.6
+  - type: doi
+    value: 10.5281/zenodo.22667051
+    description: Concept DOI, resolving to the newest archived version
+  - type: doi
     value: 10.5281/zenodo.22667052
     description: Historical release v1.0.0
   - type: url
-    value: "https://palomar-registry.org/entry?id=PALOMAR-2026-09-05-000007&version=2"
-    description: "Palomar Registry PALOMAR-2026-09-05-000007, version 2"
+    value: "https://palomar-registry.org/entry?id=PALOMAR-2026-09-09-000001&version=2"
+    description: "Palomar Registry PALOMAR-2026-09-09-000001, version 2"

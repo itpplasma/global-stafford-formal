@@ -17,7 +17,7 @@ stafford38_formal: e77e176c381ca2d6b20c030f9227f1b031415d2e
 challenge_declaration: GlobalStaffordChallenge.universalStatement
 repository_visibility: public (authorized 2026-09-08); Apache-2.0
 release_status: mathematical release v1.0.5 complete; documentation release v1.0.6 authorized
-palomar_registration: registered (PALOMAR-2026-09-05-000007 version 2, as recorded in formalization.yaml)
+palomar_registration: registered (PALOMAR-2026-09-09-000001 version 2, as recorded in formalization.yaml)
 open_holes: []
 ```
 

@@ -66,9 +66,9 @@ fixes the checked source and the actually consumed dependency pins.
 
 Palomar registry record:
 
-- ID: `PALOMAR-2026-09-05-000007`
+- ID: `PALOMAR-2026-09-09-000001`
 - version: `2`
-- <https://palomar-registry.org/entry?id=PALOMAR-2026-09-05-000007&version=2>
+- <https://palomar-registry.org/entry?id=PALOMAR-2026-09-09-000001&version=2>
 
 Release `v1.0.5` packages the provenance and literature corrections together
 with the Palomar citation metadata. It supersedes the unqualified
