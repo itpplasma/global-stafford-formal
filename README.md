@@ -1,93 +1,52 @@
-# Global Stafford for rings of differential operators: Lean 4 formalization
+# Global Stafford formalization
 
-For every field `k` of characteristic zero, every smooth integral finitely
-generated `k`-algebra `A`, and every nonzero `k`-linear finite-order
-differential operator `d` on `A`, there exist differential operators
-`F, R, S` on `A` with
+A Lean 4 and Mathlib proof of Stafford's same-divisor identity in the ring of
+differential operators of a smooth affine variety. It extends the Weyl-algebra
+case (Stafford's Conjecture 3.8, formalized in
+[stafford38-formal](https://github.com/itpplasma/stafford38-formal)) to every
+smooth integral affine variety over a field of characteristic zero.
+
+Status: the formal proof is complete; independent human review of the
+mathematics is pending.
+
+## The theorem
+
+Let `k` be a field of characteristic zero, `A` a smooth integral finitely
+generated `k`-algebra, and `D_k(A)` the ring of `k`-linear finite-order
+(Grothendieck) differential operators on `A`, with composition as product.
+For every nonzero `d ∈ D_k(A)` there are `F, R, S ∈ D_k(A)` with
 
 ```text
 1 = d R + F d S.
 ```
 
-Products are compositions and the written order is kept. Over a polynomial
-ring `A = k[x_1, …, x_n]` the ring of differential operators is the Weyl
-algebra and the statement is Stafford's Conjecture 3.8, whose Lean proof is
-the separate public repository
-[stafford38-formal](https://github.com/itpplasma/stafford38-formal); this
-repository proves its smooth-affine extension by a source-changing
-local-to-global argument.
+The written order is kept. For `A = k[x₁, …, xₙ]`, `D_k(A)` is the Weyl
+algebra and the statement is Stafford's Conjecture 3.8. The proof here is a
+local-to-global argument over étale charts that reduces to the Weyl case.
 
-The proof was developed in this research project; the accompanying informal
-exposition and internal working notes preserve the project chronology. That
-chronology is **not** asserted to certify external first-presentation or
-publication priority. A broad literature audit dated 2026-09-09 found no prior
-proof of the exact same-divisor theorem and found strong contemporary evidence
-of novelty: Bellamy's 2026 survey still records Björk's weaker two-generator
-question for `D(X)` on smooth affine varieties as open, while the classical
-general result of Coutinho--Holland gives three generators. Absolute priority
-is therefore left unasserted. See the
-[provenance, prior-art and novelty assessment](docs/provenance-literature-novelty.md)
-and the [paper/Lean correspondence](docs/paper-lean-specification.md).
+## What is formalized
 
-Current documentation release: **v1.0.6**. Adds the literature/source index and
-module references; mathematical declarations and dependency pins are unchanged.
+- `GlobalStafford.universalStatement` (`GlobalStafford/Assembly/Closure.lean`):
+  the theorem for the intrinsic algebra of finite-order differential
+  operators.
+- `GlobalStaffordChallenge.universalStatement`: the same statement written
+  with Mathlib-only definitions in `GlobalStaffordChallenge.lean` (identical
+  copy in `Challenge.lean`), proved in `GlobalStaffordSolution.lean` /
+  `Solution.lean` by transport, without importing the challenge.
 
-## Literature and source index
+The project declares no axioms. The only `sorry`s are the intentional
+placeholders in `Challenge.lean` and `GlobalStaffordChallenge.lean`, which
+state the theorem for comparison against the solution. `scripts/verify.sh`
+checks that both endpoints in `docs/endpoints.txt` depend only on `propext`,
+`Classical.choice` and `Quot.sound`, including through the dependencies.
 
-**[Literature → proof ingredients → Lean modules](docs/literature.md)** is the
-starting point for tracing the mathematical foundations. It gives full
-citations, source roles, module links, and the distinction between proved
-imports, project constructions, background, and prior art.
+## Building and checking
 
-**[Sta78]** J. T. Stafford, *[Module Structure of Weyl Algebras](https://doi.org/10.1112/jlms/s2-18.3.429)*, Journal of the London Mathematical Society (2) 18 (1978), 429–442. Source of Conjecture 3.8 (p. 438). The 1978 conjecture is the target, not a proof of its general case.
-
-**[CH88]** S. C. Coutinho and M. P. Holland, *[Module Structure of Rings of Differential Operators](https://doi.org/10.1112/plms/s3-57.3.417)*, Proceedings of the London Mathematical Society (3) 57 (1988), 417–432. Prior art: three-generation for smooth-affine differential-operator rings. Not the same-divisor theorem and not an input to the source-changing descent.
-
-**[Bel26]** Gwyn Bellamy, *[Module structure of Weyl algebras](https://doi.org/10.1112/jlms.70373)*, Journal of the London Mathematical Society 113 (2026), no. 1, e70373. Historical status and adjacent results, especially Sections 3 and 6; not an imported proof theorem.
-
-
-## Status and provenance
-
-The formalization is complete through Phase II: `GlobalStafford.universalStatement`
-(`GlobalStafford/Assembly/Closure.lean`) proves the theorem for the intrinsic
-algebra of finite-order differential operators, and `GlobalStaffordSolution.lean`
-transports it to the Mathlib-only statement
-`GlobalStaffordChallenge.universalStatement` of
-[`GlobalStaffordChallenge.lean`](GlobalStaffordChallenge.lean). Both depend
-only on `propext`, `Classical.choice`, and `Quot.sound`;
-`scripts/verify.sh` (build, pins, source audit, endpoint axioms,
-Challenge/Solution import closures) passes.
-
-Source `b21883a5b3d8f46922713049c3b060523ea3a771` passed an isolated-clone
-Phase I/full replay and Comparator with NanoDa and Lean kernel acceptance. A
-second comparison using Palomar's independently compiled canonical Challenge
-also passed. The [machine-readable verification record](docs/verification-results.json)
-fixes the checked source and the actually consumed dependency pins.
-
-Palomar registry record:
-
-- ID: `PALOMAR-2026-09-09-000001`
-- version: `2`
-- <https://palomar-registry.org/entry?id=PALOMAR-2026-09-09-000001&version=2>
-
-Release `v1.0.5` packages the provenance and literature corrections together
-with the Palomar citation metadata. It supersedes the unqualified
-"first presentation" wording of `v1.0.4`; Lean proof bytes and dependency
-pins are unchanged.
-
-| Dependency | Exact consumed version |
-| --- | --- |
-| Lean | `leanprover/lean4:v4.33.0` |
-| Mathlib | `db584cd6d46c92f209a44c0f1c829460d327499d` |
-| [AlgebraicAnalysis](https://github.com/itpplasma/algebraic-analysis) | `4aae47967f6ba02ffe2f639ab06564c9a9d1ecc8` |
-| [Stafford38 formal](https://github.com/itpplasma/stafford38-formal) | `e77e176c381ca2d6b20c030f9227f1b031415d2e` |
-
-The older Stafford38 revision
-`784b59925beb9a480519142336bd6434f6eeef16` appears in dated research records
-only as a **historical inspection pin**. It is not the dependency consumed by
-the reviewed Global Stafford replay. See
-[the provenance audit](docs/provenance-literature-novelty.md) for the exact
-relationship.
+Requires [elan](https://github.com/leanprover/elan). The pins are Lean
+`leanprover/lean4:v4.33.0` (`lean-toolchain`) and, in `lakefile.toml`,
+Mathlib, [AlgebraicAnalysis](https://github.com/itpplasma/algebraic-analysis)
+and [stafford38-formal](https://github.com/itpplasma/stafford38-formal);
+Lake fetches them into `.lake/packages/`.
 
 ```sh
 lake exe cache get
@@ -95,50 +54,36 @@ lake build
 scripts/verify.sh
 ```
 
-## Companion document
+Do not run `lake update`; it would move the pins. More detail, including the
+Phase I verifier mode and the TeX dossier build, is in
+[docs/building.md](docs/building.md).
 
-The [TeX dossier](docs/dossier/global-stafford-dossier.tex) includes a clickable
-proof map, a comparison of the theorem with `GlobalStaffordChallenge.lean`, the
-main proof mechanisms, and the actual Challenge/Solution files. Build the PDF
-and its source-hash manifest with `docs/dossier/build.sh` (LuaLaTeX, latexmk,
-TikZ, DejaVu fonts). The output is
-`docs/dossier/global-stafford-dossier.pdf`.
-[Release notes](docs/release-notes.md) and the
-[release runbook](docs/release-runbook.md) describe the prepared artifacts.
+## Documentation
 
-## Continuing work
+- [Paper/Lean correspondence](docs/paper-lean-specification.md).
+- [Literature and proof index](docs/literature.md): citations, their role in
+  the proof, and the Lean modules that use them.
+- [Provenance, prior art and novelty](docs/provenance-literature-novelty.md).
+- [Building and verification](docs/building.md) and the
+  [verification record](docs/verification.md).
+- [TeX dossier](docs/dossier/global-stafford-dossier.tex)
+  ([PDF](docs/dossier/global-stafford-dossier.pdf)): proof map and the
+  challenge/solution comparison.
+- [Release notes](docs/release-notes.md).
 
-Read [`PLAN.md`](PLAN.md) for live status, then the
-[paper correspondence](docs/paper-lean-specification.md), the
-[literature/provenance audit](docs/provenance-literature-novelty.md), and the
-[verifier](scripts/verify.sh). Phase I and II are complete for the current
-paper revision recorded in the plan. Run the commands above to prepare a fresh
-checkout; Lake fetches both mathematics dependencies at their exact pins into
-`.lake/packages/algebraicAnalysis` and `.lake/packages/stafford38Formal`.
-Separate sibling clones are unnecessary.
+The theorem is registered in the Palomar registry as
+[PALOMAR-2026-09-09-000001](https://palomar-registry.org/entry?id=PALOMAR-2026-09-09-000001&version=2).
 
-For a paper correction, identify its mapped Lean declarations and downstream
-consumers, make the smallest correction, and rerun `scripts/verify.sh`.
-For Phase I endpoint reports, use `scripts/verify.sh --phase-i` as well; both
-modes write logs under `.lake/verification`, so run them sequentially and
-retain logs before the next run. A changed proof requires a new independent
-replay before extending the Phase III verification claim.
+## Related projects
 
-Keep the current dependency pins while maintaining this proof. Optional
-AA-2–AA-4 extractions have proofs here already; moving them upstream requires
-an explicit work package, axiom-clean library proofs, downstream rewiring, and
-a shared-pin compatibility build of the Stafford38 endpoints. Never run
-`lake update` as routine setup.
+- [stafford38-formal](https://github.com/itpplasma/stafford38-formal): the
+  Weyl-algebra case, a dependency.
+- [algebraic-analysis](https://github.com/itpplasma/algebraic-analysis):
+  reusable Lean library, a dependency.
 
-## Ownership
+## Citing and license
 
-| Artifact | Home |
-| --- | --- |
-| Reusable mathematics | [algebraic-analysis](https://github.com/itpplasma/algebraic-analysis) |
-| Weyl-algebra theorem | [stafford38-formal](https://github.com/itpplasma/stafford38-formal) |
-| This formalization and its Palomar interface | this repository |
-| Internal informal exposition, research history, superseded routes | internal research repository |
-
-Christopher Albert is the human author and maintainer; AI systems assist under
-human direction, as recorded in `formalization.yaml`. Code and documentation
-are Apache-2.0 (`LICENSE`, `NOTICE`).
+Citation metadata is in [CITATION.cff](CITATION.cff). Christopher Albert is
+the author and maintainer; AI systems assisted under his direction, as
+recorded in `formalization.yaml`. Licensed under Apache-2.0 ([LICENSE](LICENSE),
+[NOTICE](NOTICE)).
